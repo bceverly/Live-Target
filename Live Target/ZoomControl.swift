@@ -7,11 +7,13 @@
 
 import SwiftUI
 
+/// Camera zoom control interface similar to the native Camera app
 struct ZoomControl: View {
     @Binding var zoomFactor: CGFloat
     @State private var showingZoomSlider = false
     
-    let zoomLevels: [CGFloat] = [1.0, 1.5, 2.0, 3.0, 5.0, 7.0, 10.0]
+    /// Predefined zoom levels for quick access
+    private let zoomLevels: [CGFloat] = [1.0, 1.5, 2.0, 3.0, 5.0, 7.0, 10.0]
     
     var body: some View {
         VStack(spacing: 0) {

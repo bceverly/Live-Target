@@ -8,12 +8,15 @@
 import Foundation
 import WatchConnectivity
 import UIKit
+import os.log
 
 class WatchConnectivityManager: NSObject, ObservableObject {
     static let shared = WatchConnectivityManager()
     
     @Published var isWatchConnected = false
     @Published var isWatchAppInstalled = false
+    
+    private let logger = Logger(subsystem: "com.bceassociates.Live-Target", category: "WatchConnectivity")
     
     private override init() {
         super.init()
@@ -26,7 +29,7 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     
     func sendImpactToWatch(_ impact: ChangePoint, originalImage: UIImage, circleColor: UIColor, numberColor: UIColor) {
         guard WCSession.default.isReachable else {
-            print("Watch is not reachable")
+            logger.warning("Watch is not reachable")
             return
         }
         
@@ -40,22 +43,22 @@ class WatchConnectivityManager: NSObject, ObservableObject {
         
         // Prepare data for watch - compress more aggressively for Watch
         guard let imageData = zoomedImage.jpegData(compressionQuality: 0.3) else {
-            print("Failed to create image data")
+            logger.error("Failed to create image data")
             return
         }
         
         // Check payload size (WatchConnectivity has ~65KB limit)
         if imageData.count > 60000 {
-            print("Image too large (\(imageData.count) bytes), creating smaller version")
+            logger.info("Image too large (\(imageData.count) bytes), creating smaller version")
             // Create an even smaller image
             let smallerImage = resizeImage(zoomedImage, targetSize: CGSize(width: 100, height: 100))
             guard let smallerData = smallerImage.jpegData(compressionQuality: 0.2) else {
-                print("Failed to create smaller image data")
+                logger.error("Failed to create smaller image data")
                 return
             }
             
             if smallerData.count > 60000 {
-                print("Even smaller image still too large (\(smallerData.count) bytes), skipping")
+                logger.warning("Even smaller image still too large (\(smallerData.count) bytes), skipping")
                 return
             }
             
@@ -150,9 +153,9 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     
     private func sendMessageToWatch(_ message: [String: Any]) {
         WCSession.default.sendMessage(message, replyHandler: { response in
-            print("Watch acknowledged impact: \(response)")
+            self.logger.info("Watch acknowledged impact: \(response)")
         }, errorHandler: { error in
-            print("Failed to send impact to watch: \(error.localizedDescription)")
+            self.logger.error("Failed to send impact to watch: \(error.localizedDescription)")
         })
     }
     
@@ -172,16 +175,16 @@ extension WatchConnectivityManager: WCSessionDelegate {
         }
         
         if let error = error {
-            print("Watch session activation error: \(error.localizedDescription)")
+            logger.error("Watch session activation error: \(error.localizedDescription)")
         }
     }
     
     func sessionDidBecomeInactive(_ session: WCSession) {
-        print("Watch session became inactive")
+        logger.info("Watch session became inactive")
     }
     
     func sessionDidDeactivate(_ session: WCSession) {
-        print("Watch session deactivated")
+        logger.info("Watch session deactivated")
         WCSession.default.activate()
     }
     
@@ -194,7 +197,7 @@ extension WatchConnectivityManager: WCSessionDelegate {
     
     func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
         // Handle messages from watch if needed
-        print("Received message from watch: \(message)")
+        logger.info("Received message from watch: \(message)")
         replyHandler(["status": "received"])
     }
 }

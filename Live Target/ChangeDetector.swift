@@ -8,36 +8,53 @@
 import SwiftUI
 import Vision
 import Photos
+import os.log
 
+/// Represents a detected change/impact point in the camera feed
 struct ChangePoint {
     let id = UUID()
+    /// Normalized coordinates (0-1) relative to image size
     let location: CGPoint
+    /// Sequential number assigned to this impact
     let number: Int
 }
 
+/// Detects changes in camera feed and identifies bullet impacts
 class ChangeDetector: ObservableObject {
     @Published var detectedChanges: [ChangePoint] = []
     @Published var isDetecting: Bool = false
+    
+    // MARK: - Private Properties
     private var previousImage: UIImage?
     private var changeCounter = 0
     private var lastCheckTime = Date()
     private var checkInterval: TimeInterval = 2.0
-    private var minChangeSize: Int = 44  // Default: 22 * 2
+    private var minChangeSize: Int = 44  // Default: 22 caliber * 2
     
+    private let logger = Logger(subsystem: "com.bceassociates.Live-Target", category: "ChangeDetector")
+    
+    // MARK: - Public Methods
+    
+    /// Sets the interval between change detection checks
+    /// - Parameter interval: Time interval in seconds
     func setCheckInterval(_ interval: TimeInterval) {
-        self.checkInterval = interval
+        self.checkInterval = max(0.1, interval) // Minimum 0.1 seconds
     }
     
+    /// Sets the minimum size for detected changes
+    /// - Parameter size: Minimum size in pixels (typically caliber * 2)
     func setMinChangeSize(_ size: Int) {
-        self.minChangeSize = size
+        self.minChangeSize = max(1, size) // Minimum 1 pixel
     }
     
+    /// Starts change detection
     func startDetection() {
         isDetecting = true
         previousImage = nil // Reset to get fresh baseline
         lastCheckTime = Date()
     }
     
+    /// Stops change detection
     func stopDetection() {
         isDetecting = false
     }
@@ -100,6 +117,13 @@ class ChangeDetector: ObservableObject {
         )
     }
     
+    // MARK: - Private Methods
+    
+    /// Finds differences between two images and returns change points
+    /// - Parameters:
+    ///   - image1: First image to compare
+    ///   - image2: Second image to compare
+    /// - Returns: Array of normalized change points
     private func findDifferences(between image1: UIImage, and image2: UIImage) -> [CGPoint] {
         guard let cgImage1 = image1.cgImage,
               let cgImage2 = image2.cgImage else { return [] }
@@ -107,65 +131,73 @@ class ChangeDetector: ObservableObject {
         let width = min(cgImage1.width, cgImage2.width)
         let height = min(cgImage1.height, cgImage2.height)
         
+        guard let pixelData1 = extractPixelData(from: cgImage1, width: width, height: height),
+              let pixelData2 = extractPixelData(from: cgImage2, width: width, height: height) else {
+            return []
+        }
+        
+        let differenceMap = createDifferenceMap(pixelData1: pixelData1, pixelData2: pixelData2, width: width, height: height)
+        return findSignificantChanges(in: differenceMap, width: width, height: height)
+    }
+    
+    /// Extracts pixel data from a CGImage
+    private func extractPixelData(from cgImage: CGImage, width: Int, height: Int) -> [UInt8]? {
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let bytesPerPixel = 4
         let bytesPerRow = width * bytesPerPixel
         let bitsPerComponent = 8
         
-        var pixelData1 = [UInt8](repeating: 0, count: width * height * bytesPerPixel)
-        var pixelData2 = [UInt8](repeating: 0, count: width * height * bytesPerPixel)
+        var pixelData = [UInt8](repeating: 0, count: width * height * bytesPerPixel)
         
-        let context1 = CGContext(
-            data: &pixelData1,
+        guard let context = CGContext(
+            data: &pixelData,
             width: width,
             height: height,
             bitsPerComponent: bitsPerComponent,
             bytesPerRow: bytesPerRow,
             space: colorSpace,
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-        )
+        ) else {
+            return nil
+        }
         
-        let context2 = CGContext(
-            data: &pixelData2,
-            width: width,
-            height: height,
-            bitsPerComponent: bitsPerComponent,
-            bytesPerRow: bytesPerRow,
-            space: colorSpace,
-            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-        )
-        
-        context1?.draw(cgImage1, in: CGRect(x: 0, y: 0, width: width, height: height))
-        context2?.draw(cgImage2, in: CGRect(x: 0, y: 0, width: width, height: height))
-        
-        let threshold: Int = 50
-        
-        // Create a difference map
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+        return pixelData
+    }
+    
+    /// Creates a difference map between two pixel data arrays
+    private func createDifferenceMap(pixelData1: [UInt8], pixelData2: [UInt8], width: Int, height: Int) -> [[Bool]] {
         var differenceMap = Array(repeating: Array(repeating: false, count: width), count: height)
+        let threshold: Int = 50
+        let bytesPerPixel = 4
         
         for y in 0..<height {
             for x in 0..<width {
                 let pixelIndex = (y * width + x) * bytesPerPixel
                 
-                if pixelIndex + 3 < pixelData1.count {
-                    let r1 = Int(pixelData1[pixelIndex])
-                    let g1 = Int(pixelData1[pixelIndex + 1])
-                    let b1 = Int(pixelData1[pixelIndex + 2])
-                    
-                    let r2 = Int(pixelData2[pixelIndex])
-                    let g2 = Int(pixelData2[pixelIndex + 1])
-                    let b2 = Int(pixelData2[pixelIndex + 2])
-                    
-                    let diff = abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2)
-                    
-                    if diff > threshold {
-                        differenceMap[y][x] = true
-                    }
+                guard pixelIndex + 3 < pixelData1.count else { continue }
+                
+                let r1 = Int(pixelData1[pixelIndex])
+                let g1 = Int(pixelData1[pixelIndex + 1])
+                let b1 = Int(pixelData1[pixelIndex + 2])
+                
+                let r2 = Int(pixelData2[pixelIndex])
+                let g2 = Int(pixelData2[pixelIndex + 1])
+                let b2 = Int(pixelData2[pixelIndex + 2])
+                
+                let diff = abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2)
+                
+                if diff > threshold {
+                    differenceMap[y][x] = true
                 }
             }
         }
         
-        // Find contiguous regions of changes that are at least 40x40 pixels
+        return differenceMap
+    }
+    
+    /// Finds significant changes in the difference map
+    private func findSignificantChanges(in differenceMap: [[Bool]], width: Int, height: Int) -> [CGPoint] {
         var changes: [CGPoint] = []
         var visited = Array(repeating: Array(repeating: false, count: width), count: height)
         
@@ -174,7 +206,7 @@ class ChangeDetector: ObservableObject {
                 if differenceMap[y][x] && !visited[y][x] {
                     let region = floodFill(differenceMap: differenceMap, visited: &visited, startX: x, startY: y, width: width, height: height)
                     
-                    if region.width >= self.minChangeSize && region.height >= self.minChangeSize {
+                    if region.width >= minChangeSize && region.height >= minChangeSize {
                         let centerX = CGFloat(region.minX + region.width / 2) / CGFloat(width)
                         let centerY = CGFloat(region.minY + region.height / 2) / CGFloat(height)
                         changes.append(CGPoint(x: centerX, y: centerY))
@@ -186,6 +218,15 @@ class ChangeDetector: ObservableObject {
         return changes
     }
     
+    /// Performs flood fill to find connected regions of changes
+    /// - Parameters:
+    ///   - differenceMap: Map of pixel differences
+    ///   - visited: Tracking array for visited pixels
+    ///   - startX: Starting x coordinate
+    ///   - startY: Starting y coordinate
+    ///   - width: Image width
+    ///   - height: Image height
+    /// - Returns: Bounding box of the connected region
     private func floodFill(differenceMap: [[Bool]], visited: inout [[Bool]], startX: Int, startY: Int, width: Int, height: Int) -> (minX: Int, minY: Int, maxX: Int, maxY: Int, width: Int, height: Int) {
         var stack = [(startX, startY)]
         var minX = startX, maxX = startX
@@ -194,32 +235,38 @@ class ChangeDetector: ObservableObject {
         while !stack.isEmpty {
             let (x, y) = stack.removeLast()
             
-            if x < 0 || x >= width || y < 0 || y >= height || visited[y][x] || !differenceMap[y][x] {
+            // Check bounds and visited status
+            guard x >= 0, x < width, y >= 0, y < height,
+                  !visited[y][x], differenceMap[y][x] else {
                 continue
             }
             
             visited[y][x] = true
             
+            // Update bounding box
             minX = min(minX, x)
             maxX = max(maxX, x)
             minY = min(minY, y)
             maxY = max(maxY, y)
             
             // Add adjacent pixels to stack
-            stack.append((x + 1, y))
-            stack.append((x - 1, y))
-            stack.append((x, y + 1))
-            stack.append((x, y - 1))
+            stack.append(contentsOf: [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)])
         }
         
         return (minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: maxX - minX + 1, height: maxY - minY + 1)
     }
     
+    /// Clears all detected changes and resets the counter
     func clearChanges() {
         detectedChanges.removeAll()
         changeCounter = 0
     }
     
+    /// Saves the current image with detected changes to the photo library
+    /// - Parameters:
+    ///   - image: The base image to save
+    ///   - circleColor: Color for impact circles
+    ///   - numberColor: Color for impact numbers
     func saveCurrentImage(_ image: UIImage, circleColor: UIColor, numberColor: UIColor) {
         stopDetection() // Stop detection when saving
         
@@ -232,30 +279,38 @@ class ChangeDetector: ObservableObject {
                 case .authorized, .limited:
                     self.saveImageToPhotoLibrary(compositeImage)
                 case .denied, .restricted:
-                    print("Photo library access denied")
+                    self.logger.error("Photo library access denied")
                 case .notDetermined:
-                    print("Photo library access not determined")
+                    self.logger.warning("Photo library access not determined")
                 @unknown default:
-                    print("Unknown photo library authorization status")
+                    self.logger.error("Unknown photo library authorization status")
                 }
             }
         }
     }
     
+    /// Saves an image to the photo library
+    /// - Parameter image: The image to save
     private func saveImageToPhotoLibrary(_ image: UIImage) {
         PHPhotoLibrary.shared().performChanges({
             PHAssetChangeRequest.creationRequestForAsset(from: image)
         }, completionHandler: { success, error in
             DispatchQueue.main.async {
                 if success {
-                    print("Image saved successfully to photo library")
+                    self.logger.info("Image saved successfully to photo library")
                 } else if let error = error {
-                    print("Error saving image: \(error.localizedDescription)")
+                    self.logger.error("Error saving image: \(error.localizedDescription)")
                 }
             }
         })
     }
     
+    /// Creates a composite image with detected changes overlaid
+    /// - Parameters:
+    ///   - baseImage: The base camera image
+    ///   - circleColor: Color for impact circles
+    ///   - numberColor: Color for impact numbers
+    /// - Returns: Composite image with overlays
     private func createCompositeImage(baseImage: UIImage, circleColor: UIColor, numberColor: UIColor) -> UIImage {
         // For camera images, we need to rotate 90 degrees clockwise to match screen orientation
         let rotatedImage = baseImage.rotated90DegreesClockwise()
@@ -304,7 +359,11 @@ class ChangeDetector: ObservableObject {
     }
 }
 
+// MARK: - UIImage Extension
+
 extension UIImage {
+    /// Rotates the image 90 degrees clockwise
+    /// - Returns: Rotated image
     func rotated90DegreesClockwise() -> UIImage {
         guard let cgImage = cgImage else { return self }
         

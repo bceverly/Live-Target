@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AVFoundation
+import os.log
 
 struct CameraView: UIViewRepresentable {
     @Binding var capturedImage: UIImage?
@@ -64,6 +65,7 @@ struct CameraView: UIViewRepresentable {
         var captureDevice: AVCaptureDevice?
         private var lastUpdateTime = Date()
         private let updateInterval: TimeInterval = 1.0/15.0 // 15 FPS max to reduce updates
+        private let logger = Logger(subsystem: "com.bceassociates.Live-Target", category: "CameraView")
         
         init(_ parent: CameraView) {
             self.parent = parent
@@ -77,7 +79,7 @@ struct CameraView: UIViewRepresentable {
                 device.videoZoomFactor = max(1.0, min(zoomFactor, device.activeFormat.videoMaxZoomFactor))
                 device.unlockForConfiguration()
             } catch {
-                print("Error setting zoom: \(error)")
+                logger.error("Error setting zoom: \(error.localizedDescription)")
             }
         }
         

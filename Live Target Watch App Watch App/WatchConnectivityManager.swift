@@ -9,12 +9,15 @@ import Foundation
 import WatchConnectivity
 import UIKit
 import WatchKit
+import os.log
 
 class WatchConnectivityManager: NSObject, ObservableObject {
     static let shared = WatchConnectivityManager()
     
     @Published var isPhoneConnected = false
     @Published var connectionStatus = "Disconnected"
+    
+    private let logger = Logger(subsystem: "com.bceassociates.Live-Target", category: "WatchConnectivity")
     
     override init() {
         super.init()
@@ -29,15 +32,15 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     
     func requestLatestImpact() {
         guard WCSession.default.isReachable else {
-            print("Phone is not reachable")
+            logger.warning("Phone is not reachable")
             return
         }
         
         let message = ["type": "requestLatestImpact"]
         WCSession.default.sendMessage(message, replyHandler: { response in
-            print("Received latest impact response: \(response)")
+            self.logger.info("Received latest impact response: \(response)")
         }, errorHandler: { error in
-            print("Failed to request latest impact: \(error.localizedDescription)")
+            self.logger.error("Failed to request latest impact: \(error.localizedDescription)")
         })
     }
 }
@@ -50,7 +53,7 @@ extension WatchConnectivityManager: WCSessionDelegate {
         }
         
         if let error = error {
-            print("Watch session activation error: \(error.localizedDescription)")
+            logger.error("Watch session activation error: \(error.localizedDescription)")
         }
     }
     
@@ -62,7 +65,7 @@ extension WatchConnectivityManager: WCSessionDelegate {
     }
     
     func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
-        print("Received message from phone: \(message)")
+        logger.info("Received message from phone: \(message)")
         
         if let type = message["type"] as? String {
             switch type {
@@ -80,7 +83,7 @@ extension WatchConnectivityManager: WCSessionDelegate {
               let timestamp = message["timestamp"] as? TimeInterval,
               let imageData = message["imageData"] as? Data,
               let image = UIImage(data: imageData) else {
-            print("Invalid impact data received")
+            logger.error("Invalid impact data received")
             return
         }
         
