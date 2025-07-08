@@ -73,11 +73,31 @@ class ChangeDetector: ObservableObject {
             
             DispatchQueue.main.async {
                 self.detectedChanges.append(changePoint)
+                
+                // Send to Apple Watch
+                self.sendImpactToWatch(changePoint, image: newImage)
             }
         }
         
         self.previousImage = newImage
         self.lastCheckTime = currentTime
+    }
+    
+    private func sendImpactToWatch(_ impact: ChangePoint, image: UIImage) {
+        // Get current colors from UserDefaults
+        let circleColorHex = UserDefaults.standard.string(forKey: "circleColor") ?? "FF0000"
+        let numberColorHex = UserDefaults.standard.string(forKey: "numberColor") ?? "FF0000"
+        
+        let circleColor = UIColor(Color(hex: circleColorHex) ?? .red)
+        let numberColor = UIColor(Color(hex: numberColorHex) ?? .red)
+        
+        // Send to watch
+        WatchConnectivityManager.shared.sendImpactToWatch(
+            impact,
+            originalImage: image,
+            circleColor: circleColor,
+            numberColor: numberColor
+        )
     }
     
     private func findDifferences(between image1: UIImage, and image2: UIImage) -> [CGPoint] {

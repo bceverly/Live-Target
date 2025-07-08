@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BBB337282E1D683700A0E0F0 /* Live Target Watch App Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = BBB337082E1D683500A0E0F0 /* Live Target Watch App Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		BB0E92E72E1C158E00606FAC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,12 +25,50 @@
 			remoteGlobalIDString = BB0E92D62E1C158C00606FAC;
 			remoteInfo = "Live Target";
 		};
+		BBB337152E1D683700A0E0F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BB0E92CF2E1C158C00606FAC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BBB337072E1D683500A0E0F0;
+			remoteInfo = "Live Target Watch App Watch App";
+		};
+		BBB3371F2E1D683700A0E0F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BB0E92CF2E1C158C00606FAC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BBB337072E1D683500A0E0F0;
+			remoteInfo = "Live Target Watch App Watch App";
+		};
+		BBB337262E1D683700A0E0F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BB0E92CF2E1C158C00606FAC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BBB337072E1D683500A0E0F0;
+			remoteInfo = "Live Target Watch App Watch App";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BBB3372C2E1D683700A0E0F0 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				BBB337282E1D683700A0E0F0 /* Live Target Watch App Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		BB0E92D72E1C158C00606FAC /* Live Target.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Live Target.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB0E92E62E1C158E00606FAC /* Live TargetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Live TargetTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB0E92F02E1C158E00606FAC /* Live TargetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Live TargetUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BBB337082E1D683500A0E0F0 /* Live Target Watch App Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Live Target Watch App Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BBB337142E1D683700A0E0F0 /* Live Target Watch App Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Live Target Watch App Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BBB3371E2E1D683700A0E0F0 /* Live Target Watch App Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Live Target Watch App Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -43,6 +85,21 @@
 		BB0E92F32E1C158E00606FAC /* Live TargetUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Live TargetUITests";
+			sourceTree = "<group>";
+		};
+		BBB337092E1D683500A0E0F0 /* Live Target Watch App Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Live Target Watch App Watch App";
+			sourceTree = "<group>";
+		};
+		BBB337172E1D683700A0E0F0 /* Live Target Watch App Watch AppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Live Target Watch App Watch AppTests";
+			sourceTree = "<group>";
+		};
+		BBB337212E1D683700A0E0F0 /* Live Target Watch App Watch AppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Live Target Watch App Watch AppUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -69,6 +126,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BBB337052E1D683500A0E0F0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BBB337112E1D683700A0E0F0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BBB3371B2E1D683700A0E0F0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -78,6 +156,9 @@
 				BB0E92D92E1C158C00606FAC /* Live Target */,
 				BB0E92E92E1C158E00606FAC /* Live TargetTests */,
 				BB0E92F32E1C158E00606FAC /* Live TargetUITests */,
+				BBB337092E1D683500A0E0F0 /* Live Target Watch App Watch App */,
+				BBB337172E1D683700A0E0F0 /* Live Target Watch App Watch AppTests */,
+				BBB337212E1D683700A0E0F0 /* Live Target Watch App Watch AppUITests */,
 				BB0E92D82E1C158C00606FAC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,6 +169,9 @@
 				BB0E92D72E1C158C00606FAC /* Live Target.app */,
 				BB0E92E62E1C158E00606FAC /* Live TargetTests.xctest */,
 				BB0E92F02E1C158E00606FAC /* Live TargetUITests.xctest */,
+				BBB337082E1D683500A0E0F0 /* Live Target Watch App Watch App.app */,
+				BBB337142E1D683700A0E0F0 /* Live Target Watch App Watch AppTests.xctest */,
+				BBB3371E2E1D683700A0E0F0 /* Live Target Watch App Watch AppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -102,10 +186,12 @@
 				BB0E92D32E1C158C00606FAC /* Sources */,
 				BB0E92D42E1C158C00606FAC /* Frameworks */,
 				BB0E92D52E1C158C00606FAC /* Resources */,
+				BBB3372C2E1D683700A0E0F0 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				BBB337272E1D683700A0E0F0 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				BB0E92D92E1C158C00606FAC /* Live Target */,
@@ -163,6 +249,74 @@
 			productReference = BB0E92F02E1C158E00606FAC /* Live TargetUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		BBB337072E1D683500A0E0F0 /* Live Target Watch App Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BBB337292E1D683700A0E0F0 /* Build configuration list for PBXNativeTarget "Live Target Watch App Watch App" */;
+			buildPhases = (
+				BBB337042E1D683500A0E0F0 /* Sources */,
+				BBB337052E1D683500A0E0F0 /* Frameworks */,
+				BBB337062E1D683500A0E0F0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				BBB337092E1D683500A0E0F0 /* Live Target Watch App Watch App */,
+			);
+			name = "Live Target Watch App Watch App";
+			packageProductDependencies = (
+			);
+			productName = "Live Target Watch App Watch App";
+			productReference = BBB337082E1D683500A0E0F0 /* Live Target Watch App Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		BBB337132E1D683700A0E0F0 /* Live Target Watch App Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BBB3372D2E1D683700A0E0F0 /* Build configuration list for PBXNativeTarget "Live Target Watch App Watch AppTests" */;
+			buildPhases = (
+				BBB337102E1D683700A0E0F0 /* Sources */,
+				BBB337112E1D683700A0E0F0 /* Frameworks */,
+				BBB337122E1D683700A0E0F0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BBB337162E1D683700A0E0F0 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				BBB337172E1D683700A0E0F0 /* Live Target Watch App Watch AppTests */,
+			);
+			name = "Live Target Watch App Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "Live Target Watch App Watch AppTests";
+			productReference = BBB337142E1D683700A0E0F0 /* Live Target Watch App Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		BBB3371D2E1D683700A0E0F0 /* Live Target Watch App Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BBB337302E1D683700A0E0F0 /* Build configuration list for PBXNativeTarget "Live Target Watch App Watch AppUITests" */;
+			buildPhases = (
+				BBB3371A2E1D683700A0E0F0 /* Sources */,
+				BBB3371B2E1D683700A0E0F0 /* Frameworks */,
+				BBB3371C2E1D683700A0E0F0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BBB337202E1D683700A0E0F0 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				BBB337212E1D683700A0E0F0 /* Live Target Watch App Watch AppUITests */,
+			);
+			name = "Live Target Watch App Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "Live Target Watch App Watch AppUITests";
+			productReference = BBB3371E2E1D683700A0E0F0 /* Live Target Watch App Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -184,6 +338,17 @@
 						CreatedOnToolsVersion = 16.4;
 						TestTargetID = BB0E92D62E1C158C00606FAC;
 					};
+					BBB337072E1D683500A0E0F0 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					BBB337132E1D683700A0E0F0 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = BBB337072E1D683500A0E0F0;
+					};
+					BBB3371D2E1D683700A0E0F0 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = BBB337072E1D683500A0E0F0;
+					};
 				};
 			};
 			buildConfigurationList = BB0E92D22E1C158C00606FAC /* Build configuration list for PBXProject "Live Target" */;
@@ -203,6 +368,9 @@
 				BB0E92D62E1C158C00606FAC /* Live Target */,
 				BB0E92E52E1C158E00606FAC /* Live TargetTests */,
 				BB0E92EF2E1C158E00606FAC /* Live TargetUITests */,
+				BBB337072E1D683500A0E0F0 /* Live Target Watch App Watch App */,
+				BBB337132E1D683700A0E0F0 /* Live Target Watch App Watch AppTests */,
+				BBB3371D2E1D683700A0E0F0 /* Live Target Watch App Watch AppUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -223,6 +391,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BB0E92EE2E1C158E00606FAC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BBB337062E1D683500A0E0F0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BBB337122E1D683700A0E0F0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BBB3371C2E1D683700A0E0F0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,6 +442,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BBB337042E1D683500A0E0F0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BBB337102E1D683700A0E0F0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BBB3371A2E1D683700A0E0F0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -265,6 +475,21 @@
 			isa = PBXTargetDependency;
 			target = BB0E92D62E1C158C00606FAC /* Live Target */;
 			targetProxy = BB0E92F12E1C158E00606FAC /* PBXContainerItemProxy */;
+		};
+		BBB337162E1D683700A0E0F0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BBB337072E1D683500A0E0F0 /* Live Target Watch App Watch App */;
+			targetProxy = BBB337152E1D683700A0E0F0 /* PBXContainerItemProxy */;
+		};
+		BBB337202E1D683700A0E0F0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BBB337072E1D683500A0E0F0 /* Live Target Watch App Watch App */;
+			targetProxy = BBB3371F2E1D683700A0E0F0 /* PBXContainerItemProxy */;
+		};
+		BBB337272E1D683700A0E0F0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BBB337072E1D683500A0E0F0 /* Live Target Watch App Watch App */;
+			targetProxy = BBB337262E1D683700A0E0F0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -526,6 +751,142 @@
 			};
 			name = Release;
 		};
+		BBB3372A2E1D683700A0E0F0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z65K66NG9F;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Live Target Watch App";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "com.bceassociates.Live-Target";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Debug;
+		};
+		BBB3372B2E1D683700A0E0F0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z65K66NG9F;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Live Target Watch App";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "com.bceassociates.Live-Target";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Release;
+		};
+		BBB3372E2E1D683700A0E0F0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z65K66NG9F;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target-Watch-App-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Live Target Watch App Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Live Target Watch App Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Debug;
+		};
+		BBB3372F2E1D683700A0E0F0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z65K66NG9F;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target-Watch-App-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Live Target Watch App Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Live Target Watch App Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Release;
+		};
+		BBB337312E1D683700A0E0F0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z65K66NG9F;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target-Watch-App-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "Live Target Watch App Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Debug;
+		};
+		BBB337322E1D683700A0E0F0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z65K66NG9F;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target-Watch-App-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "Live Target Watch App Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -561,6 +922,33 @@
 			buildConfigurations = (
 				BB0E93012E1C158E00606FAC /* Debug */,
 				BB0E93022E1C158E00606FAC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BBB337292E1D683700A0E0F0 /* Build configuration list for PBXNativeTarget "Live Target Watch App Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BBB3372A2E1D683700A0E0F0 /* Debug */,
+				BBB3372B2E1D683700A0E0F0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BBB3372D2E1D683700A0E0F0 /* Build configuration list for PBXNativeTarget "Live Target Watch App Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BBB3372E2E1D683700A0E0F0 /* Debug */,
+				BBB3372F2E1D683700A0E0F0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BBB337302E1D683700A0E0F0 /* Build configuration list for PBXNativeTarget "Live Target Watch App Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BBB337312E1D683700A0E0F0 /* Debug */,
+				BBB337322E1D683700A0E0F0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

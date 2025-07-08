@@ -12,6 +12,7 @@ import SwiftData
 struct ContentView: View {
     @State private var capturedImage: UIImage?
     @StateObject private var changeDetector = ChangeDetector()
+    @StateObject private var watchConnectivity = WatchConnectivityManager.shared
     @State private var showingSettings = false
     @AppStorage("circleColor") private var circleColorHex: String = "FF0000"
     @AppStorage("numberColor") private var numberColorHex: String = "FF0000"
@@ -59,8 +60,19 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Settings") {
-                        showingSettings = true
+                    HStack {
+                        // Watch connectivity status
+                        if watchConnectivity.isWatchConnected {
+                            Image(systemName: "applewatch")
+                                .foregroundColor(.green)
+                        } else if watchConnectivity.isWatchAppInstalled {
+                            Image(systemName: "applewatch")
+                                .foregroundColor(.orange)
+                        }
+                        
+                        Button("Settings") {
+                            showingSettings = true
+                        }
                     }
                 }
                 
