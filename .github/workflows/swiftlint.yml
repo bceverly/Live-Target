@@ -33,25 +33,3 @@ jobs:
     - name: Run SwiftLint
       run: |
         swiftlint lint --reporter github-actions-logging
-        
-    - name: Run SwiftLint (Autocorrect)
-      run: |
-        swiftlint --fix --format
-        
-    - name: Check for Changes
-      id: verify-changed-files
-      run: |
-        if [ -n "$(git status --porcelain)" ]; then
-          echo "changed=true" >> $GITHUB_OUTPUT
-        else
-          echo "changed=false" >> $GITHUB_OUTPUT
-        fi
-        
-    - name: Commit SwiftLint Fixes
-      if: steps.verify-changed-files.outputs.changed == 'true' && github.event_name == 'push'
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add .
-        git commit -m "Apply SwiftLint auto-fixes" || exit 0
-        git push
