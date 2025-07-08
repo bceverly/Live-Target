@@ -1,3 +1,10 @@
+//
+//  CameraView.swift
+//  Live Target
+//
+//  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+//
+
 import SwiftUI
 import AVFoundation
 
