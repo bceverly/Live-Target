@@ -70,6 +70,7 @@ jobs:
         
     - name: Update Version in Project
       run: |
+        cd ios/
         VERSION="${{ needs.validate-release.outputs.version }}"
         # Remove 'v' prefix for version number
         VERSION_NUMBER=${VERSION#v}
@@ -85,6 +86,7 @@ jobs:
         
     - name: Build Release Archive
       run: |
+        cd ios/
         xcodebuild \
           -project "Live Target.xcodeproj" \
           -scheme "Live Target" \
@@ -125,7 +127,7 @@ jobs:
         mkdir -p release
         
         # Copy archive (if export worked, you'd copy the IPA here)
-        cp -r "Live Target.xcarchive" release/ || true
+        cp -r "ios/Live Target.xcarchive" release/ || true
         
         # Create release notes
         cat > release/RELEASE_NOTES.md << EOF

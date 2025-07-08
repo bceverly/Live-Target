@@ -44,6 +44,7 @@ jobs:
           
     - name: Install Dependencies
       run: |
+        cd ios/
         # Install any required dependencies (if using SPM)
         # xcodebuild -resolvePackageDependencies -project "Live Target.xcodeproj"
         
@@ -54,10 +55,12 @@ jobs:
           brew install swiftlint
         fi
         # Run SwiftLint (will warn but not fail build)
+        cd ios/
         swiftlint lint --reporter github-actions-logging || true
         
     - name: Build for Simulator
       run: |
+        cd ios/
         xcodebuild \
           -project "Live Target.xcodeproj" \
           -scheme "Live Target" \
@@ -69,6 +72,7 @@ jobs:
           
     - name: Run Unit Tests
       run: |
+        cd ios/
         xcodebuild \
           -project "Live Target.xcodeproj" \
           -scheme "Live Target" \
@@ -103,10 +107,12 @@ jobs:
     - name: Run SwiftLint
       run: |
         brew install swiftlint
+        cd ios/
         swiftlint lint --reporter github-actions-logging
         
     - name: Generate Code Coverage
       run: |
+        cd ios/
         xcodebuild \
           -project "Live Target.xcodeproj" \
           -scheme "Live Target" \
@@ -142,7 +148,7 @@ jobs:
     - name: Scan for Secrets
       run: |
         # Simple grep-based secret scanning
-        if grep -r -i "api_key\|password\|secret\|token" --include="*.swift" . | grep -v "// swiftlint"; then
+        if grep -r -i "api_key\|password\|secret\|token" --include="*.swift" ios/ | grep -v "// swiftlint"; then
           echo "⚠️ Potential secrets found in code!"
           exit 1
         else
