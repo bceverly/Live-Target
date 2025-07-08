@@ -18,12 +18,16 @@ struct ContentView: View {
     @AppStorage("numberColor") private var numberColorHex: String = "FF0000"
     @AppStorage("checkInterval") private var checkInterval: Double = 2.0
     @AppStorage("bulletCaliber") private var bulletCaliber: Int = 22
+    @AppStorage("zoomFactor") private var zoomFactor: Double = 1.0
     
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
                 ZStack {
-                    CameraView(capturedImage: $capturedImage)
+                    CameraView(capturedImage: $capturedImage, zoomFactor: Binding(
+                        get: { CGFloat(zoomFactor) },
+                        set: { zoomFactor = Double($0) }
+                    ))
                         .onChange(of: capturedImage) { _, newImage in
                             if let image = newImage {
                                 changeDetector.detectChanges(in: image)
@@ -53,6 +57,16 @@ struct ContentView: View {
                                 .foregroundColor(Color(hex: numberColorHex) ?? .red)
                         }
                         .position(screenPoint)
+                    }
+                    
+                    // Zoom control positioned at the bottom
+                    VStack {
+                        Spacer()
+                        ZoomControl(zoomFactor: Binding(
+                            get: { CGFloat(zoomFactor) },
+                            set: { zoomFactor = Double($0) }
+                        ))
+                        .padding(.bottom, 100) // Space for bottom toolbar
                     }
                 }
             }

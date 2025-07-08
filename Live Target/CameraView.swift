@@ -10,6 +10,7 @@ import AVFoundation
 
 struct CameraView: UIViewRepresentable {
     @Binding var capturedImage: UIImage?
+    @Binding var zoomFactor: CGFloat
     
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
@@ -33,8 +34,9 @@ struct CameraView: UIViewRepresentable {
         output.setSampleBufferDelegate(context.coordinator, queue: DispatchQueue.main)
         captureSession.addOutput(output)
         
-        // Store session in coordinator instead of state
+        // Store session and device in coordinator instead of state
         context.coordinator.captureSession = captureSession
+        context.coordinator.captureDevice = captureDevice
         
         DispatchQueue.global(qos: .userInitiated).async {
             captureSession.startRunning()
@@ -47,6 +49,9 @@ struct CameraView: UIViewRepresentable {
         if let layer = uiView.layer.sublayers?.first as? AVCaptureVideoPreviewLayer {
             layer.frame = uiView.bounds
         }
+        
+        // Update zoom factor
+        context.coordinator.updateZoom(zoomFactor)
     }
     
     func makeCoordinator() -> Coordinator {
@@ -56,11 +61,24 @@ struct CameraView: UIViewRepresentable {
     class Coordinator: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         let parent: CameraView
         var captureSession: AVCaptureSession?
+        var captureDevice: AVCaptureDevice?
         private var lastUpdateTime = Date()
         private let updateInterval: TimeInterval = 1.0/15.0 // 15 FPS max to reduce updates
         
         init(_ parent: CameraView) {
             self.parent = parent
+        }
+        
+        func updateZoom(_ zoomFactor: CGFloat) {
+            guard let device = captureDevice else { return }
+            
+            do {
+                try device.lockForConfiguration()
+                device.videoZoomFactor = max(1.0, min(zoomFactor, device.activeFormat.videoMaxZoomFactor))
+                device.unlockForConfiguration()
+            } catch {
+                print("Error setting zoom: \(error)")
+            }
         }
         
         func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
