@@ -198,29 +198,3 @@ extension WatchConnectivityManager: WCSessionDelegate {
         replyHandler(["status": "received"])
     }
 }
-
-extension UIImage {
-    func rotated90DegreesClockwise() -> UIImage {
-        guard let cgImage = cgImage else { return self }
-        
-        let newSize = CGSize(width: size.height, height: size.width)
-        let renderer = UIGraphicsImageRenderer(size: newSize)
-        
-        return renderer.image { context in
-            let cgContext = context.cgContext
-            
-            // Move to center, rotate 90 degrees counter-clockwise, and flip horizontally
-            cgContext.translateBy(x: newSize.width / 2, y: newSize.height / 2)
-            cgContext.rotate(by: -CGFloat.pi / 2)  // Counter-clockwise rotation
-            cgContext.scaleBy(x: -1, y: 1)  // Flip horizontally to fix mirror effect
-            
-            // Draw the image centered
-            cgContext.draw(cgImage, in: CGRect(
-                x: -size.width / 2,
-                y: -size.height / 2,
-                width: size.width,
-                height: size.height
-            ))
-        }
-    }
-}
