@@ -3,6 +3,7 @@
 //  Live Target Watch App Watch AppUITests
 //
 //  Created by Bryan Everly on 7/8/25.
+//  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
 //
 
 import XCTest

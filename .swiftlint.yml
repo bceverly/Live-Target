@@ -35,12 +35,6 @@ opt_in_rules:
   - vertical_parameter_alignment_on_call
 
 # Rule configurations
-line_length:
-  warning: 120
-  error: 150
-  ignores_comments: true
-  ignores_urls: true
-
 function_body_length:
   warning: 50
   error: 100
