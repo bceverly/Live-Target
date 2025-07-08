@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blue">#2196F3</color>
+    <color name="default_red">#FF0000</color>
+    <color name="green">#4CAF50</color>
+    <color name="md_theme_error">#BA1A1A</color>
+    <color name="md_theme_error_container">#FFDAD6</color>
+    <color name="md_theme_inverse_on_surface">#F4EFF4</color>
+    <color name="md_theme_inverse_primary">#D0BCFF</color>
+    <color name="md_theme_inverse_surface">#313033</color>
+    <color name="md_theme_on_error">#FFFFFF</color>
+    <color name="md_theme_on_error_container">#410002</color>
+    <color name="md_theme_on_primary">#FFFFFF</color>
+    <color name="md_theme_on_primary_container">#B71C1C</color>
+    <color name="md_theme_on_secondary">#FFFFFF</color>
+    <color name="md_theme_on_secondary_container">#E65100</color>
+    <color name="md_theme_on_surface">#1C1B1F</color>
+    <color name="md_theme_on_surface_variant">#49454F</color>
+    <color name="md_theme_on_tertiary">#FFFFFF</color>
+    <color name="md_theme_on_tertiary_container">#FF6F00</color>
+    <color name="md_theme_outline">#79747E</color>
+    <color name="md_theme_outline_variant">#CAC4D0</color>
+    <color name="md_theme_primary">#D32F2F</color>
+    <color name="md_theme_primary_container">#FFCDD2</color>
+    <color name="md_theme_secondary">#FF5722</color>
+    <color name="md_theme_secondary_container">#FFE0B2</color>
+    <color name="md_theme_surface">#FFFBFE</color>
+    <color name="md_theme_surface_variant">#E7E0EC</color>
+    <color name="md_theme_tertiary">#FF9800</color>
+    <color name="md_theme_tertiary_container">#FFF3E0</color>
+    <string name="about">About</string>
+    <string name="app_name">Live Target</string>
+    <string name="app_version">Version</string>
+    <string name="build_date">Build Date</string>
+    <string name="bullet_caliber">Bullet Caliber</string>
+    <string name="camera_permission_required">Camera permission is required to detect bullet impacts.</string>
+    <string name="change_detection">Change Detection</string>
+    <string name="check_frequency">Check Frequency</string>
+    <string name="circle_color">Circle Color</string>
+    <string name="clear">Clear</string>
+    <string name="colors">Colors</string>
+    <string name="copyright">Copyright</string>
+    <string name="copyright_text">© 2025 BCEAssociates, Inc.\nAll rights reserved.</string>
+    <string name="detecting">Detecting...</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="image_saved">Image saved to gallery</string>
+    <string name="number_color">Number Color</string>
+    <string name="save">Save</string>
+    <string name="save_failed">Failed to save image</string>
+    <string name="settings">Settings</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="stopped">Stopped</string>
+    <style name="Theme.LiveTarget" parent="android:Theme.Material.Light">
+        
+    </style>
+</resources>

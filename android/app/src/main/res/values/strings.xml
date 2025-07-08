@@ -1,0 +1,31 @@
+<!--
+  strings.xml
+  Live Target Android
+
+  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+-->
+<resources>
+    <string name="app_name">Live Target</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="clear">Clear</string>
+    <string name="save">Save</string>
+    <string name="settings">Settings</string>
+    <string name="colors">Colors</string>
+    <string name="change_detection">Change Detection</string>
+    <string name="about">About</string>
+    <string name="circle_color">Circle Color</string>
+    <string name="number_color">Number Color</string>
+    <string name="check_frequency">Check Frequency</string>
+    <string name="bullet_caliber">Bullet Caliber</string>
+    <string name="app_version">Version</string>
+    <string name="build_date">Build Date</string>
+    <string name="copyright">Copyright</string>
+    <string name="copyright_text">© 2025 BCEAssociates, Inc.\nAll rights reserved.</string>
+    <string name="camera_permission_required">Camera permission is required to detect bullet impacts.</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="detecting">Detecting...</string>
+    <string name="stopped">Stopped</string>
+    <string name="image_saved">Image saved to gallery</string>
+    <string name="save_failed">Failed to save image</string>
+</resources>

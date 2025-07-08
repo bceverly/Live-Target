@@ -1,0 +1,258 @@
+//
+//  MainScreen.kt
+//  Live Target Android
+//
+//  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+//
+
+package com.bceassociates.livetarget.ui.screen
+
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.bceassociates.livetarget.R
+import com.bceassociates.livetarget.ui.component.CameraPreview
+import com.bceassociates.livetarget.ui.theme.LiveTargetTheme
+import com.bceassociates.livetarget.viewmodel.MainViewModel
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel = viewModel()
+) {
+    val context = LocalContext.current
+    var hasCameraPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+    
+    var showSettings by remember { mutableStateOf(false) }
+    
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        hasCameraPermission = isGranted
+    }
+    
+    val uiState by viewModel.uiState.collectAsState()
+    
+    Column(modifier = modifier.fillMaxSize()) {
+        // Top App Bar
+        TopAppBar(
+            title = { Text(stringResource(R.string.app_name)) },
+            actions = {
+                IconButton(onClick = { showSettings = true }) {
+                    Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings))
+                }
+            }
+        )
+        
+        // Main Content
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            if (hasCameraPermission) {
+                // Camera Preview with Impact Overlays
+                Box(modifier = Modifier.fillMaxSize()) {
+                    CameraPreview(
+                        onImageCaptured = { bitmap ->
+                            viewModel.processImage(bitmap)
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    
+                    // Impact overlays
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        drawImpacts(
+                            impacts = uiState.detectedChanges,
+                            circleColor = Color(android.graphics.Color.parseColor("#${uiState.circleColor}")),
+                            numberColor = Color(android.graphics.Color.parseColor("#${uiState.numberColor}"))
+                        )
+                    }
+                    
+                    // Status indicator
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(16.dp)
+                    ) {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (uiState.isDetecting) 
+                                    MaterialTheme.colorScheme.errorContainer 
+                                else 
+                                    MaterialTheme.colorScheme.secondaryContainer
+                            )
+                        ) {
+                            Text(
+                                text = if (uiState.isDetecting) 
+                                    stringResource(R.string.detecting) 
+                                else 
+                                    stringResource(R.string.stopped),
+                                modifier = Modifier.padding(8.dp),
+                                color = if (uiState.isDetecting) 
+                                    MaterialTheme.colorScheme.onErrorContainer 
+                                else 
+                                    MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        }
+                    }
+                }
+            } else {
+                // Camera permission request
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.camera_permission_required),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                    Button(
+                        onClick = { launcher.launch(Manifest.permission.CAMERA) }
+                    ) {
+                        Text(stringResource(R.string.grant_permission))
+                    }
+                }
+            }
+        }
+        
+        // Bottom Controls
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(
+                onClick = { viewModel.clearChanges() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Text(stringResource(R.string.clear))
+            }
+            
+            Button(
+                onClick = { 
+                    if (uiState.isDetecting) {
+                        viewModel.stopDetection()
+                    } else {
+                        viewModel.startDetection()
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (uiState.isDetecting) 
+                        MaterialTheme.colorScheme.error 
+                    else 
+                        MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    if (uiState.isDetecting) 
+                        stringResource(R.string.stop) 
+                    else 
+                        stringResource(R.string.start)
+                )
+            }
+            
+            Button(
+                onClick = { viewModel.saveImage() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary
+                )
+            ) {
+                Text(stringResource(R.string.save))
+            }
+        }
+    }
+    
+    // Settings Screen
+    if (showSettings) {
+        SettingsScreen(
+            onDismiss = { showSettings = false },
+            viewModel = viewModel
+        )
+    }
+}
+
+private fun DrawScope.drawImpacts(
+    impacts: List<com.bceassociates.livetarget.data.model.ChangePoint>,
+    circleColor: Color,
+    numberColor: Color
+) {
+    impacts.forEach { impact ->
+        val centerX = impact.location.x * size.width
+        val centerY = impact.location.y * size.height
+        val radius = 30.dp.toPx()
+        
+        // Draw circle
+        drawCircle(
+            color = circleColor,
+            radius = radius,
+            center = androidx.compose.ui.geometry.Offset(centerX, centerY),
+            style = Stroke(width = 3.dp.toPx())
+        )
+        
+        // Draw impact number
+        drawIntoCanvas { canvas ->
+            val paint = android.graphics.Paint().apply {
+                color = numberColor.toArgb()
+                textSize = 24.dp.toPx()
+                textAlign = android.graphics.Paint.Align.CENTER
+                isAntiAlias = true
+                isFakeBoldText = true
+            }
+            
+            canvas.nativeCanvas.drawText(
+                impact.number.toString(),
+                centerX,
+                centerY + paint.textSize / 3f, // Offset to center vertically
+                paint
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainScreenPreview() {
+    LiveTargetTheme {
+        MainScreen()
+    }
+}

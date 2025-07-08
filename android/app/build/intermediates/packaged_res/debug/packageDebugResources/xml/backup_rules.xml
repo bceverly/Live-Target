@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  backup_rules.xml
+  Live Target Android
+
+  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+-->
+<full-backup-content>
+    <!-- Exclude internal app databases and caches -->
+    <exclude domain="database" path="." />
+    <exclude domain="sharedpref" path="datastore" />
+</full-backup-content>

@@ -1,0 +1,60 @@
+com.bceassociates.livetarget.app-profileinstaller-1.3.1-0 /Users/bceverly/.gradle/caches/8.9/transforms/0558a81ec46300ecb0e790a563eb6e8b/transformed/profileinstaller-1.3.1/res
+com.bceassociates.livetarget.app-foundation-layout-release-1 /Users/bceverly/.gradle/caches/8.9/transforms/0d5e7bbbeece1c6532159f7cabbe9c89/transformed/foundation-layout-release/res
+com.bceassociates.livetarget.app-appcompat-resources-1.1.0-2 /Users/bceverly/.gradle/caches/8.9/transforms/0e3988a7d7ede331e014724fa4452e82/transformed/appcompat-resources-1.1.0/res
+com.bceassociates.livetarget.app-startup-runtime-1.1.1-3 /Users/bceverly/.gradle/caches/8.9/transforms/10a92733d8cb1a8dc394fb86c719f04b/transformed/startup-runtime-1.1.1/res
+com.bceassociates.livetarget.app-runtime-release-4 /Users/bceverly/.gradle/caches/8.9/transforms/1278e48db8a85254bacb786e8d8e6457/transformed/runtime-release/res
+com.bceassociates.livetarget.app-camera-view-1.3.1-5 /Users/bceverly/.gradle/caches/8.9/transforms/16d1c66d3350469a1a9c15d116f0944a/transformed/camera-view-1.3.1/res
+com.bceassociates.livetarget.app-ui-graphics-release-6 /Users/bceverly/.gradle/caches/8.9/transforms/17a7212b7261c7417b65fa21584493b3/transformed/ui-graphics-release/res
+com.bceassociates.livetarget.app-savedstate-ktx-1.2.1-7 /Users/bceverly/.gradle/caches/8.9/transforms/188d5d6f9f758f370cc51a8255c72978/transformed/savedstate-ktx-1.2.1/res
+com.bceassociates.livetarget.app-ui-test-manifest-1.7.6-8 /Users/bceverly/.gradle/caches/8.9/transforms/188def047e44dc9d2adf5d72559d1459/transformed/ui-test-manifest-1.7.6/res
+com.bceassociates.livetarget.app-ui-release-9 /Users/bceverly/.gradle/caches/8.9/transforms/286091293b54c38ced3a452df3c1b65d/transformed/ui-release/res
+com.bceassociates.livetarget.app-camera-camera2-1.3.1-10 /Users/bceverly/.gradle/caches/8.9/transforms/2882983a98e3a21824454af6fd87c39e/transformed/camera-camera2-1.3.1/res
+com.bceassociates.livetarget.app-customview-poolingcontainer-1.0.0-11 /Users/bceverly/.gradle/caches/8.9/transforms/297630dd5ff610b6794dc6c913566d01/transformed/customview-poolingcontainer-1.0.0/res
+com.bceassociates.livetarget.app-ui-geometry-release-12 /Users/bceverly/.gradle/caches/8.9/transforms/29d75c95ce9dfc0123fa0839b5100685/transformed/ui-geometry-release/res
+com.bceassociates.livetarget.app-core-1.13.1-13 /Users/bceverly/.gradle/caches/8.9/transforms/2a7b1de2b99d86290546f5e10036b836/transformed/core-1.13.1/res
+com.bceassociates.livetarget.app-lifecycle-viewmodel-ktx-2.8.3-14 /Users/bceverly/.gradle/caches/8.9/transforms/2aedbaad80b09d80fdd94d097ee005da/transformed/lifecycle-viewmodel-ktx-2.8.3/res
+com.bceassociates.livetarget.app-lifecycle-runtime-release-15 /Users/bceverly/.gradle/caches/8.9/transforms/2fe7ac97ed167df57bc61d9373bc6944/transformed/lifecycle-runtime-release/res
+com.bceassociates.livetarget.app-lifecycle-livedata-2.8.3-16 /Users/bceverly/.gradle/caches/8.9/transforms/31cddeeeb0868f12659fcde4fd0d7f95/transformed/lifecycle-livedata-2.8.3/res
+com.bceassociates.livetarget.app-lifecycle-runtime-ktx-release-17 /Users/bceverly/.gradle/caches/8.9/transforms/3579c522c714d70f491d9f26acad25e8/transformed/lifecycle-runtime-ktx-release/res
+com.bceassociates.livetarget.app-lifecycle-livedata-core-ktx-2.8.3-18 /Users/bceverly/.gradle/caches/8.9/transforms/364c9bbe175cfead7c6dfd503d176fc6/transformed/lifecycle-livedata-core-ktx-2.8.3/res
+com.bceassociates.livetarget.app-ui-tooling-preview-release-19 /Users/bceverly/.gradle/caches/8.9/transforms/37595408c8f5d48305434130af2280ad/transformed/ui-tooling-preview-release/res
+com.bceassociates.livetarget.app-core-ktx-1.13.1-20 /Users/bceverly/.gradle/caches/8.9/transforms/4098ba14fd206b91899c025e2df0ebad/transformed/core-ktx-1.13.1/res
+com.bceassociates.livetarget.app-ui-tooling-data-release-21 /Users/bceverly/.gradle/caches/8.9/transforms/4cf9ab411607a20201ea2197e0037055/transformed/ui-tooling-data-release/res
+com.bceassociates.livetarget.app-lifecycle-process-2.8.3-22 /Users/bceverly/.gradle/caches/8.9/transforms/4ecfe7fea24b592e71d9a827b12bf288/transformed/lifecycle-process-2.8.3/res
+com.bceassociates.livetarget.app-graphics-path-1.0.1-23 /Users/bceverly/.gradle/caches/8.9/transforms/505ce755b2e2a29d1f91e550609f4d46/transformed/graphics-path-1.0.1/res
+com.bceassociates.livetarget.app-camera-video-1.3.1-24 /Users/bceverly/.gradle/caches/8.9/transforms/576307586d8f5eb603f31961c7d7ff4f/transformed/camera-video-1.3.1/res
+com.bceassociates.livetarget.app-material-icons-core-release-25 /Users/bceverly/.gradle/caches/8.9/transforms/61f394511a1acc73e0528c9fefccb107/transformed/material-icons-core-release/res
+com.bceassociates.livetarget.app-camera-core-1.3.1-26 /Users/bceverly/.gradle/caches/8.9/transforms/701342f1c34f7a822dc5f23fbe707d60/transformed/camera-core-1.3.1/res
+com.bceassociates.livetarget.app-ui-text-release-27 /Users/bceverly/.gradle/caches/8.9/transforms/793cd99a5a6305c933e0ebf36058cb3f/transformed/ui-text-release/res
+com.bceassociates.livetarget.app-lifecycle-runtime-compose-release-28 /Users/bceverly/.gradle/caches/8.9/transforms/7ada3557657953556880ca08a8246d07/transformed/lifecycle-runtime-compose-release/res
+com.bceassociates.livetarget.app-emoji2-1.3.0-29 /Users/bceverly/.gradle/caches/8.9/transforms/7deaab4cbfd6b6c16223faa25d9b36a7/transformed/emoji2-1.3.0/res
+com.bceassociates.livetarget.app-lifecycle-viewmodel-release-30 /Users/bceverly/.gradle/caches/8.9/transforms/7ee3753f58f895068d7c60e768dd36fa/transformed/lifecycle-viewmodel-release/res
+com.bceassociates.livetarget.app-activity-1.8.2-31 /Users/bceverly/.gradle/caches/8.9/transforms/82406b0d1d4289d126472e6c70de1f96/transformed/activity-1.8.2/res
+com.bceassociates.livetarget.app-savedstate-1.2.1-32 /Users/bceverly/.gradle/caches/8.9/transforms/8a272bac36e9bf9c9425c67b3d234228/transformed/savedstate-1.2.1/res
+com.bceassociates.livetarget.app-lifecycle-livedata-core-2.8.3-33 /Users/bceverly/.gradle/caches/8.9/transforms/8b2f0efd81411cf5987bec9018308a0f/transformed/lifecycle-livedata-core-2.8.3/res
+com.bceassociates.livetarget.app-activity-ktx-1.8.2-34 /Users/bceverly/.gradle/caches/8.9/transforms/8bd4dc7c6f327fa16a7406459a68136c/transformed/activity-ktx-1.8.2/res
+com.bceassociates.livetarget.app-ui-unit-release-35 /Users/bceverly/.gradle/caches/8.9/transforms/8d962dee7b4e46e88839fadb345e4651/transformed/ui-unit-release/res
+com.bceassociates.livetarget.app-activity-compose-1.8.2-36 /Users/bceverly/.gradle/caches/8.9/transforms/9260d46089c9d55512548ddba3849ee8/transformed/activity-compose-1.8.2/res
+com.bceassociates.livetarget.app-animation-release-37 /Users/bceverly/.gradle/caches/8.9/transforms/9a5396888708b1c10ae55f0f5d0ac1ee/transformed/animation-release/res
+com.bceassociates.livetarget.app-animation-core-release-38 /Users/bceverly/.gradle/caches/8.9/transforms/9ab1d1f81935d21f2a2fa0c8bc3b9874/transformed/animation-core-release/res
+com.bceassociates.livetarget.app-lifecycle-viewmodel-compose-release-39 /Users/bceverly/.gradle/caches/8.9/transforms/9c717efc3b6b1096f38433f902ddd849/transformed/lifecycle-viewmodel-compose-release/res
+com.bceassociates.livetarget.app-material-ripple-release-40 /Users/bceverly/.gradle/caches/8.9/transforms/ab6b1918188c83d4773497c70953827c/transformed/material-ripple-release/res
+com.bceassociates.livetarget.app-annotation-experimental-1.4.1-41 /Users/bceverly/.gradle/caches/8.9/transforms/b0174196d8999664a61535058d40150e/transformed/annotation-experimental-1.4.1/res
+com.bceassociates.livetarget.app-material-release-42 /Users/bceverly/.gradle/caches/8.9/transforms/b440eebb6fcd4cf109283f2e1545ff50/transformed/material-release/res
+com.bceassociates.livetarget.app-lifecycle-viewmodel-savedstate-2.8.3-43 /Users/bceverly/.gradle/caches/8.9/transforms/b8c033ab72e86d859ed1e96d10c8bcc6/transformed/lifecycle-viewmodel-savedstate-2.8.3/res
+com.bceassociates.livetarget.app-runtime-saveable-release-44 /Users/bceverly/.gradle/caches/8.9/transforms/bc11257dd84b68b19a23a49398c925a2/transformed/runtime-saveable-release/res
+com.bceassociates.livetarget.app-material3-release-45 /Users/bceverly/.gradle/caches/8.9/transforms/c95ea32fd9ed8d2681a2c0f29a2f69f0/transformed/material3-release/res
+com.bceassociates.livetarget.app-ui-util-release-46 /Users/bceverly/.gradle/caches/8.9/transforms/cdd938f8a063d0c6753838011f269211/transformed/ui-util-release/res
+com.bceassociates.livetarget.app-appcompat-1.1.0-47 /Users/bceverly/.gradle/caches/8.9/transforms/ce5d11b13b9c6dca8cee39f6aaa66d5c/transformed/appcompat-1.1.0/res
+com.bceassociates.livetarget.app-datastore-preferences-1.0.0-48 /Users/bceverly/.gradle/caches/8.9/transforms/d32b204931e91eb56315dc692e2d5e5d/transformed/datastore-preferences-1.0.0/res
+com.bceassociates.livetarget.app-ui-tooling-release-49 /Users/bceverly/.gradle/caches/8.9/transforms/d71cf455e1b41a88f8085c96067e1b17/transformed/ui-tooling-release/res
+com.bceassociates.livetarget.app-datastore-1.0.0-50 /Users/bceverly/.gradle/caches/8.9/transforms/e58827981530a103804ab7c651224328/transformed/datastore-1.0.0/res
+com.bceassociates.livetarget.app-camera-lifecycle-1.3.1-51 /Users/bceverly/.gradle/caches/8.9/transforms/e91335c7fe8be7e488f36b9c669db1e0/transformed/camera-lifecycle-1.3.1/res
+com.bceassociates.livetarget.app-core-runtime-2.2.0-52 /Users/bceverly/.gradle/caches/8.9/transforms/ef01a22deb782e9e5344f10051ae6281/transformed/core-runtime-2.2.0/res
+com.bceassociates.livetarget.app-foundation-release-53 /Users/bceverly/.gradle/caches/8.9/transforms/f61bad253bb213b020ccb8d8ec820e2b/transformed/foundation-release/res
+com.bceassociates.livetarget.app-resValues-54 /Users/bceverly/dev/Live Target/android/app/build/generated/res/resValues/debug
+com.bceassociates.livetarget.app-packageDebugResources-55 /Users/bceverly/dev/Live Target/android/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.bceassociates.livetarget.app-packageDebugResources-56 /Users/bceverly/dev/Live Target/android/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.bceassociates.livetarget.app-debug-57 /Users/bceverly/dev/Live Target/android/app/build/intermediates/merged_res/debug/mergeDebugResources
+com.bceassociates.livetarget.app-debug-58 /Users/bceverly/dev/Live Target/android/app/src/debug/res
+com.bceassociates.livetarget.app-main-59 /Users/bceverly/dev/Live Target/android/app/src/main/res
