@@ -9,51 +9,120 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-
+    @State private var capturedImage: UIImage?
+    @StateObject private var changeDetector = ChangeDetector()
+    @State private var showingSettings = false
+    @AppStorage("circleColor") private var circleColorHex: String = "FF0000"
+    @AppStorage("numberColor") private var numberColorHex: String = "FF0000"
+    @AppStorage("checkInterval") private var checkInterval: Double = 2.0
+    @AppStorage("bulletCaliber") private var bulletCaliber: Int = 22
+    
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+        NavigationView {
+            GeometryReader { geometry in
+                ZStack {
+                    CameraView(capturedImage: $capturedImage)
+                        .onChange(of: capturedImage) { _, newImage in
+                            if let image = newImage {
+                                changeDetector.detectChanges(in: image)
+                            }
+                        }
+                        .onChange(of: checkInterval) { _, newInterval in
+                            changeDetector.setCheckInterval(newInterval)
+                        }
+                        .onChange(of: bulletCaliber) { _, newCaliber in
+                            changeDetector.setMinChangeSize(newCaliber * 2)
+                        }
+                    
+                    ForEach(changeDetector.detectedChanges, id: \.id) { change in
+                        let screenPoint = CGPoint(
+                            x: change.location.x * geometry.size.width,
+                            y: change.location.y * geometry.size.height
+                        )
+                        
+                        ZStack {
+                            Circle()
+                                .stroke(Color(hex: circleColorHex) ?? .red, lineWidth: 3)
+                                .frame(width: 60, height: 60)
+                            
+                            Text("\(change.number)")
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .foregroundColor(Color(hex: numberColorHex) ?? .red)
+                        }
+                        .position(screenPoint)
                     }
                 }
-                .onDelete(perform: deleteItems)
             }
+            .navigationTitle("Live Target")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
+                    Button("Settings") {
+                        showingSettings = true
+                    }
                 }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
+                
+                ToolbarItemGroup(placement: .bottomBar) {
+                    Button("Clear") {
+                        changeDetector.clearChanges()
+                    }
+                    .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                    if changeDetector.isDetecting {
+                        // When detecting: show Stop and Save buttons
+                        Button("Stop") {
+                            changeDetector.stopDetection()
+                        }
+                        .foregroundColor(.red)
+                        .fontWeight(.semibold)
+                        
+                        Spacer()
+                        
+                        Button("Save") {
+                            if let image = capturedImage {
+                                let circleColor = UIColor(Color(hex: circleColorHex) ?? .red)
+                                let numberColor = UIColor(Color(hex: numberColorHex) ?? .red)
+                                changeDetector.saveCurrentImage(image, circleColor: circleColor, numberColor: numberColor)
+                            }
+                        }
+                        .foregroundColor(.blue)
+                        .fontWeight(.semibold)
+                    } else {
+                        // When stopped: show Start and Save buttons
+                        Button("Start") {
+                            changeDetector.startDetection()
+                        }
+                        .foregroundColor(.green)
+                        .fontWeight(.semibold)
+                        
+                        Spacer()
+                        
+                        Button("Save") {
+                            if let image = capturedImage {
+                                let circleColor = UIColor(Color(hex: circleColorHex) ?? .red)
+                                let numberColor = UIColor(Color(hex: numberColorHex) ?? .red)
+                                changeDetector.saveCurrentImage(image, circleColor: circleColor, numberColor: numberColor)
+                            }
+                        }
+                        .foregroundColor(.blue)
+                        .fontWeight(.semibold)
                     }
                 }
             }
-        } detail: {
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+            .sheet(isPresented: $showingSettings) {
+                SettingsView()
+            }
+            .onAppear {
+                changeDetector.setCheckInterval(checkInterval)
+                changeDetector.setMinChangeSize(bulletCaliber * 2)
             }
         }
     }
 }
+
 
 #Preview {
     ContentView()
