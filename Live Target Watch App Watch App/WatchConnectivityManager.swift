@@ -68,7 +68,7 @@ extension WatchConnectivityManager: WCSessionDelegate {
         }
     }
     
-    func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
+    func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
         logger.info("Received message from phone: \(message)")
         
         if let type = message["type"] as? String {

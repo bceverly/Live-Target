@@ -199,7 +199,7 @@ extension WatchConnectivityManager: WCSessionDelegate {
         }
     }
     
-    func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
+    func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
         // Handle messages from watch if needed
         logger.info("Received message from watch: \(message)")
         replyHandler(["status": "received"])

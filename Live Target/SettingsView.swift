@@ -86,11 +86,11 @@ extension Color {
         guard let components = uic.cgColor.components, components.count >= 3 else {
             return "FF0000"
         }
-        let r = Float(components[0])
-        let g = Float(components[1])
-        let b = Float(components[2])
+        let red = Float(components[0])
+        let green = Float(components[1])
+        let blue = Float(components[2])
         
-        return String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
+        return String(format: "%02lX%02lX%02lX", lroundf(red * 255), lroundf(green * 255), lroundf(blue * 255))
     }
 }
 

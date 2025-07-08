@@ -308,17 +308,20 @@ class ChangeDetector: ObservableObject {
     /// Saves an image to the photo library
     /// - Parameter image: The image to save
     private func saveImageToPhotoLibrary(_ image: UIImage) {
-        PHPhotoLibrary.shared().performChanges({
-            PHAssetChangeRequest.creationRequestForAsset(from: image)
-        }, completionHandler: { success, error in
-            DispatchQueue.main.async {
-                if success {
-                    self.logger.info("Image saved successfully to photo library")
-                } else if let error = error {
-                    self.logger.error("Error saving image: \(error.localizedDescription)")
+        PHPhotoLibrary.shared().performChanges(
+            {
+                PHAssetChangeRequest.creationRequestForAsset(from: image)
+            },
+            completionHandler: { success, error in
+                DispatchQueue.main.async {
+                    if success {
+                        self.logger.info("Image saved successfully to photo library")
+                    } else if let error = error {
+                        self.logger.error("Error saving image: \(error.localizedDescription)")
+                    }
                 }
             }
-        })
+        )
     }
     
     /// Creates a composite image with detected changes overlaid
