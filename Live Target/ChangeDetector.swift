@@ -230,40 +230,21 @@ class ChangeDetector: ObservableObject {
     }
     
     private func createCompositeImage(baseImage: UIImage, circleColor: UIColor, numberColor: UIColor) -> UIImage {
-        // Fix orientation by using the image's actual orientation
-        let imageSize = baseImage.size
+        // For camera images, we need to rotate 90 degrees clockwise to match screen orientation
+        let rotatedImage = baseImage.rotated90DegreesClockwise()
+        let imageSize = rotatedImage.size
         let renderer = UIGraphicsImageRenderer(size: imageSize)
         
         return renderer.image { context in
-            // Draw the base camera image with proper orientation
-            baseImage.draw(in: CGRect(origin: .zero, size: imageSize))
+            // Draw the rotated camera image
+            rotatedImage.draw(in: CGRect(origin: .zero, size: imageSize))
             
             // Draw circles and numbers on top
             let cgContext = context.cgContext
             
             for change in detectedChanges {
-                // Adjust coordinates based on image orientation
-                var centerX: CGFloat
-                var centerY: CGFloat
-                
-                switch baseImage.imageOrientation {
-                case .up:
-                    centerX = change.location.x * imageSize.width
-                    centerY = change.location.y * imageSize.height
-                case .right:
-                    centerX = (1 - change.location.y) * imageSize.width
-                    centerY = change.location.x * imageSize.height
-                case .down:
-                    centerX = (1 - change.location.x) * imageSize.width
-                    centerY = (1 - change.location.y) * imageSize.height
-                case .left:
-                    centerX = change.location.y * imageSize.width
-                    centerY = (1 - change.location.x) * imageSize.height
-                default:
-                    centerX = change.location.x * imageSize.width
-                    centerY = change.location.y * imageSize.height
-                }
-                
+                let centerX = change.location.x * imageSize.width
+                let centerY = change.location.y * imageSize.height
                 let circleRadius: CGFloat = 30
                 
                 // Draw circle
@@ -292,6 +273,32 @@ class ChangeDetector: ObservableObject {
                     y: centerY - stringSize.height / 2
                 ))
             }
+        }
+    }
+}
+
+extension UIImage {
+    func rotated90DegreesClockwise() -> UIImage {
+        guard let cgImage = cgImage else { return self }
+        
+        let newSize = CGSize(width: size.height, height: size.width)
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        
+        return renderer.image { context in
+            let cgContext = context.cgContext
+            
+            // Move to center, rotate 90 degrees counter-clockwise, and flip horizontally
+            cgContext.translateBy(x: newSize.width / 2, y: newSize.height / 2)
+            cgContext.rotate(by: -CGFloat.pi / 2)  // Counter-clockwise rotation
+            cgContext.scaleBy(x: -1, y: 1)  // Flip horizontally to fix mirror effect
+            
+            // Draw the image centered
+            cgContext.draw(cgImage, in: CGRect(
+                x: -size.width / 2,
+                y: -size.height / 2,
+                width: size.width,
+                height: size.height
+            ))
         }
     }
 }
