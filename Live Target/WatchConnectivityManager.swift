@@ -152,11 +152,15 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     }
     
     private func sendMessageToWatch(_ message: [String: Any]) {
-        WCSession.default.sendMessage(message, replyHandler: { response in
-            self.logger.info("Watch acknowledged impact: \(response)")
-        }, errorHandler: { error in
-            self.logger.error("Failed to send impact to watch: \(error.localizedDescription)")
-        })
+        WCSession.default.sendMessage(
+            message,
+            replyHandler: { response in
+                self.logger.info("Watch acknowledged impact: \(response)")
+            },
+            errorHandler: { error in
+                self.logger.error("Failed to send impact to watch: \(error.localizedDescription)")
+            }
+        )
     }
     
     private func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {

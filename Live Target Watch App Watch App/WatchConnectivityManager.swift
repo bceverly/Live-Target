@@ -37,11 +37,15 @@ class WatchConnectivityManager: NSObject, ObservableObject {
         }
         
         let message = ["type": "requestLatestImpact"]
-        WCSession.default.sendMessage(message, replyHandler: { response in
-            self.logger.info("Received latest impact response: \(response)")
-        }, errorHandler: { error in
-            self.logger.error("Failed to request latest impact: \(error.localizedDescription)")
-        })
+        WCSession.default.sendMessage(
+            message,
+            replyHandler: { response in
+                self.logger.info("Received latest impact response: \(response)")
+            },
+            errorHandler: { error in
+                self.logger.error("Failed to request latest impact: \(error.localizedDescription)")
+            }
+        )
     }
 }
 

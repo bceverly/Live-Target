@@ -177,15 +177,15 @@ class ChangeDetector: ObservableObject {
                 
                 guard pixelIndex + 3 < pixelData1.count else { continue }
                 
-                let r1 = Int(pixelData1[pixelIndex])
-                let g1 = Int(pixelData1[pixelIndex + 1])
-                let b1 = Int(pixelData1[pixelIndex + 2])
+                let red1 = Int(pixelData1[pixelIndex])
+                let green1 = Int(pixelData1[pixelIndex + 1])
+                let blue1 = Int(pixelData1[pixelIndex + 2])
                 
-                let r2 = Int(pixelData2[pixelIndex])
-                let g2 = Int(pixelData2[pixelIndex + 1])
-                let b2 = Int(pixelData2[pixelIndex + 2])
+                let red2 = Int(pixelData2[pixelIndex])
+                let green2 = Int(pixelData2[pixelIndex + 1])
+                let blue2 = Int(pixelData2[pixelIndex + 2])
                 
-                let diff = abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2)
+                let diff = abs(red1 - red2) + abs(green1 - green2) + abs(blue1 - blue2)
                 
                 if diff > threshold {
                     differenceMap[y][x] = true
@@ -204,7 +204,9 @@ class ChangeDetector: ObservableObject {
         for y in 0..<height {
             for x in 0..<width {
                 if differenceMap[y][x] && !visited[y][x] {
-                    let region = floodFill(differenceMap: differenceMap, visited: &visited, startX: x, startY: y, width: width, height: height)
+                    let startPoint = CGPoint(x: x, y: y)
+                    let imageSize = CGSize(width: width, height: height)
+                    let region = floodFill(differenceMap: differenceMap, visited: &visited, startPoint: startPoint, imageSize: imageSize)
                     
                     if region.width >= minChangeSize && region.height >= minChangeSize {
                         let centerX = CGFloat(region.minX + region.width / 2) / CGFloat(width)
@@ -218,16 +220,30 @@ class ChangeDetector: ObservableObject {
         return changes
     }
     
+    /// Represents a bounding box region
+    private struct BoundingBox {
+        let minX: Int
+        let minY: Int
+        let maxX: Int
+        let maxY: Int
+        
+        var width: Int { maxX - minX + 1 }
+        var height: Int { maxY - minY + 1 }
+    }
+    
     /// Performs flood fill to find connected regions of changes
     /// - Parameters:
     ///   - differenceMap: Map of pixel differences
     ///   - visited: Tracking array for visited pixels
-    ///   - startX: Starting x coordinate
-    ///   - startY: Starting y coordinate
-    ///   - width: Image width
-    ///   - height: Image height
+    ///   - startPoint: Starting coordinates
+    ///   - imageSize: Size of the image
     /// - Returns: Bounding box of the connected region
-    private func floodFill(differenceMap: [[Bool]], visited: inout [[Bool]], startX: Int, startY: Int, width: Int, height: Int) -> (minX: Int, minY: Int, maxX: Int, maxY: Int, width: Int, height: Int) {
+    private func floodFill(differenceMap: [[Bool]], visited: inout [[Bool]], startPoint: CGPoint, imageSize: CGSize) -> BoundingBox {
+        let startX = Int(startPoint.x)
+        let startY = Int(startPoint.y)
+        let width = Int(imageSize.width)
+        let height = Int(imageSize.height)
+        
         var stack = [(startX, startY)]
         var minX = startX, maxX = startX
         var minY = startY, maxY = startY
@@ -253,7 +269,7 @@ class ChangeDetector: ObservableObject {
             stack.append(contentsOf: [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)])
         }
         
-        return (minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: maxX - minX + 1, height: maxY - minY + 1)
+        return BoundingBox(minX: minX, minY: minY, maxX: maxX, maxY: maxY)
     }
     
     /// Clears all detected changes and resets the counter

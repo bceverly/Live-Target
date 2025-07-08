@@ -10,10 +10,10 @@ import SwiftUI
 import SwiftData
 
 @main
-struct Live_TargetApp: App {
+struct LiveTargetApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Item.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
