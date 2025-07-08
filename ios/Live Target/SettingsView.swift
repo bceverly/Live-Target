@@ -14,6 +14,26 @@ struct SettingsView: View {
     @AppStorage("bulletCaliber") private var bulletCaliber: Int = 22
     @Environment(\.dismiss) private var dismiss
     
+    // MARK: - App Information
+    private var appVersion: String {
+        if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
+           let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String {
+            return "\(version) (\(build))"
+        }
+        return "0.9"
+    }
+    
+    private var buildDate: String {
+        // Try to get build date from bundle info first
+        if let buildDateString = Bundle.main.object(forInfoDictionaryKey: "BuildDate") as? String {
+            return buildDateString
+        }
+        
+        // Use a compile-time constant for the build date
+        // In a real CI/CD environment, this would be injected during build
+        return "January 8, 2025"
+    }
+    
     var body: some View {
         NavigationView {
             Form {
@@ -50,6 +70,45 @@ struct SettingsView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
+                }
+                
+                Section(header: Text("About")) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("App Name")
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Text("Live Target")
+                                .fontWeight(.medium)
+                        }
+                        
+                        HStack {
+                            Text("Version")
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Text(appVersion)
+                                .fontWeight(.medium)
+                        }
+                        
+                        HStack {
+                            Text("Build Date")
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Text(buildDate)
+                                .fontWeight(.medium)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Copyright")
+                                .foregroundColor(.secondary)
+                            Text("© 2025 BCEAssociates, Inc.\nAll rights reserved.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    .padding(.vertical, 8)
                 }
             }
             .navigationTitle("Settings")

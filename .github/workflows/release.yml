@@ -75,14 +75,16 @@ jobs:
         # Remove 'v' prefix for version number
         VERSION_NUMBER=${VERSION#v}
         
-        # Update version in project file (you may need to adjust this path)
-        # This is a simple approach - you might want to use agvtool or PlistBuddy
         echo "Setting version to: $VERSION_NUMBER"
         
-        # Example: Update Info.plist if it exists
-        if [ -f "Live Target/Info.plist" ]; then
-          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION_NUMBER" "Live Target/Info.plist" || true
-        fi
+        # Use agvtool to update version numbers in the Xcode project
+        agvtool new-marketing-version "$VERSION_NUMBER"
+        
+        # Set build number to current timestamp for uniqueness
+        BUILD_NUMBER=$(date +%Y%m%d%H%M)
+        agvtool new-version -all "$BUILD_NUMBER"
+        
+        echo "Updated to version $VERSION_NUMBER with build $BUILD_NUMBER"
         
     - name: Build Release Archive
       run: |

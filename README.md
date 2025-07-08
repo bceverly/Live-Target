@@ -71,36 +71,269 @@ Live-Target/
 - **OpenCV acceleration** for improved performance
 - **Flexible file system access** for image management
 
-## Getting Started
+## Development Environment Setup
 
-### iOS Development
+### Required Software
 
-#### Prerequisites
-- Xcode 15.0 or later
-- iOS 17.0+ / watchOS 10.0+
-- Apple Developer account (for device testing)
-- Physical iPhone with camera
+#### For iOS Development
+| Software | Version | Purpose | Installation |
+|----------|---------|---------|--------------|
+| **macOS** | 13.0+ | Required for iOS development | System requirement |
+| **Xcode** | 15.0+ | iOS/watchOS development IDE | App Store or Apple Developer |
+| **Xcode Command Line Tools** | Latest | Build tools and Swift compiler | `xcode-select --install` |
+| **Homebrew** | Latest | Package manager for dev tools | `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` |
+| **SwiftLint** | 0.50+ | Code quality and style checking | `brew install swiftlint` |
 
-#### Setup
+#### For Android Development (Planned)
+| Software | Version | Purpose | Installation |
+|----------|---------|---------|--------------|
+| **Android Studio** | 2023.1+ | Android development IDE | [Download from Google](https://developer.android.com/studio) |
+| **Java JDK** | 17+ | Required for Android development | `brew install openjdk@17` |
+| **Android SDK** | API 24+ | Android development framework | Installed via Android Studio |
+| **Gradle** | 8.0+ | Android build system | Bundled with Android Studio |
+
+#### Optional Development Tools
+| Software | Purpose | Installation |
+|----------|---------|--------------|
+| **Git** | Version control | `brew install git` |
+| **GitHub CLI** | GitHub integration | `brew install gh` |
+| **VS Code** | Code editing for shared docs | `brew install --cask visual-studio-code` |
+| **Simulator** | iOS device simulation | Included with Xcode |
+
+### Platform-Specific Setup
+
+### iOS Development Setup
+
+#### 1. Install Xcode
 ```bash
+# Option 1: Install from App Store (Recommended)
+# Search for "Xcode" in App Store and install
+
+# Option 2: Download from Apple Developer Portal
+# Visit https://developer.apple.com/download/
+```
+
+#### 2. Install Command Line Tools
+```bash
+# Install Xcode Command Line Tools
+xcode-select --install
+
+# Verify installation
+xcode-select -p
+# Should output: /Applications/Xcode.app/Contents/Developer
+```
+
+#### 3. Install Development Dependencies
+```bash
+# Install Homebrew (if not already installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install SwiftLint for code quality
+brew install swiftlint
+
+# Verify SwiftLint installation
+swiftlint version
+```
+
+#### 4. Setup iOS Project
+```bash
+# Clone repository
+git clone https://github.com/bceverly/Live-Target.git
+cd Live-Target
+
 # Navigate to iOS project
 cd ios/
 
 # Open in Xcode
 open "Live Target.xcodeproj"
+```
 
-# Or build from command line
+#### 5. Configure Signing (Required for Device Testing)
+1. **Open project in Xcode**
+2. **Select "Live Target" project** in navigator
+3. **Choose "Live Target" target**
+4. **Go to "Signing & Capabilities" tab**
+5. **Select your development team**
+6. **Ensure bundle identifier is unique**
+7. **Repeat for Watch app target**
+
+#### 6. Build and Test
+```bash
+# Build from command line
+cd ios/
+xcodebuild -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 16" build
+
+# Run tests
+xcodebuild test -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 16"
+
+# Or use build script
 ../tools/scripts/build-ios.sh
 ```
 
-### Android Development (Future)
+### Android Development Setup (When Available)
+
+#### 1. Install Java JDK
 ```bash
-# Navigate to Android project (when available)
+# Install OpenJDK 17 via Homebrew
+brew install openjdk@17
+
+# Add to PATH (add to ~/.zshrc or ~/.bash_profile)
+echo 'export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"' >> ~/.zshrc
+
+# Verify installation
+java --version
+```
+
+#### 2. Install Android Studio
+```bash
+# Download and install Android Studio
+# Visit: https://developer.android.com/studio
+
+# Or install via Homebrew Cask
+brew install --cask android-studio
+```
+
+#### 3. Setup Android SDK
+1. **Launch Android Studio**
+2. **Follow setup wizard**
+3. **Install Android SDK** (API level 24 minimum)
+4. **Install Android Virtual Device (AVD)**
+5. **Configure SDK path** in Android Studio preferences
+
+#### 4. Setup Environment Variables
+```bash
+# Add to ~/.zshrc or ~/.bash_profile
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+export PATH=$PATH:$ANDROID_HOME/tools
+
+# Reload shell configuration
+source ~/.zshrc
+```
+
+#### 5. Setup Android Project (When Available)
+```bash
+# Navigate to Android project
 cd android/
 
 # Build with Gradle
+./gradlew assembleDebug
+
+# Run tests
+./gradlew test
+
+# Or use build script
 ../tools/scripts/build-android.sh
 ```
+
+### Development Workflow
+
+#### Daily Development
+```bash
+# 1. Update repository
+git pull origin main
+
+# 2. iOS development
+cd ios/
+open "Live Target.xcodeproj"
+
+# 3. Run tests before committing
+xcodebuild test -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 16"
+
+# 4. Check code quality
+swiftlint
+
+# 5. Android development (when available)
+cd ../android/
+./gradlew test
+```
+
+#### Code Quality Checks
+```bash
+# Run SwiftLint on iOS code
+cd ios/
+swiftlint lint
+
+# Auto-fix some SwiftLint issues
+swiftlint --fix
+
+# Run all tests
+cd ios/
+xcodebuild test -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 16"
+```
+
+### Troubleshooting
+
+#### Common iOS Issues
+
+**Xcode Command Line Tools Issues:**
+```bash
+# Reset command line tools
+sudo xcode-select --reset
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+```
+
+**SwiftLint SourceKit Crashes:**
+```bash
+# Reinstall SwiftLint
+brew uninstall swiftlint
+brew install swiftlint
+
+# Or use GitHub Actions for reliable linting
+git push  # Triggers CI/CD with SwiftLint
+```
+
+**Simulator Issues:**
+```bash
+# Reset iOS Simulator
+xcrun simctl erase all
+
+# List available simulators
+xcrun simctl list devices
+```
+
+**Build Cache Issues:**
+```bash
+# Clean Xcode build cache
+rm -rf ~/Library/Developer/Xcode/DerivedData
+
+# Clean project in Xcode: Product > Clean Build Folder (⌘+Shift+K)
+```
+
+#### Common Android Issues (Future)
+
+**Gradle Issues:**
+```bash
+# Clean Gradle cache
+./gradlew clean
+
+# Refresh dependencies
+./gradlew --refresh-dependencies
+```
+
+**SDK Issues:**
+```bash
+# Update SDK tools via Android Studio
+# Tools > SDK Manager > Update
+```
+
+### Hardware Requirements
+
+#### iOS Development
+- **Mac computer** (MacBook, iMac, Mac Studio, Mac Pro)
+- **8GB RAM minimum** (16GB+ recommended for Xcode)
+- **50GB free disk space** (for Xcode, iOS SDK, simulators)
+- **iPhone device** for camera functionality testing
+- **Apple Watch** (optional, for Watch app testing)
+
+#### Android Development
+- **Any computer** (Windows, macOS, Linux)
+- **8GB RAM minimum** (16GB+ recommended for Android Studio)
+- **30GB free disk space** (for Android Studio, SDK, emulators)
+- **Android device** for camera functionality testing
+
+### Getting Started
 
 ## How It Works
 
