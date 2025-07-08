@@ -36,7 +36,15 @@ If you have an Apple Watch, Live Target includes a companion app that shows:
 
 ### License
 
-This project will use the MIT License unless noted otherwise.
+This is a commercial application. All rights reserved.
+
+---
+
+## Copyright
+
+Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+
+This software is proprietary and confidential. Unauthorized copying, distribution, or use is strictly prohibited.
 
 ---
 
