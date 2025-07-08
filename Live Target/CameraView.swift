@@ -10,7 +10,6 @@ import AVFoundation
 
 struct CameraView: UIViewRepresentable {
     @Binding var capturedImage: UIImage?
-    @State private var captureSession: AVCaptureSession?
     
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
@@ -34,7 +33,8 @@ struct CameraView: UIViewRepresentable {
         output.setSampleBufferDelegate(context.coordinator, queue: DispatchQueue.main)
         captureSession.addOutput(output)
         
-        self.captureSession = captureSession
+        // Store session in coordinator instead of state
+        context.coordinator.captureSession = captureSession
         
         DispatchQueue.global(qos: .userInitiated).async {
             captureSession.startRunning()
@@ -55,12 +55,19 @@ struct CameraView: UIViewRepresentable {
     
     class Coordinator: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         let parent: CameraView
+        var captureSession: AVCaptureSession?
+        private var lastUpdateTime = Date()
+        private let updateInterval: TimeInterval = 1.0/15.0 // 15 FPS max to reduce updates
         
         init(_ parent: CameraView) {
             self.parent = parent
         }
         
         func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+            let now = Date()
+            guard now.timeIntervalSince(lastUpdateTime) >= updateInterval else { return }
+            lastUpdateTime = now
+            
             guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
             
             let ciImage = CIImage(cvPixelBuffer: pixelBuffer)

@@ -38,9 +38,35 @@ class WatchConnectivityManager: NSObject, ObservableObject {
             numberColor: numberColor
         )
         
-        // Prepare data for watch
-        guard let imageData = zoomedImage.jpegData(compressionQuality: 0.7) else {
+        // Prepare data for watch - compress more aggressively for Watch
+        guard let imageData = zoomedImage.jpegData(compressionQuality: 0.3) else {
             print("Failed to create image data")
+            return
+        }
+        
+        // Check payload size (WatchConnectivity has ~65KB limit)
+        if imageData.count > 60000 {
+            print("Image too large (\(imageData.count) bytes), creating smaller version")
+            // Create an even smaller image
+            let smallerImage = resizeImage(zoomedImage, targetSize: CGSize(width: 100, height: 100))
+            guard let smallerData = smallerImage.jpegData(compressionQuality: 0.2) else {
+                print("Failed to create smaller image data")
+                return
+            }
+            
+            if smallerData.count > 60000 {
+                print("Even smaller image still too large (\(smallerData.count) bytes), skipping")
+                return
+            }
+            
+            let message: [String: Any] = [
+                "type": "newImpact",
+                "impactNumber": impact.number,
+                "timestamp": Date().timeIntervalSince1970,
+                "imageData": smallerData
+            ]
+            
+            sendMessageToWatch(message)
             return
         }
         
@@ -51,16 +77,13 @@ class WatchConnectivityManager: NSObject, ObservableObject {
             "imageData": imageData
         ]
         
-        // Send to watch
-        WCSession.default.sendMessage(message, replyHandler: { response in
-            print("Watch acknowledged impact: \(response)")
-        }, errorHandler: { error in
-            print("Failed to send impact to watch: \(error.localizedDescription)")
-        })
+        sendMessageToWatch(message)
     }
     
     private func createZoomedImpactImage(originalImage: UIImage, impact: ChangePoint, circleColor: UIColor, numberColor: UIColor) -> UIImage {
-        let imageSize = originalImage.size
+        // First, rotate the image to correct orientation for Watch
+        let rotatedImage = originalImage.rotated90DegreesClockwise()
+        let imageSize = rotatedImage.size
         let zoomFactor: CGFloat = 3.0
         let cropSize: CGFloat = 200.0
         
@@ -76,8 +99,8 @@ class WatchConnectivityManager: NSObject, ObservableObject {
         )
         
         // Create cropped and zoomed image
-        guard let croppedCGImage = originalImage.cgImage?.cropping(to: cropRect) else {
-            return originalImage
+        guard let croppedCGImage = rotatedImage.cgImage?.cropping(to: cropRect) else {
+            return rotatedImage
         }
         
         let croppedImage = UIImage(cgImage: croppedCGImage)
@@ -124,6 +147,21 @@ class WatchConnectivityManager: NSObject, ObservableObject {
             ))
         }
     }
+    
+    private func sendMessageToWatch(_ message: [String: Any]) {
+        WCSession.default.sendMessage(message, replyHandler: { response in
+            print("Watch acknowledged impact: \(response)")
+        }, errorHandler: { error in
+            print("Failed to send impact to watch: \(error.localizedDescription)")
+        })
+    }
+    
+    private func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+    }
 }
 
 extension WatchConnectivityManager: WCSessionDelegate {
@@ -158,5 +196,31 @@ extension WatchConnectivityManager: WCSessionDelegate {
         // Handle messages from watch if needed
         print("Received message from watch: \(message)")
         replyHandler(["status": "received"])
+    }
+}
+
+extension UIImage {
+    func rotated90DegreesClockwise() -> UIImage {
+        guard let cgImage = cgImage else { return self }
+        
+        let newSize = CGSize(width: size.height, height: size.width)
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        
+        return renderer.image { context in
+            let cgContext = context.cgContext
+            
+            // Move to center, rotate 90 degrees counter-clockwise, and flip horizontally
+            cgContext.translateBy(x: newSize.width / 2, y: newSize.height / 2)
+            cgContext.rotate(by: -CGFloat.pi / 2)  // Counter-clockwise rotation
+            cgContext.scaleBy(x: -1, y: 1)  // Flip horizontally to fix mirror effect
+            
+            // Draw the image centered
+            cgContext.draw(cgImage, in: CGRect(
+                x: -size.width / 2,
+                y: -size.height / 2,
+                width: size.width,
+                height: size.height
+            ))
+        }
     }
 }
