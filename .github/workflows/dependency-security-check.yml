@@ -1,0 +1,228 @@
+#
+#  dependency-security-check.yml
+#  Live Target Dependency Security Check
+#
+#  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+#
+
+name: Dependency Security Check
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'Package.swift'
+      - 'Package.resolved'
+      - 'Podfile'
+      - 'Podfile.lock'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'Package.swift'
+      - 'Package.resolved'
+      - 'Podfile'
+      - 'Podfile.lock'
+  schedule:
+    # Run weekly security check on Sundays at 3 AM UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+
+jobs:
+  security-audit:
+    name: Security Audit
+    runs-on: macos-15
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Xcode
+      run: |
+        sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+        
+    - name: Check for Package.swift
+      id: check-spm
+      run: |
+        if [ -f "Package.swift" ]; then
+          echo "spm_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "spm_exists=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Check for Podfile
+      id: check-cocoapods
+      run: |
+        if [ -f "Podfile" ]; then
+          echo "cocoapods_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "cocoapods_exists=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Swift Package Manager Security Audit
+      if: steps.check-spm.outputs.spm_exists == 'true'
+      run: |
+        echo "🔍 Checking Swift Package Manager dependencies..."
+        
+        # Check for Package.resolved
+        if [ -f "Package.resolved" ]; then
+          echo "📦 Found Package.resolved - analyzing dependencies..."
+          
+          # Extract package URLs and versions
+          if command -v jq &> /dev/null; then
+            cat Package.resolved | jq '.pins[] | {identity: .identity, location: .location, version: .state.version}'
+          else
+            echo "Package.resolved found but jq not available for detailed analysis"
+            cat Package.resolved
+          fi
+        else
+          echo "⚠️ No Package.resolved found"
+        fi
+        
+        # Try to resolve dependencies to get latest info
+        swift package resolve || echo "Unable to resolve packages"
+        
+    - name: CocoaPods Security Audit
+      if: steps.check-cocoapods.outputs.cocoapods_exists == 'true'
+      run: |
+        echo "🔍 Checking CocoaPods dependencies..."
+        
+        # Install CocoaPods if not present
+        if ! command -v pod &> /dev/null; then
+          sudo gem install cocoapods
+        fi
+        
+        # Check for known vulnerabilities (basic check)
+        if [ -f "Podfile.lock" ]; then
+          echo "📦 Found Podfile.lock - analyzing dependencies..."
+          cat Podfile.lock | grep -A 1 "PODS:"
+        fi
+        
+    - name: Check for Known Vulnerable Packages
+      run: |
+        echo "🛡️ Checking for known vulnerable packages..."
+        
+        # List of known vulnerable or deprecated packages to check for
+        VULNERABLE_PATTERNS=(
+          "Alamofire.*[0-4]\."  # Very old Alamofire versions
+          "AFNetworking.*[0-2]\."  # Very old AFNetworking
+          # Add more patterns as needed
+        )
+        
+        FOUND_ISSUES=false
+        
+        # Check Package.resolved if it exists
+        if [ -f "Package.resolved" ]; then
+          for pattern in "${VULNERABLE_PATTERNS[@]}"; do
+            if grep -E "$pattern" Package.resolved > /dev/null; then
+              echo "⚠️ Potentially vulnerable dependency found: $pattern"
+              FOUND_ISSUES=true
+            fi
+          done
+        fi
+        
+        # Check Podfile.lock if it exists
+        if [ -f "Podfile.lock" ]; then
+          for pattern in "${VULNERABLE_PATTERNS[@]}"; do
+            if grep -E "$pattern" Podfile.lock > /dev/null; then
+              echo "⚠️ Potentially vulnerable dependency found: $pattern"
+              FOUND_ISSUES=true
+            fi
+          done
+        fi
+        
+        if [ "$FOUND_ISSUES" = true ]; then
+          echo "❌ Security issues found in dependencies"
+          exit 1
+        else
+          echo "✅ No known vulnerable dependencies detected"
+        fi
+        
+    - name: Generate Security Report
+      if: always()
+      run: |
+        echo "📊 Generating dependency security report..."
+        
+        cat > security-report.md << EOF
+        # Dependency Security Report
+        
+        **Generated:** $(date)
+        **Repository:** ${{ github.repository }}
+        **Branch:** ${{ github.ref_name }}
+        **Commit:** ${{ github.sha }}
+        
+        ## Swift Package Manager
+        $(if [ -f "Package.swift" ]; then echo "✅ Package.swift found"; else echo "❌ No Package.swift"; fi)
+        $(if [ -f "Package.resolved" ]; then echo "✅ Package.resolved found"; else echo "❌ No Package.resolved"; fi)
+        
+        ## CocoaPods
+        $(if [ -f "Podfile" ]; then echo "✅ Podfile found"; else echo "❌ No Podfile"; fi)
+        $(if [ -f "Podfile.lock" ]; then echo "✅ Podfile.lock found"; else echo "❌ No Podfile.lock"; fi)
+        
+        ## Recommendations
+        - Keep dependencies updated regularly
+        - Monitor security advisories for used packages
+        - Use Dependabot for automated updates
+        - Run security audits before releases
+        
+        ---
+        Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+        EOF
+        
+    - name: Upload Security Report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-report-${{ github.run_number }}
+        path: security-report.md
+        retention-days: 30
+
+  notify-security-issues:
+    name: Notify Security Issues
+    runs-on: ubuntu-latest
+    needs: security-audit
+    if: failure()
+    
+    steps:
+    - name: Create Security Issue
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const title = `🔒 Security Alert: Dependency vulnerabilities detected`;
+          const body = `
+          ## Security Alert
+          
+          Dependency security check failed on branch \`${{ github.ref_name }}\`.
+          
+          **Commit:** ${{ github.sha }}
+          **Workflow:** ${{ github.workflow }}
+          **Run:** ${{ github.run_number }}
+          
+          Please review the security audit results and update vulnerable dependencies.
+          
+          [View workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          
+          ---
+          Auto-generated by GitHub Actions
+          `;
+          
+          // Check if similar issue already exists
+          const existingIssues = await github.rest.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: 'open',
+            labels: 'security'
+          });
+          
+          const hasExistingAlert = existingIssues.data.some(issue => 
+            issue.title.includes('Security Alert: Dependency vulnerabilities')
+          );
+          
+          if (!hasExistingAlert) {
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['security', 'dependencies', 'high-priority']
+            });
+          }

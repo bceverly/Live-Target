@@ -1,0 +1,75 @@
+#
+#  dependabot.yml
+#  Live Target Dependabot Configuration
+#
+#  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+#
+
+version: 2
+
+updates:
+  # Swift Package Manager dependencies
+  - package-ecosystem: "swift"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "bceverly"
+    assignees:
+      - "bceverly"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "swift"
+    milestone: null
+    target-branch: "develop"
+    
+  # GitHub Actions workflow dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "bceverly"
+    assignees:
+      - "bceverly"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "ci/cd"
+    target-branch: "develop"
+
+  # CocoaPods dependencies (if used in future)
+  - package-ecosystem: "cocoapods"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "bceverly"
+    assignees:
+      - "bceverly"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "cocoapods"
+    target-branch: "develop"

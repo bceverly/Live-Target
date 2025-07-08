@@ -1,0 +1,119 @@
+#
+#  pr-checks.yml
+#  Live Target Pull Request Checks
+#
+#  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+#
+
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  pr-validation:
+    name: PR Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Check PR Title Format
+      run: |
+        PR_TITLE="${{ github.event.pull_request.title }}"
+        
+        # Check if title follows conventional commit format
+        if [[ $PR_TITLE =~ ^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+ ]]; then
+          echo "✅ PR title follows conventional commit format"
+        else
+          echo "❌ PR title should follow format: type(scope): description"
+          echo "Examples:"
+          echo "  feat(camera): add change detection algorithm"
+          echo "  fix(ui): resolve button layout issue"
+          echo "  docs: update README with installation steps"
+          exit 1
+        fi
+        
+    - name: Check PR Description
+      run: |
+        PR_BODY="${{ github.event.pull_request.body }}"
+        
+        if [[ ${#PR_BODY} -lt 20 ]]; then
+          echo "❌ PR description too short. Please provide more details."
+          exit 1
+        fi
+        
+        echo "✅ PR description is adequate"
+        
+    - name: Check for Breaking Changes
+      run: |
+        # Check if this is marked as a breaking change
+        if grep -q "breaking change" <<< "${{ github.event.pull_request.body }}"; then
+          echo "⚠️ This PR contains breaking changes"
+          echo "Make sure version bump is planned accordingly"
+        fi
+        
+    - name: Validate File Changes
+      run: |
+        # Get list of changed files
+        git fetch origin ${{ github.base_ref }}
+        CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+        
+        echo "Changed files:"
+        echo "$CHANGED_FILES"
+        
+        # Check if any Swift files are missing copyright
+        for file in $CHANGED_FILES; do
+          if [[ $file == *.swift && -f $file ]]; then
+            if ! grep -q "Copyright © 2025 BCEAssociates, Inc" "$file"; then
+              echo "❌ Missing copyright notice in: $file"
+              exit 1
+            fi
+          fi
+        done
+        
+        echo "✅ All Swift files have copyright notices"
+
+  size-check:
+    name: PR Size Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Check PR Size
+      run: |
+        git fetch origin ${{ github.base_ref }}
+        
+        # Count lines changed
+        LINES_CHANGED=$(git diff --stat origin/${{ github.base_ref }}...HEAD | tail -1 | awk '{print $4+$6}')
+        
+        if [[ $LINES_CHANGED -gt 500 ]]; then
+          echo "⚠️ Large PR detected: $LINES_CHANGED lines changed"
+          echo "Consider breaking this into smaller PRs for easier review"
+        else
+          echo "✅ PR size is reasonable: $LINES_CHANGED lines changed"
+        fi
+
+  conflict-check:
+    name: Merge Conflict Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Check for Merge Conflicts
+      run: |
+        git fetch origin ${{ github.base_ref }}
+        
+        if git merge-tree $(git merge-base HEAD origin/${{ github.base_ref }}) HEAD origin/${{ github.base_ref }} | grep -q '<<<<<<< '; then
+          echo "❌ Merge conflicts detected"
+          echo "Please resolve conflicts before merging"
+          exit 1
+        else
+          echo "✅ No merge conflicts detected"
+        fi

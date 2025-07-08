@@ -1,0 +1,168 @@
+#
+#  ios-ci.yml
+#  Live Target CI/CD Pipeline
+#
+#  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+#
+
+name: iOS CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  XCODE_VERSION: '16.4'
+  IOS_SIMULATOR: 'iPhone 16'
+  IOS_VERSION: '18.5'
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: macos-15
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Xcode
+      run: |
+        sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+        xcodebuild -version
+        
+    - name: Cache SPM Dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/Library/Developer/Xcode/DerivedData
+          ~/.swiftpm
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+          
+    - name: Install Dependencies
+      run: |
+        # Install any required dependencies (if using SPM)
+        # xcodebuild -resolvePackageDependencies -project "Live Target.xcodeproj"
+        
+    - name: Lint Swift Code
+      run: |
+        # Install SwiftLint if not present
+        if ! command -v swiftlint &> /dev/null; then
+          brew install swiftlint
+        fi
+        # Run SwiftLint (will warn but not fail build)
+        swiftlint lint --reporter github-actions-logging || true
+        
+    - name: Build for Simulator
+      run: |
+        xcodebuild \
+          -project "Live Target.xcodeproj" \
+          -scheme "Live Target" \
+          -destination "platform=iOS Simulator,name=${{ env.IOS_SIMULATOR }},OS=${{ env.IOS_VERSION }}" \
+          -configuration Debug \
+          clean build \
+          CODE_SIGNING_ALLOWED=NO \
+          | xcpretty && exit ${PIPESTATUS[0]}
+          
+    - name: Run Unit Tests
+      run: |
+        xcodebuild \
+          -project "Live Target.xcodeproj" \
+          -scheme "Live Target" \
+          -destination "platform=iOS Simulator,name=${{ env.IOS_SIMULATOR }},OS=${{ env.IOS_VERSION }}" \
+          -configuration Debug \
+          test \
+          CODE_SIGNING_ALLOWED=NO \
+          | xcpretty && exit ${PIPESTATUS[0]}
+          
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: |
+          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+        retention-days: 7
+
+  code-quality:
+    name: Code Quality Analysis
+    runs-on: macos-15
+    needs: build-and-test
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Xcode
+      run: |
+        sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+        
+    - name: Run SwiftLint
+      run: |
+        brew install swiftlint
+        swiftlint lint --reporter github-actions-logging
+        
+    - name: Generate Code Coverage
+      run: |
+        xcodebuild \
+          -project "Live Target.xcodeproj" \
+          -scheme "Live Target" \
+          -destination "platform=iOS Simulator,name=${{ env.IOS_SIMULATOR }},OS=${{ env.IOS_VERSION }}" \
+          -configuration Debug \
+          -enableCodeCoverage YES \
+          test \
+          CODE_SIGNING_ALLOWED=NO
+          
+    - name: Upload Coverage Reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-reports
+        path: |
+          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xccovreport
+        retention-days: 30
+
+  security-scan:
+    name: Security Analysis
+    runs-on: macos-15
+    needs: build-and-test
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Run Dependency Check
+      run: |
+        # Check for known vulnerabilities in dependencies
+        # This is a placeholder - you might want to add specific security tools
+        echo "Running security analysis..."
+        
+    - name: Scan for Secrets
+      run: |
+        # Simple grep-based secret scanning
+        if grep -r -i "api_key\|password\|secret\|token" --include="*.swift" . | grep -v "// swiftlint"; then
+          echo "⚠️ Potential secrets found in code!"
+          exit 1
+        else
+          echo "✅ No obvious secrets detected"
+        fi
+
+  notify:
+    name: Notify Results
+    runs-on: ubuntu-latest
+    needs: [build-and-test, code-quality, security-scan]
+    if: always()
+    
+    steps:
+    - name: Report Status
+      run: |
+        if [[ "${{ needs.build-and-test.result }}" == "success" && 
+              "${{ needs.code-quality.result }}" == "success" && 
+              "${{ needs.security-scan.result }}" == "success" ]]; then
+          echo "✅ All CI checks passed!"
+        else
+          echo "❌ Some CI checks failed"
+          exit 1
+        fi

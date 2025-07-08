@@ -1,0 +1,74 @@
+#
+#  .swiftlint.yml
+#  Live Target SwiftLint Configuration
+#
+#  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+#
+
+# Paths to include during linting
+included:
+  - Live Target/
+
+# Paths to ignore during linting
+excluded:
+  - Live Target.xcodeproj
+  - Live TargetTests/
+  - Live TargetUITests/
+  - Pods/
+  - .build/
+
+# Rules to disable
+disabled_rules:
+  - trailing_whitespace # Allow trailing whitespace for now
+  - todo # Allow TODO comments
+  - line_length # Allow longer lines for readability
+
+# Rules to enable (opt-in rules)
+opt_in_rules:
+  - empty_count
+  - empty_string
+  - first_where
+  - force_unwrapping
+  - implicit_return
+  - redundant_nil_coalescing
+  - sorted_first_last
+  - vertical_parameter_alignment_on_call
+
+# Rule configurations
+line_length:
+  warning: 120
+  error: 150
+  ignores_comments: true
+  ignores_urls: true
+
+function_body_length:
+  warning: 50
+  error: 100
+
+type_body_length:
+  warning: 300
+  error: 500
+
+file_length:
+  warning: 500
+  error: 1000
+
+identifier_name:
+  min_length:
+    warning: 2
+    error: 1
+  max_length:
+    warning: 50
+    error: 60
+  excluded:
+    - id
+    - x
+    - y
+
+# Custom rules
+custom_rules:
+  copyright_notice:
+    name: "Copyright Notice"
+    regex: '//\s*Copyright © 2025 BCEAssociates, Inc\. All rights reserved\.'
+    message: "All Swift files should contain the copyright notice"
+    severity: warning

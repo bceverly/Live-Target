@@ -1,0 +1,107 @@
+#
+#  dependabot-auto-merge.yml
+#  Live Target Dependabot Auto-merge Workflow
+#
+#  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+#
+
+name: Dependabot Auto-merge
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  dependabot-auto-merge:
+    name: Auto-merge Dependabot PRs
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Get Dependabot Metadata
+      id: metadata
+      uses: dependabot/fetch-metadata@v1
+      with:
+        github-token: "${{ secrets.GITHUB_TOKEN }}"
+        
+    - name: Check Update Type
+      id: check-update
+      run: |
+        UPDATE_TYPE="${{ steps.metadata.outputs.update-type }}"
+        PACKAGE_ECOSYSTEM="${{ steps.metadata.outputs.package-ecosystem }}"
+        
+        echo "Update type: $UPDATE_TYPE"
+        echo "Package ecosystem: $PACKAGE_ECOSYSTEM"
+        
+        # Auto-merge rules
+        AUTO_MERGE=false
+        
+        # Auto-merge patch updates for all ecosystems
+        if [[ "$UPDATE_TYPE" == "version-update:semver-patch" ]]; then
+          AUTO_MERGE=true
+          echo "✅ Patch update - will auto-merge"
+        fi
+        
+        # Auto-merge minor updates for GitHub Actions
+        if [[ "$UPDATE_TYPE" == "version-update:semver-minor" && "$PACKAGE_ECOSYSTEM" == "github-actions" ]]; then
+          AUTO_MERGE=true
+          echo "✅ GitHub Actions minor update - will auto-merge"
+        fi
+        
+        # Auto-merge development dependencies
+        if [[ "${{ steps.metadata.outputs.dependency-type }}" == "development" ]]; then
+          AUTO_MERGE=true
+          echo "✅ Development dependency - will auto-merge"
+        fi
+        
+        echo "auto_merge=$AUTO_MERGE" >> $GITHUB_OUTPUT
+        
+    - name: Wait for CI Checks
+      if: steps.check-update.outputs.auto_merge == 'true'
+      uses: lewagon/wait-on-check-action@v1.3.1
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        check-name: 'Build and Test'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        wait-interval: 30
+        allowed-conclusions: success
+        
+    - name: Auto-approve PR
+      if: steps.check-update.outputs.auto_merge == 'true'
+      run: |
+        gh pr review "${{ github.event.pull_request.number }}" --approve --body "Auto-approving safe dependency update"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Enable Auto-merge
+      if: steps.check-update.outputs.auto_merge == 'true'
+      run: |
+        gh pr merge "${{ github.event.pull_request.number }}" --auto --squash --delete-branch
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Comment on Manual Review Required
+      if: steps.check-update.outputs.auto_merge == 'false'
+      run: |
+        UPDATE_TYPE="${{ steps.metadata.outputs.update-type }}"
+        
+        cat > comment.md << EOF
+        🔍 **Manual Review Required**
+        
+        This Dependabot PR requires manual review because:
+        - Update type: \`$UPDATE_TYPE\`
+        - This may include breaking changes
+        
+        Please review the changes and merge manually if appropriate.
+        EOF
+        
+        gh pr comment "${{ github.event.pull_request.number }}" --body-file comment.md
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

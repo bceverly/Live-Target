@@ -1,0 +1,57 @@
+#
+#  swiftlint.yml
+#  Live Target SwiftLint Configuration
+#
+#  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+#
+
+name: SwiftLint
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '**/*.swift'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**/*.swift'
+
+jobs:
+  swiftlint:
+    name: SwiftLint Analysis
+    runs-on: macos-15
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Install SwiftLint
+      run: |
+        brew install swiftlint
+        
+    - name: Run SwiftLint
+      run: |
+        swiftlint lint --reporter github-actions-logging
+        
+    - name: Run SwiftLint (Autocorrect)
+      run: |
+        swiftlint --fix --format
+        
+    - name: Check for Changes
+      id: verify-changed-files
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "changed=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Commit SwiftLint Fixes
+      if: steps.verify-changed-files.outputs.changed == 'true' && github.event_name == 'push'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -m "Apply SwiftLint auto-fixes" || exit 0
+        git push
