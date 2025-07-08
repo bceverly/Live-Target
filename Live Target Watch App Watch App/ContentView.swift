@@ -10,38 +10,67 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var watchConnectivity = WatchConnectivityManager()
     @StateObject private var impactStore = ImpactStore.shared
+    @State private var isLoading = true
     
     var body: some View {
-        TabView {
-            NavigationView {
-                VStack {
-                    if watchConnectivity.isPhoneConnected {
-                        if let latestImpact = impactStore.latestImpact {
-                            LatestImpactView(impact: latestImpact)
-                        } else {
-                            WaitingForImpactView()
-                        }
-                    } else {
-                        DisconnectedView()
+        if isLoading {
+            LoadingView()
+                .onAppear {
+                    watchConnectivity.activateSession()
+                    // Small delay to ensure proper initialization
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        isLoading = false
                     }
                 }
-                .navigationTitle("Latest")
-                .navigationBarTitleDisplayMode(.inline)
-            }
-            .tabItem {
-                Image(systemName: "target")
-                Text("Latest")
-            }
-            
-            ImpactHistoryView()
-                .tabItem {
-                    Image(systemName: "clock")
-                    Text("History")
+        } else {
+            TabView {
+                NavigationView {
+                    VStack {
+                        if watchConnectivity.isPhoneConnected {
+                            if let latestImpact = impactStore.latestImpact {
+                                LatestImpactView(impact: latestImpact)
+                            } else {
+                                WaitingForImpactView()
+                            }
+                        } else {
+                            DisconnectedView()
+                        }
+                    }
+                    .navigationTitle("Latest")
+                    .navigationBarTitleDisplayMode(.inline)
                 }
+                .tabItem {
+                    Image(systemName: "target")
+                    Text("Latest")
+                }
+                
+                ImpactHistoryView()
+                    .tabItem {
+                        Image(systemName: "clock")
+                        Text("History")
+                    }
+            }
         }
-        .onAppear {
-            watchConnectivity.activateSession()
+    }
+}
+
+struct LoadingView: View {
+    var body: some View {
+        VStack(spacing: 15) {
+            Image(systemName: "target")
+                .font(.system(size: 50))
+                .foregroundColor(.red)
+            
+            Text("Live Target")
+                .font(.title2)
+                .fontWeight(.bold)
+            
+            Text("Loading...")
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black)
     }
 }
 
