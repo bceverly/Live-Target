@@ -22,7 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -104,7 +104,7 @@ fun ZoomControl(
                     ),
             ) {
                 Icon(
-                    imageVector = if (showingZoomSlider) Icons.Default.Remove else Icons.Default.Add,
+                    imageVector = if (showingZoomSlider) Icons.Default.KeyboardArrowUp else Icons.Default.Add,
                     contentDescription = if (showingZoomSlider) "Hide zoom slider" else "Show zoom slider",
                     tint = Color.White,
                     modifier = Modifier.size(16.dp),

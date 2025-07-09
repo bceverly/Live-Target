@@ -269,10 +269,8 @@ class SamsungWatchManager(context: Context) : WatchConnectivityManager(context) 
     override fun cleanup() {
         try {
             socket?.close()
-            sagent?.releaseAgent()
             socket = null
             peerAgent = null
-            sagent = null
             Log.d(TAG, "Samsung watch connectivity cleaned up")
         } catch (e: Exception) {
             Log.e(TAG, "Error cleaning up Samsung watch connectivity", e)
@@ -281,7 +279,7 @@ class SamsungWatchManager(context: Context) : WatchConnectivityManager(context) 
     
     // Internal methods for handling Samsung Accessory SDK callbacks
     internal fun onPeerAgentFound(peerAgent: SAPeerAgent) {
-        Log.d(TAG, "Samsung watch peer agent found: ${peerAgent.accessory.name}")
+        Log.d(TAG, "Samsung watch peer agent found")
         this.peerAgent = peerAgent
         updateWatchPaired(true)
         updateWatchAppInstalled(true)
@@ -289,7 +287,7 @@ class SamsungWatchManager(context: Context) : WatchConnectivityManager(context) 
     
     internal fun onServiceConnectionResponse(socket: SASocket, result: Int) {
         Log.d(TAG, "Samsung watch service connection response: $result")
-        if (result == SAAgent.CONNECTION_SUCCESS) {
+        if (result == 0) { // 0 = success
             this.socket = socket
             updateWatchConnected(true)
             updateConnectionStatus(WatchConnectionStatus.CONNECTED)

@@ -71,7 +71,7 @@ abstract class WatchConnectivityManager(protected val context: Context) {
         _isWatchPaired.value = paired
     }
     
-    protected fun updateConnectionStatus(status: WatchConnectionStatus) {
+    fun updateConnectionStatus(status: WatchConnectionStatus) {
         _watchConnectionStatus.value = status
     }
     

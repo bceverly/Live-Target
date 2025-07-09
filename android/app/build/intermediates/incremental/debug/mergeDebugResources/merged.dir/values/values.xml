@@ -358,6 +358,7 @@
     <string name="check_frequency">Check Frequency</string>
     <string name="circle_color">Circle Color</string>
     <string name="clear">Clear</string>
+    <string name="close">Close</string>
     <string name="close_drawer">"Close navigation menu"</string>
     <string name="close_sheet">"Close sheet"</string>
     <string name="colors">Colors</string>
@@ -368,6 +369,77 @@
     <string name="detecting">Detecting...</string>
     <string name="dropdown_menu">"Dropdown menu"</string>
     <string name="grant_permission">Grant Permission</string>
+    <string name="help">Help</string>
+    <string name="help_avoid_backlighting">Avoid backlighting or extreme shadows on target</string>
+    <string name="help_bullet_caliber">Bullet Caliber: Sets the minimum size for impact detection (17-70 caliber)</string>
+    <string name="help_caliber_note">Higher caliber = larger minimum detection size</string>
+    <string name="help_camera_positioning">Camera Positioning</string>
+    <string name="help_check_frequency">Check Frequency: How often the app compares camera frames (0.5-10 seconds)</string>
+    <string name="help_circle_color">Circle Color: Color of the circles drawn around detected impacts</string>
+    <string name="help_clean_background">Clean target background improves detection accuracy</string>
+    <string name="help_clear">Clear: Remove all detected impact markers from screen</string>
+    <string name="help_close_camera_apps">Close other camera apps before using Live Target</string>
+    <string name="help_colors_title">Colors</string>
+    <string name="help_consistent_lighting">Use consistent, even lighting on target</string>
+    <string name="help_contrasting_colors">Use contrasting colors for impact markers</string>
+    <string name="help_controls_title">Controls</string>
+    <string name="help_detection_issues">Detection Issues</string>
+    <string name="help_detection_title">Change Detection</string>
+    <string name="help_environment">Environment</string>
+    <string name="help_false_detections">False detections: Increase bullet caliber setting or check frequency</string>
+    <string name="help_feature_parity">Available for both Android (with Samsung Galaxy Watch) and iOS (with Apple Watch) with full feature parity between platforms.</string>
+    <string name="help_how_to_use_title">How to Use Live Target</string>
+    <string name="help_increase_frequency">Increase check frequency if device is struggling</string>
+    <string name="help_lower_frequency">Lower check frequency in bright, stable lighting</string>
+    <string name="help_main_controls_title">Main Controls</string>
+    <string name="help_minimize_movement">Minimize movement around the target area</string>
+    <string name="help_missed_impacts">Missed impacts: Decrease bullet caliber setting or improve lighting</string>
+    <string name="help_mount_device">Mount device securely to minimize camera shake</string>
+    <string name="help_multiple_detections">Multiple detections per shot: Increase check frequency</string>
+    <string name="help_number_color">Number Color: Color of the impact numbers displayed on screen</string>
+    <string name="help_optimal_settings">Optimal Settings</string>
+    <string name="help_performance_issues">Performance Issues</string>
+    <string name="help_perpendicular_position">Position camera perpendicular to target face</string>
+    <string name="help_restart_app">Restart app if detection becomes unresponsive</string>
+    <string name="help_save">Save: Capture current view with impact annotations to Photos</string>
+    <string name="help_set_caliber">Set bullet caliber close to your actual ammunition</string>
+    <string name="help_settings_button">Settings: Access app configuration options</string>
+    <string name="help_settings_title">Settings Explained</string>
+    <string name="help_start_2_second">Start with 2-second check frequency for most situations</string>
+    <string name="help_start_before_first">Start detection before first shot for best baseline</string>
+    <string name="help_start_stop">Start/Stop: Begin or end impact detection</string>
+    <string name="help_step_1">Position your device so the target is clearly visible in the camera view</string>
+    <string name="help_step_2">Adjust settings (caliber, colors, check frequency) as needed</string>
+    <string name="help_step_3">Tap \'Start\' to begin impact detection</string>
+    <string name="help_step_4">Fire at your target - new impacts will be automatically detected and numbered</string>
+    <string name="help_step_5">Use \'Save\' to capture target images with impact annotations</string>
+    <string name="help_target_fills_view">Ensure target fills a good portion of the camera view</string>
+    <string name="help_tips_title">Tips for Best Results</string>
+    <string name="help_troubleshooting_title">Troubleshooting</string>
+    <string name="help_use_case_accuracy">Accuracy training</string>
+    <string name="help_use_case_analysis">Shot group analysis</string>
+    <string name="help_use_case_monitoring">Remote target monitoring</string>
+    <string name="help_use_case_practice">Target shooting practice</string>
+    <string name="help_watch_connection_verify">Verify watch is connected (green watch icon)</string>
+    <string name="help_watch_enable_integration">Ensure watch integration is enabled in settings</string>
+    <string name="help_watch_gray">Gray watch: Status unknown or integration disabled</string>
+    <string name="help_watch_green">Green watch: Connected and ready</string>
+    <string name="help_watch_integration">Watch Integration: Enable/disable sending impact notifications to Samsung Galaxy Watch</string>
+    <string name="help_watch_issues">Samsung Galaxy Watch Issues</string>
+    <string name="help_watch_notifications">When enabled, your Galaxy Watch will receive notifications and display impact details</string>
+    <string name="help_watch_pair_check">Check that watch is paired and companion app is installed</string>
+    <string name="help_watch_red">Red watch: Connection failed or unavailable</string>
+    <string name="help_watch_status">Watch Status: Shows pairing and connection status</string>
+    <string name="help_watch_status_icons">Watch Status Icons</string>
+    <string name="help_watch_test_start">Try tapping Start button to test connectivity</string>
+    <string name="help_watch_title">Samsung Galaxy Watch</string>
+    <string name="help_what_is_description">Live Target is an intelligent bullet impact detection system that uses your device\'s camera and computer vision to automatically identify and track bullet holes on targets during shooting practice.</string>
+    <string name="help_what_is_title">What is Live Target?</string>
+    <string name="help_what_is_use_cases">The app continuously monitors your target through the camera feed and alerts you when new impacts are detected, making it perfect for:</string>
+    <string name="help_zoom_controls">Zoom Controls: Use + and - buttons to adjust camera zoom</string>
+    <string name="help_zoom_controls_title">Zoom Controls</string>
+    <string name="help_zoom_detail">Higher zoom provides more detail but smaller field of view</string>
+    <string name="help_zoom_range">Zoom range: 1x to 10x magnification with hardware zoom support</string>
     <string name="image_saved">Image saved to gallery</string>
     <string name="in_progress">In progress</string>
     <string name="indeterminate">Partially checked</string>
@@ -1981,11 +2053,11 @@
     <declare-styleable name="ActionBar">
         
         <attr name="navigationMode">
-            <!-- Normal static title text -->
+            
             <enum name="normal" value="0"/>
-            <!-- The action bar will use a selection list for navigation. -->
+            
             <enum name="listMode" value="1"/>
-            <!-- The action bar will use a series of horizontal tabs for navigation. -->
+            
             <enum name="tabMode" value="2"/>
         </attr>
         
@@ -2134,22 +2206,17 @@
 
         
         <attr name="tintMode">
-            <!-- The tint is drawn on top of the drawable.
-                 [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] -->
+            
             <enum name="src_over" value="3"/>
-            <!-- The tint is masked by the alpha channel of the drawable. The drawable’s
-                 color channels are thrown out. [Sa * Da, Sc * Da] -->
+            
             <enum name="src_in" value="5"/>
-            <!-- The tint is drawn above the drawable, but with the drawable’s alpha
-                 channel masking the result. [Da, Sc * Da + (1 - Sa) * Dc] -->
+            
             <enum name="src_atop" value="9"/>
-            <!-- Multiplies the color and alpha channels of the drawable with those of
-                 the tint. [Sa * Da, Sc * Dc] -->
+            
             <enum name="multiply" value="14"/>
-            <!-- [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] -->
+            
             <enum name="screen" value="15"/>
-            <!-- Combines the tint and icon color and alpha channels, clamping the
-                 result to valid color values. Saturate(S + D) -->
+            
             <enum name="add" value="16"/>
         </attr>
     </declare-styleable>
@@ -2161,22 +2228,17 @@
         <attr format="color" name="tickMarkTint"/>
         
         <attr name="tickMarkTintMode">
-            <!-- The tint is drawn on top of the drawable.
-                 [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] -->
+            
             <enum name="src_over" value="3"/>
-            <!-- The tint is masked by the alpha channel of the drawable. The drawable’s
-                 color channels are thrown out. [Sa * Da, Sc * Da] -->
+            
             <enum name="src_in" value="5"/>
-            <!-- The tint is drawn above the drawable, but with the drawable’s alpha
-                 channel masking the result. [Da, Sc * Da + (1 - Sa) * Dc] -->
+            
             <enum name="src_atop" value="9"/>
-            <!-- Multiplies the color and alpha channels of the drawable with those of
-                 the tint. [Sa * Da, Sc * Dc] -->
+            
             <enum name="multiply" value="14"/>
-            <!-- [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] -->
+            
             <enum name="screen" value="15"/>
-            <!-- Combines the tint and drawable color and alpha channels, clamping the
-                 result to valid color values. Saturate(S + D) -->
+            
             <enum name="add" value="16"/>
         </attr>
     </declare-styleable>
@@ -2197,10 +2259,9 @@
         <attr name="android:textAppearance"/>
         
         <attr format="enum" name="autoSizeTextType">
-            <!-- No auto-sizing (default). -->
+            
             <enum name="none" value="0"/>
-            <!-- Uniform horizontal and vertical text size scaling to fit within the
-            container. -->
+            
             <enum name="uniform" value="1"/>
         </attr>
         
@@ -2232,22 +2293,17 @@
         <attr format="color" name="drawableTint"/>
         
         <attr name="drawableTintMode">
-            <!-- The tint is drawn on top of the drawable.
-                 [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] -->
+            
             <enum name="src_over" value="3"/>
-            <!-- The tint is masked by the alpha channel of the drawable. The drawable’s
-                 color channels are thrown out. [Sa * Da, Sc * Da] -->
+            
             <enum name="src_in" value="5"/>
-            <!-- The tint is drawn above the drawable, but with the drawable’s alpha
-                 channel masking the result. [Da, Sc * Da + (1 - Sa) * Dc] -->
+            
             <enum name="src_atop" value="9"/>
-            <!-- Multiplies the color and alpha channels of the drawable with those of
-                 the tint. [Sa * Da, Sc * Dc] -->
+            
             <enum name="multiply" value="14"/>
-            <!-- [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] -->
+            
             <enum name="screen" value="15"/>
-            <!-- Combines the tint and drawable color and alpha channels, clamping the
-                 result to valid color values. Saturate(S + D) -->
+            
             <enum name="add" value="16"/>
         </attr>
     </declare-styleable>
@@ -2639,22 +2695,17 @@
 
         
         <attr name="buttonTintMode">
-            <!-- The tint is drawn on top of the drawable.
-                 [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] -->
+            
             <enum name="src_over" value="3"/>
-            <!-- The tint is masked by the alpha channel of the drawable. The drawable’s
-                 color channels are thrown out. [Sa * Da, Sc * Da] -->
+            
             <enum name="src_in" value="5"/>
-            <!-- The tint is drawn above the drawable, but with the drawable’s alpha
-                 channel masking the result. [Da, Sc * Da + (1 - Sa) * Dc] -->
+            
             <enum name="src_atop" value="9"/>
-            <!-- Multiplies the color and alpha channels of the drawable with those of
-                 the tint. [Sa * Da, Sc * Dc] -->
+            
             <enum name="multiply" value="14"/>
-            <!-- [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] -->
+            
             <enum name="screen" value="15"/>
-            <!-- Combines the tint and icon color and alpha channels, clamping the
-                 result to valid color values. Saturate(S + D) -->
+            
             <enum name="add" value="16"/>
         </attr>
     </declare-styleable>
@@ -2687,23 +2738,14 @@
         <attr format="reference" name="fontProviderCerts"/>
         
         <attr name="fontProviderFetchStrategy">
-            <!-- The blocking font fetch works as follows.
-              First, check the local cache, then if the requested font is not cached, request the
-              font from the provider and wait until it is finished.  You can change the length of
-              the timeout by modifying fontProviderFetchTimeout.  If the timeout happens, the
-              default typeface will be used instead. -->
+            
             <enum name="blocking" value="0"/>
-            <!-- The async font fetch works as follows.
-              First, check the local cache, then if the requeted font is not cached, trigger a
-              request the font and continue with layout inflation. Once the font fetch succeeds, the
-              target text view will be refreshed with the downloaded font data. The
-              fontProviderFetchTimeout will be ignored if async loading is specified. -->
+            
             <enum name="async" value="1"/>
         </attr>
         
         <attr format="integer" name="fontProviderFetchTimeout">
-            <!-- A special value for the timeout. In this case, the blocking font fetching will not
-              timeout and wait until a reply is received from the font provider. -->
+            
             <enum name="forever" value="-1"/>
         </attr>
         
@@ -2889,24 +2931,15 @@
 
         
         <attr name="showAsAction">
-            <!-- Never show this item in an action bar, show it in the overflow menu instead.
-                 Mutually exclusive with "ifRoom" and "always". -->
+            
             <flag name="never" value="0"/>
-            <!-- Show this item in an action bar if there is room for it as determined
-                 by the system. Favor this option over "always" where possible.
-                 Mutually exclusive with "never" and "always". -->
+            
             <flag name="ifRoom" value="1"/>
-            <!-- Always show this item in an actionbar, even if it would override
-                 the system's limits of how much stuff to put there. This may make
-                 your action bar look bad on some screens. In most cases you should
-                 use "ifRoom" instead. Mutually exclusive with "ifRoom" and "never". -->
+            
             <flag name="always" value="2"/>
-            <!-- When this item is shown as an action in the action bar, show a text
-                 label with it even if it has an icon representation. -->
+            
             <flag name="withText" value="4"/>
-            <!-- This item's action view collapses to a normal menu
-                 item. When expanded, the action view takes over a
-                 larger segment of its container. -->
+            
             <flag name="collapseActionView" value="8"/>
         </attr>
 
@@ -2930,22 +2963,17 @@
 
         
         <attr name="iconTintMode">
-            <!-- The tint is drawn on top of the icon.
-                 [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] -->
+            
             <enum name="src_over" value="3"/>
-            <!-- The tint is masked by the alpha channel of the icon. The icon’s
-                 color channels are thrown out. [Sa * Da, Sc * Da] -->
+            
             <enum name="src_in" value="5"/>
-            <!-- The tint is drawn above the icon, but with the icon’s alpha
-                 channel masking the result. [Da, Sc * Da + (1 - Sa) * Dc] -->
+            
             <enum name="src_atop" value="9"/>
-            <!-- Multiplies the color and alpha channels of the icon with those of
-                 the tint. [Sa * Da, Sc * Dc] -->
+            
             <enum name="multiply" value="14"/>
-            <!-- [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] -->
+            
             <enum name="screen" value="15"/>
-            <!-- Combines the tint and icon color and alpha channels, clamping the
-                 result to valid color values. Saturate(S + D) -->
+            
             <enum name="add" value="16"/>
         </attr>
 
@@ -3064,22 +3092,17 @@
         <attr format="color" name="thumbTint"/>
         
         <attr name="thumbTintMode">
-            <!-- The tint is drawn on top of the drawable.
-                 [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] -->
+            
             <enum name="src_over" value="3"/>
-            <!-- The tint is masked by the alpha channel of the drawable. The drawable’s
-                 color channels are thrown out. [Sa * Da, Sc * Da] -->
+            
             <enum name="src_in" value="5"/>
-            <!-- The tint is drawn above the drawable, but with the drawable’s alpha
-                 channel masking the result. [Da, Sc * Da + (1 - Sa) * Dc] -->
+            
             <enum name="src_atop" value="9"/>
-            <!-- Multiplies the color and alpha channels of the drawable with those of
-                 the tint. [Sa * Da, Sc * Dc] -->
+            
             <enum name="multiply" value="14"/>
-            <!-- [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] -->
+            
             <enum name="screen" value="15"/>
-            <!-- Combines the tint and drawable color and alpha channels, clamping the
-                 result to valid color values. Saturate(S + D) -->
+            
             <enum name="add" value="16"/>
         </attr>
         
@@ -3088,22 +3111,17 @@
         <attr format="color" name="trackTint"/>
         
         <attr name="trackTintMode">
-            <!-- The tint is drawn on top of the drawable.
-                 [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] -->
+            
             <enum name="src_over" value="3"/>
-            <!-- The tint is masked by the alpha channel of the drawable. The drawable’s
-                 color channels are thrown out. [Sa * Da, Sc * Da] -->
+            
             <enum name="src_in" value="5"/>
-            <!-- The tint is drawn above the drawable, but with the drawable’s alpha
-                 channel masking the result. [Da, Sc * Da + (1 - Sa) * Dc] -->
+            
             <enum name="src_atop" value="9"/>
-            <!-- Multiplies the color and alpha channels of the drawable with those of
-                 the tint. [Sa * Da, Sc * Dc] -->
+            
             <enum name="multiply" value="14"/>
-            <!-- [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] -->
+            
             <enum name="screen" value="15"/>
-            <!-- Combines the tint and drawable color and alpha channels, clamping the
-                 result to valid color values. Saturate(S + D) -->
+            
             <enum name="add" value="16"/>
         </attr>
         
@@ -3169,11 +3187,11 @@
         <attr name="contentInsetEndWithActions"/>
         <attr format="dimension" name="maxButtonHeight"/>
         <attr name="buttonGravity">
-            <!-- Place object in the vertical center of its container, not changing its size. -->
+            
             <flag name="center_vertical" value="0x10"/>
-            <!-- Push object to the top of its container, not changing its size. -->
+            
             <flag name="top" value="0x30"/>
-            <!-- Push object to the bottom of its container, not changing its size. -->
+            
             <flag name="bottom" value="0x50"/>
         </attr>
         
@@ -3217,22 +3235,17 @@
 
         
         <attr name="backgroundTintMode">
-            <!-- The tint is drawn on top of the drawable.
-                 [Sa + (1 - Sa)*Da, Rc = Sc + (1 - Sa)*Dc] -->
+            
             <enum name="src_over" value="3"/>
-            <!-- The tint is masked by the alpha channel of the drawable. The drawable’s
-                 color channels are thrown out. [Sa * Da, Sc * Da] -->
+            
             <enum name="src_in" value="5"/>
-            <!-- The tint is drawn above the drawable, but with the drawable’s alpha
-                 channel masking the result. [Da, Sc * Da + (1 - Sa) * Dc] -->
+            
             <enum name="src_atop" value="9"/>
-            <!-- Multiplies the color and alpha channels of the drawable with those of
-                 the tint. [Sa * Da, Sc * Dc] -->
+            
             <enum name="multiply" value="14"/>
-            <!-- [Sa + Da - Sa * Da, Sc + Dc - Sc * Dc] -->
+            
             <enum name="screen" value="15"/>
-            <!-- Combines the tint and icon color and alpha channels, clamping the
-                 result to valid color values. Saturate(S + D) -->
+            
             <enum name="add" value="16"/>
         </attr>
     </declare-styleable>

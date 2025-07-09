@@ -24,22 +24,29 @@ class SamsungWatchService : SAAgentV2() {
         private const val LIVE_TARGET_CHANNEL_ID = 104
     }
     
-    private lateinit var watchManager: SamsungWatchManager
+    private lateinit var watchManager: WatchConnectivityManager
     
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "Samsung watch service created")
         
         // Get the watch manager instance
-        watchManager = WatchConnectivityManager.getInstance(this) as SamsungWatchManager
+        // Use a fallback context or create a stub if applicationContext is null
+        val context = applicationContext ?: return
+        watchManager = WatchConnectivityManager.getInstance(context)
     }
     
     override fun onFindPeerAgentResponse(peerAgent: SAPeerAgent, result: Int) {
         Log.d(TAG, "Find peer agent response: $result")
         
+        if (!::watchManager.isInitialized) {
+            Log.w(TAG, "Watch manager not initialized")
+            return
+        }
+        
         if (result == PEER_AGENT_FOUND) {
             Log.d(TAG, "Samsung watch peer agent found")
-            watchManager.onPeerAgentFound(peerAgent)
+            (watchManager as? SamsungWatchManager)?.onPeerAgentFound(peerAgent)
             
             // Request service connection
             requestServiceConnection(peerAgent)
@@ -50,12 +57,20 @@ class SamsungWatchService : SAAgentV2() {
     
     override fun onServiceConnectionResponse(peerAgent: SAPeerAgent, socket: SASocket, result: Int) {
         Log.d(TAG, "Service connection response: $result")
-        watchManager.onServiceConnectionResponse(socket, result)
+        if (!::watchManager.isInitialized) {
+            Log.w(TAG, "Watch manager not initialized")
+            return
+        }
+        (watchManager as? SamsungWatchManager)?.onServiceConnectionResponse(socket, result)
     }
     
     override fun onServiceConnectionLost(peerAgent: SAPeerAgent, reason: Int) {
         Log.d(TAG, "Service connection lost: $reason")
-        watchManager.onServiceConnectionLost(reason)
+        if (!::watchManager.isInitialized) {
+            Log.w(TAG, "Watch manager not initialized")
+            return
+        }
+        (watchManager as? SamsungWatchManager)?.onServiceConnectionLost(reason)
     }
     
     override fun onPeerAgentUpdated(peerAgent: SAPeerAgent, result: Int) {
@@ -70,6 +85,10 @@ class SamsungWatchService : SAAgentV2() {
     
     override fun onError(peerAgent: SAPeerAgent, errorMessage: String, errorCode: Int) {
         Log.e(TAG, "Samsung watch service error: $errorMessage (code: $errorCode)")
+        if (!::watchManager.isInitialized) {
+            Log.w(TAG, "Watch manager not initialized")
+            return
+        }
         watchManager.updateConnectionStatus(WatchConnectionStatus.ERROR)
     }
     

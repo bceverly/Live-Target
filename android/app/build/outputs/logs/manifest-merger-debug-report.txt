@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:8:1-48:12
-INJECTED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:8:1-48:12
-INJECTED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:8:1-48:12
-INJECTED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:8:1-48:12
+ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:8:1-58:12
+INJECTED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:8:1-58:12
+INJECTED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:8:1-58:12
+INJECTED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:8:1-58:12
 MERGED from [androidx.compose.material3:material3-android:1.3.1] /Users/bceverly/.gradle/caches/8.9/transforms/773946f719aa2047c606899c5c8e1fdb/transformed/material3-release/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.compose.material:material-android:1.7.6] /Users/bceverly/.gradle/caches/8.9/transforms/8b4207499abeb101075acea0681caa6d/transformed/material-release/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.material:material-ripple-android:1.7.6] /Users/bceverly/.gradle/caches/8.9/transforms/9cbac007566b8c31218a4c8ab5634f5a/transformed/material-ripple-release/AndroidManifest.xml:2:1-7:12
@@ -92,21 +92,29 @@ ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.
 		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:16:9-35
 	android:name
 		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:15:22-78
+uses-permission#com.samsung.accessory.permission.ACCESSORY_FRAMEWORK
+ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:19:5-92
+	android:name
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:19:22-89
+uses-permission#com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY
+ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:20:5-117
+	android:name
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:20:22-114
 uses-feature#android.hardware.camera
-ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:19:5-21:35
+ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:23:5-25:35
 	android:required
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:21:9-32
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:25:9-32
 	android:name
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:20:9-47
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:24:9-47
 uses-feature#android.hardware.camera.autofocus
-ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:22:5-24:36
+ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:26:5-28:36
 	android:required
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:24:9-33
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:28:9-33
 	android:name
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:23:9-57
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:27:9-57
 application
-ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:26:5-46:19
-INJECTED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:26:5-46:19
+ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:30:5-56:19
+INJECTED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:30:5-56:19
 MERGED from [androidx.compose.ui:ui-tooling-android:1.7.6] /Users/bceverly/.gradle/caches/8.9/transforms/cdbca8a4fe6c85ccc6c14def21f08599/transformed/ui-tooling-release/AndroidManifest.xml:22:5-26:19
 MERGED from [androidx.compose.ui:ui-tooling-android:1.7.6] /Users/bceverly/.gradle/caches/8.9/transforms/cdbca8a4fe6c85ccc6c14def21f08599/transformed/ui-tooling-release/AndroidManifest.xml:22:5-26:19
 MERGED from [androidx.camera:camera-camera2:1.3.1] /Users/bceverly/.gradle/caches/8.9/transforms/559a7d9d52de50e7046462377a994927/transformed/camera-camera2-1.3.1/AndroidManifest.xml:23:5-34:19
@@ -132,43 +140,51 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/bceverly/.gradle/cac
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.13.1] /Users/bceverly/.gradle/caches/8.9/transforms/810f9bdafd4f59eb2cf91de042bac0bf/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:33:9-35
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:37:9-35
 	android:label
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:31:9-41
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:35:9-41
 	android:fullBackupContent
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:29:9-54
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:33:9-54
 	android:roundIcon
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:32:9-62
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:36:9-62
 	tools:targetApi
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:35:9-29
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:39:9-29
 	android:icon
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:30:9-57
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:34:9-57
 	android:allowBackup
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:27:9-35
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:31:9-35
 	android:theme
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:34:9-48
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:38:9-48
 	android:dataExtractionRules
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:28:9-65
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:32:9-65
 activity#com.bceassociates.livetarget.MainActivity
-ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:36:9-45:20
+ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:40:9-49:20
 	android:label
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:39:13-45
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:43:13-45
 	android:exported
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:38:13-36
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:42:13-36
 	android:theme
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:40:13-52
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:44:13-52
 	android:name
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:37:13-41
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:41:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:41:13-44:29
+ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:45:13-48:29
 action#android.intent.action.MAIN
-ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:42:17-69
+ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:46:17-69
 	android:name
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:42:25-66
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:46:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:43:17-77
+ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:47:17-77
 	android:name
-		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:43:27-74
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:47:27-74
+service#com.bceassociates.livetarget.watch.SamsungWatchService
+ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:52:9-55:40
+	android:enabled
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:54:13-35
+	android:exported
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:55:13-37
+	android:name
+		ADDED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml:53:13-54
 uses-sdk
 INJECTED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/bceverly/dev/Live Target/android/app/src/main/AndroidManifest.xml

@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Help
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -98,7 +98,7 @@ fun MainScreen(
                     integrationEnabled = uiState.watchIntegrationEnabled,
                 )
                 IconButton(onClick = { showHelp = true }) {
-                    Icon(Icons.Default.Help, contentDescription = stringResource(R.string.help))
+                    Icon(Icons.Default.Info, contentDescription = stringResource(R.string.help))
                 }
                 IconButton(onClick = { showSettings = true }) {
                     Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings))

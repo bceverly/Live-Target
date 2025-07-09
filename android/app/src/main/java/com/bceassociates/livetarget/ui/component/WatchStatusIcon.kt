@@ -10,7 +10,7 @@ package com.bceassociates.livetarget.ui.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -39,7 +39,7 @@ fun WatchStatusIcon(
     ) {
         // Base watch icon
         Icon(
-            imageVector = Icons.Default.AccessTime,
+            imageVector = Icons.Default.Notifications,
             contentDescription = "Watch status",
             tint = getIconColor(status, integrationEnabled),
             modifier = Modifier.size(16.dp),

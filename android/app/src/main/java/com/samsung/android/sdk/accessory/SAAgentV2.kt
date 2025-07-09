@@ -7,11 +7,16 @@
 
 package com.samsung.android.sdk.accessory
 
+import android.content.Context
+
 /**
  * Stub implementation of Samsung Accessory SDK SAAgentV2 for CI/CD builds
  * This allows the project to build without the actual Samsung SDK
  */
 abstract class SAAgentV2 {
+    
+    // Stub context property
+    protected val applicationContext: Context? = null
     
     companion object {
         const val PEER_AGENT_FOUND = 0
