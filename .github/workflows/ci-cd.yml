@@ -1,0 +1,223 @@
+#
+#  ci-cd.yml
+#  Live Target Multi-Platform CI/CD Pipeline
+#
+#  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+#
+
+name: Multi-Platform CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      ios-changed: ${{ steps.changes.outputs.ios }}
+      android-changed: ${{ steps.changes.outputs.android }}
+      docs-changed: ${{ steps.changes.outputs.docs }}
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Detect Changed Files
+      uses: dorny/paths-filter@v3
+      id: changes
+      with:
+        filters: |
+          ios:
+            - 'ios/**'
+            - '.github/workflows/ios-ci.yml'
+            - '.github/workflows/ci-cd.yml'
+          android:
+            - 'android/**'
+            - '.github/workflows/android-ci.yml'
+            - '.github/workflows/ci-cd.yml'
+          docs:
+            - '**.md'
+            - 'docs/**'
+
+  call-ios-ci:
+    name: iOS CI/CD
+    needs: detect-changes
+    if: needs.detect-changes.outputs.ios-changed == 'true'
+    uses: ./.github/workflows/ios-ci.yml
+    secrets: inherit
+
+  call-android-ci:
+    name: Android CI/CD
+    needs: detect-changes
+    if: needs.detect-changes.outputs.android-changed == 'true'
+    uses: ./.github/workflows/android-ci.yml
+    secrets: inherit
+
+  unified-security-scan:
+    name: Unified Security Scan
+    runs-on: ubuntu-latest
+    if: always() && (needs.detect-changes.outputs.ios-changed == 'true' || needs.detect-changes.outputs.android-changed == 'true')
+    needs: [detect-changes]
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    
+    - name: Run Comprehensive Security Scan
+      uses: semgrep/semgrep-action@v1
+      with:
+        config: >-
+          p/security-audit
+          p/secrets
+          p/owasp-top-ten
+          p/swift
+          p/kotlin
+          p/android
+        generateSarif: "1"
+    
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: semgrep.sarif
+      if: always()
+    
+    - name: Check for Secrets in All Platforms
+      run: |
+        echo "🔍 Scanning for potential secrets across all platforms..."
+        
+        # Check for common secret patterns
+        SECRET_PATTERNS="api_key|password|secret|token|private_key|keystore|certificate"
+        
+        # Scan iOS files
+        if find ios/ -name "*.swift" -exec grep -l -i "$SECRET_PATTERNS" {} \; 2>/dev/null | grep -v "Test"; then
+          echo "⚠️ Potential secrets found in iOS code!"
+          exit 1
+        fi
+        
+        # Scan Android files
+        if find android/ -name "*.kt" -o -name "*.java" -exec grep -l -i "$SECRET_PATTERNS" {} \; 2>/dev/null | grep -v "Test"; then
+          echo "⚠️ Potential secrets found in Android code!"
+          exit 1
+        fi
+        
+        echo "✅ No obvious secrets detected across platforms"
+
+  dependency-security:
+    name: Dependency Security Check
+    runs-on: ubuntu-latest
+    if: always() && (needs.detect-changes.outputs.ios-changed == 'true' || needs.detect-changes.outputs.android-changed == 'true')
+    needs: [detect-changes]
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    
+    - name: Run Dependency Check
+      uses: dependency-check/Dependency-Check_Action@main
+      with:
+        project: 'Live Target'
+        path: '.'
+        format: 'ALL'
+        args: >
+          --enableRetired
+          --enableExperimental
+          --out reports
+    
+    - name: Upload Dependency Check Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: dependency-check-reports
+        path: reports/
+        retention-days: 30
+
+  generate-reports:
+    name: Generate CI/CD Reports
+    runs-on: ubuntu-latest
+    needs: [call-ios-ci, call-android-ci, unified-security-scan]
+    if: always()
+    
+    steps:
+    - name: Download All Artifacts
+      uses: actions/download-artifact@v4
+    
+    - name: Generate Summary Report
+      run: |
+        echo "# 📊 Live Target CI/CD Summary Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## 🏗️ Build Status" >> $GITHUB_STEP_SUMMARY
+        
+        if [[ "${{ needs.call-ios-ci.result }}" == "success" ]]; then
+          echo "- ✅ iOS CI/CD: Passed" >> $GITHUB_STEP_SUMMARY
+        elif [[ "${{ needs.call-ios-ci.result }}" == "skipped" ]]; then
+          echo "- ⏭️ iOS CI/CD: Skipped (no changes)" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "- ❌ iOS CI/CD: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [[ "${{ needs.call-android-ci.result }}" == "success" ]]; then
+          echo "- ✅ Android CI/CD: Passed" >> $GITHUB_STEP_SUMMARY
+        elif [[ "${{ needs.call-android-ci.result }}" == "skipped" ]]; then
+          echo "- ⏭️ Android CI/CD: Skipped (no changes)" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "- ❌ Android CI/CD: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [[ "${{ needs.unified-security-scan.result }}" == "success" ]]; then
+          echo "- ✅ Security Scan: Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "- ❌ Security Scan: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## 📱 Platforms Tested" >> $GITHUB_STEP_SUMMARY
+        echo "- iOS: SwiftUI + watchOS companion app" >> $GITHUB_STEP_SUMMARY
+        echo "- Android: Jetpack Compose + CameraX" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## 🔧 Quality Checks" >> $GITHUB_STEP_SUMMARY
+        echo "- Code linting (SwiftLint + ktlint)" >> $GITHUB_STEP_SUMMARY
+        echo "- Unit tests" >> $GITHUB_STEP_SUMMARY
+        echo "- Security scanning" >> $GITHUB_STEP_SUMMARY
+        echo "- Dependency vulnerability checks" >> $GITHUB_STEP_SUMMARY
+    
+    - name: Comment PR with Results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const ios_result = '${{ needs.call-ios-ci.result }}';
+          const android_result = '${{ needs.call-android-ci.result }}';
+          const security_result = '${{ needs.unified-security-scan.result }}';
+          
+          const getEmoji = (result) => {
+            if (result === 'success') return '✅';
+            if (result === 'skipped') return '⏭️';
+            return '❌';
+          };
+          
+          const comment = `## 🚀 Live Target CI/CD Results
+          
+          | Platform | Status | Result |
+          |----------|--------|--------|
+          | iOS | ${getEmoji(ios_result)} | ${ios_result} |
+          | Android | ${getEmoji(android_result)} | ${android_result} |
+          | Security | ${getEmoji(security_result)} | ${security_result} |
+          
+          ### 📋 Checks Performed
+          - ✅ Code Quality (Linting)
+          - ✅ Unit Tests
+          - ✅ Security Scanning
+          - ✅ Build Verification
+          
+          _Generated automatically by GitHub Actions_`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });

@@ -1,0 +1,326 @@
+#
+#  android-ci.yml
+#  Live Target Android CI/CD Pipeline
+#
+#  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+#
+
+name: Android CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android-ci.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android-ci.yml'
+
+env:
+  JAVA_VERSION: '17'
+  ANDROID_API_LEVEL: '35'
+  ANDROID_BUILD_TOOLS: '34.0.0'
+
+jobs:
+  lint-and-test:
+    name: Android Lint & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    
+    - name: Setup JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        cache: gradle
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: ${{ env.ANDROID_API_LEVEL }}
+        build-tools: ${{ env.ANDROID_BUILD_TOOLS }}
+        cmake: '3.22.1'
+        ndk: '26.1.10909125'
+    
+    - name: Grant Gradle Execute Permission
+      run: chmod +x android/gradlew
+    
+    - name: Cache Gradle Dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+          android/.gradle
+        key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+    
+    - name: Validate Gradle Wrapper
+      uses: gradle/wrapper-validation-action@v2
+      with:
+        gradle-wrapper-directory: android
+    
+    - name: Run Kotlin Lint (ktlint)
+      run: |
+        cd android
+        # Install ktlint for code formatting checks
+        curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.1.1/ktlint && chmod a+x ktlint
+        # Run ktlint on Kotlin source files
+        find app/src -name "*.kt" | xargs ./ktlint --reporter=github-actions
+      continue-on-error: true
+    
+    - name: Run Android Lint
+      run: |
+        cd android
+        ./gradlew lintDebug
+    
+    - name: Upload Lint Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: android-lint-results
+        path: |
+          android/app/build/reports/lint-results-debug.html
+          android/app/build/reports/lint-results-debug.xml
+        retention-days: 30
+    
+    - name: Run Unit Tests
+      run: |
+        cd android
+        ./gradlew testDebugUnitTest
+    
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: android-test-results
+        path: |
+          android/app/build/reports/tests/
+          android/app/build/test-results/
+        retention-days: 30
+    
+    - name: Generate Test Coverage Report
+      run: |
+        cd android
+        ./gradlew jacocoTestReport
+    
+    - name: Upload Coverage Reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-coverage-reports
+        path: android/app/build/reports/jacoco/
+        retention-days: 30
+    
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        files: android/app/build/reports/jacoco/test/jacocoTestReport.xml
+        flags: android
+        name: android-coverage
+        fail_ci_if_error: false
+
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    
+    - name: Setup JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        cache: gradle
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: ${{ env.ANDROID_API_LEVEL }}
+        build-tools: ${{ env.ANDROID_BUILD_TOOLS }}
+    
+    - name: Grant Gradle Execute Permission
+      run: chmod +x android/gradlew
+    
+    - name: Build Debug APK
+      run: |
+        cd android
+        ./gradlew assembleDebug
+    
+    - name: Upload Debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-debug-apk
+        path: android/app/build/outputs/apk/debug/app-debug.apk
+        retention-days: 30
+    
+    - name: Build Release APK (if main branch)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        cd android
+        ./gradlew assembleRelease
+    
+    - name: Upload Release APK
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-release-apk
+        path: android/app/build/outputs/apk/release/app-release-unsigned.apk
+        retention-days: 90
+    
+    - name: Build Android App Bundle (AAB)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        cd android
+        ./gradlew bundleRelease
+    
+    - name: Upload Release AAB
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-release-aab
+        path: android/app/build/outputs/bundle/release/app-release.aab
+        retention-days: 90
+
+  security-scan:
+    name: Android Security Analysis
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    
+    - name: Setup JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+    
+    - name: Run Semgrep Security Scan
+      uses: semgrep/semgrep-action@v1
+      with:
+        config: >-
+          p/security-audit
+          p/secrets
+          p/kotlin
+          p/android
+        generateSarif: "1"
+    
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: semgrep.sarif
+      if: always()
+    
+    - name: Dependency Vulnerability Scan
+      run: |
+        cd android
+        # Check for known vulnerabilities in dependencies
+        ./gradlew dependencyCheckAnalyze --info
+      continue-on-error: true
+    
+    - name: Scan for Hardcoded Secrets
+      run: |
+        # Simple grep-based secret scanning for Android
+        if grep -r -i "api_key\|password\|secret\|token\|keystore" --include="*.kt" --include="*.java" --include="*.xml" android/app/src/ | grep -v "//.*TODO\|//.*FIXME"; then
+          echo "⚠️ Potential secrets found in code!"
+          exit 1
+        else
+          echo "✅ No obvious secrets detected"
+        fi
+
+  instrumented-tests:
+    name: Android Instrumented Tests
+    runs-on: macos-latest
+    needs: lint-and-test
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    
+    - name: Setup JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        cache: gradle
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: ${{ env.ANDROID_API_LEVEL }}
+        build-tools: ${{ env.ANDROID_BUILD_TOOLS }}
+    
+    - name: Grant Gradle Execute Permission
+      run: chmod +x android/gradlew
+    
+    - name: AVD Cache
+      uses: actions/cache@v4
+      id: avd-cache
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        key: avd-${{ env.ANDROID_API_LEVEL }}
+    
+    - name: Create AVD and Generate Snapshot for Caching
+      if: steps.avd-cache.outputs.cache-hit != 'true'
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ env.ANDROID_API_LEVEL }}
+        force-avd-creation: false
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: false
+        script: echo "Generated AVD snapshot for caching."
+    
+    - name: Run Instrumented Tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ env.ANDROID_API_LEVEL }}
+        force-avd-creation: false
+        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: true
+        script: |
+          cd android
+          ./gradlew connectedDebugAndroidTest
+    
+    - name: Upload Instrumented Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: android-instrumented-test-results
+        path: |
+          android/app/build/reports/androidTests/
+          android/app/build/outputs/androidTest-results/
+        retention-days: 30
+
+  notify:
+    name: Notify Results
+    runs-on: ubuntu-latest
+    needs: [lint-and-test, build, security-scan]
+    if: always()
+    
+    steps:
+    - name: Report Status
+      run: |
+        if [[ "${{ needs.lint-and-test.result }}" == "success" && 
+              "${{ needs.build.result }}" == "success" && 
+              "${{ needs.security-scan.result }}" == "success" ]]; then
+          echo "✅ All Android CI checks passed!"
+        else
+          echo "❌ Some Android CI checks failed"
+          echo "Lint & Test: ${{ needs.lint-and-test.result }}"
+          echo "Build: ${{ needs.build.result }}"
+          echo "Security: ${{ needs.security-scan.result }}"
+          exit 1
+        fi

@@ -60,3 +60,84 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# Android
+#
+# Gradle files
+android/.gradle/
+android/build/
+android/gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration file (sdk path, etc)
+android/local.properties
+
+# Log Files
+*.log
+
+# Android Studio
+android/.idea/
+android/*.iml
+android/.externalNativeBuild/
+android/.cxx/
+android/app/.cxx/
+
+# Android build artifacts
+android/app/build/
+android/*/build/
+android/*/*/build/
+
+# Android signing files
+android/*.jks
+android/*.keystore
+android/app/release/
+android/app/debug/
+
+# Android lint
+android/lint-report.html
+android/lint-report.xml
+android/lint-results.html
+android/lint-results.xml
+
+# Android test reports
+android/app/build/reports/
+android/app/build/test-results/
+android/app/build/outputs/
+android/app/build/tmp/
+
+# Android generated files
+android/app/src/main/gen/
+android/app/src/main/assets/
+android/gen/
+android/out/
+
+# Proguard
+android/proguard/
+android/app/proguard-rules.pro
+
+# NDK
+android/obj/
+android/libs/armeabi*/
+android/libs/arm64*/
+android/libs/x86*/
+android/libs/mips*/
+
+# Android Studio navigation files
+android/.navigation/
+
+# Android Studio captures folder
+android/captures/
+
+# Keystore files
+android/*.jks
+android/*.keystore
+
+# Google Services (if you add Firebase later)
+android/google-services.json
+
+# Freeline
+android/freeline.py
+android/freeline/
+android/freeline_project_description.json
+
+# Android Profiling
+*.hprof

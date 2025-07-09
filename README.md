@@ -1,13 +1,17 @@
 # Live Target
 
+[![Multi-Platform CI/CD](https://github.com/bceverly/Live-Target/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/bceverly/Live-Target/actions/workflows/ci-cd.yml)
 [![iOS CI/CD Pipeline](https://github.com/bceverly/Live-Target/actions/workflows/ios-ci.yml/badge.svg)](https://github.com/bceverly/Live-Target/actions/workflows/ios-ci.yml)
+[![Android CI/CD Pipeline](https://github.com/bceverly/Live-Target/actions/workflows/android-ci.yml/badge.svg)](https://github.com/bceverly/Live-Target/actions/workflows/android-ci.yml)
 [![SwiftLint](https://github.com/bceverly/Live-Target/actions/workflows/swiftlint.yml/badge.svg)](https://github.com/bceverly/Live-Target/actions/workflows/swiftlint.yml)
 [![Dependency Security Check](https://github.com/bceverly/Live-Target/actions/workflows/dependency-security-check.yml/badge.svg)](https://github.com/bceverly/Live-Target/actions/workflows/dependency-security-check.yml)
 [![Release Pipeline](https://github.com/bceverly/Live-Target/actions/workflows/release.yml/badge.svg)](https://github.com/bceverly/Live-Target/actions/workflows/release.yml)
 
-[![Platform](https://img.shields.io/badge/platform-iOS%2018.5%2B-blue.svg)](https://developer.apple.com/ios/)
+[![Platform](https://img.shields.io/badge/platform-iOS%2018.5%2B%20%7C%20Android%207.0%2B-blue.svg)](https://developer.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-5.0-orange.svg)](https://swift.org/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.1.0-purple.svg)](https://kotlinlang.org/)
 [![Xcode](https://img.shields.io/badge/Xcode-16.4-blue.svg)](https://developer.apple.com/xcode/)
+[![Android Studio](https://img.shields.io/badge/Android%20Studio-2025.1.1-green.svg)](https://developer.android.com/studio)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)](#license)
 
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-brightgreen.svg)](https://github.com/bceverly/Live-Target/network/dependencies)
@@ -26,7 +30,7 @@ Live Target helps shooting enthusiasts automatically detect and track bullet imp
 |----------|--------|----------|
 | **iOS** | ✅ **Active Development** | Camera, Detection, Settings, Watch Integration |
 | **watchOS** | ✅ **Active Development** | Impact Display, History, Haptic Feedback |
-| **Android** | 📋 **Planned** | Camera, Detection, Settings (No Watch) |
+| **Android** | ✅ **Completed** | Camera, Detection, Settings, Image Saving |
 
 ## Repository Structure
 
@@ -36,8 +40,9 @@ Live-Target/
 │   ├── Live Target/        # Main iOS app
 │   ├── Live Target Watch App/   # Watch app
 │   └── Live Target.xcodeproj
-├── android/                # Android implementation (planned)
-│   └── README.md          # Implementation roadmap
+├── android/                # Android implementation (completed)
+│   ├── app/               # Main Android app (Kotlin + Compose)
+│   └── gradle/            # Build system configuration
 ├── shared/                 # Cross-platform resources
 │   ├── algorithms/        # Detection algorithm docs
 │   ├── design/           # Design system & UI specs
