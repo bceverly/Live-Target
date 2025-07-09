@@ -15,6 +15,10 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
         android:maxSdkVersion="28" />
     
+    <!-- Samsung Accessory SDK permissions -->
+    <uses-permission android:name="com.samsung.accessory.permission.ACCESSORY_FRAMEWORK" />
+    <uses-permission android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY" />
+    
     <!-- Camera hardware requirement -->
     <uses-feature
         android:name="android.hardware.camera"
@@ -43,6 +47,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <!-- Samsung Galaxy Watch Service -->
+        <service
+            android:name=".watch.SamsungWatchService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

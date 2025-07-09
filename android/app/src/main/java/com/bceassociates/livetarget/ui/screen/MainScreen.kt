@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.weight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Settings
@@ -57,6 +56,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bceassociates.livetarget.R
 import com.bceassociates.livetarget.ui.component.CameraPreview
+import com.bceassociates.livetarget.ui.component.WatchStatusIcon
 import com.bceassociates.livetarget.ui.component.ZoomControl
 import com.bceassociates.livetarget.ui.theme.LiveTargetTheme
 import com.bceassociates.livetarget.viewmodel.MainViewModel
@@ -93,6 +93,10 @@ fun MainScreen(
         TopAppBar(
             title = { Text(stringResource(R.string.app_name)) },
             actions = {
+                WatchStatusIcon(
+                    status = uiState.watchConnectionStatus,
+                    integrationEnabled = uiState.watchIntegrationEnabled,
+                )
                 IconButton(onClick = { showHelp = true }) {
                     Icon(Icons.Default.Help, contentDescription = stringResource(R.string.help))
                 }
@@ -101,13 +105,12 @@ fun MainScreen(
                 }
             },
         )
-        )
         
         // Main Content
         Box(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .weight(1f),
         ) {
             if (hasCameraPermission) {
                 // Camera Preview with Impact Overlays
@@ -218,6 +221,10 @@ fun MainScreen(
                     if (uiState.isDetecting) {
                         viewModel.stopDetection()
                     } else {
+                        // Test watch connectivity when starting if integration is enabled
+                        if (uiState.watchIntegrationEnabled) {
+                            viewModel.testWatchConnectivity()
+                        }
                         viewModel.startDetection()
                     }
                 },

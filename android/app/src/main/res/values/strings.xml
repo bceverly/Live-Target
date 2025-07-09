@@ -34,6 +34,7 @@
     <!-- Help Screen Content -->
     <string name="help_what_is_title">What is Live Target?</string>
     <string name="help_what_is_description">Live Target is an intelligent bullet impact detection system that uses your device\'s camera and computer vision to automatically identify and track bullet holes on targets during shooting practice.</string>
+    <string name="help_feature_parity">Available for both Android (with Samsung Galaxy Watch) and iOS (with Apple Watch) with full feature parity between platforms.</string>
     <string name="help_what_is_use_cases">The app continuously monitors your target through the camera feed and alerts you when new impacts are detected, making it perfect for:</string>
     <string name="help_use_case_practice">Target shooting practice</string>
     <string name="help_use_case_accuracy">Accuracy training</string>
@@ -57,12 +58,26 @@
     <string name="help_bullet_caliber">Bullet Caliber: Sets the minimum size for impact detection (17-70 caliber)</string>
     <string name="help_caliber_note">Higher caliber = larger minimum detection size</string>
     
+    <string name="help_watch_title">Samsung Galaxy Watch</string>
+    <string name="help_watch_integration">Watch Integration: Enable/disable sending impact notifications to Samsung Galaxy Watch</string>
+    <string name="help_watch_status">Watch Status: Shows pairing and connection status</string>
+    <string name="help_watch_notifications">When enabled, your Galaxy Watch will receive notifications and display impact details</string>
+    <string name="help_watch_status_icons">Watch Status Icons</string>
+    <string name="help_watch_green">Green watch: Connected and ready</string>
+    <string name="help_watch_red">Red watch: Connection failed or unavailable</string>
+    <string name="help_watch_gray">Gray watch: Status unknown or integration disabled</string>
+    
     <string name="help_controls_title">Controls</string>
     <string name="help_main_controls_title">Main Controls</string>
     <string name="help_start_stop">Start/Stop: Begin or end impact detection</string>
     <string name="help_clear">Clear: Remove all detected impact markers from screen</string>
     <string name="help_save">Save: Capture current view with impact annotations to Photos</string>
     <string name="help_settings_button">Settings: Access app configuration options</string>
+    
+    <string name="help_zoom_controls_title">Zoom Controls</string>
+    <string name="help_zoom_controls">Zoom Controls: Use + and - buttons to adjust camera zoom</string>
+    <string name="help_zoom_range">Zoom range: 1x to 10x magnification with hardware zoom support</string>
+    <string name="help_zoom_detail">Higher zoom provides more detail but smaller field of view</string>
     
     <string name="help_tips_title">Tips for Best Results</string>
     <string name="help_camera_positioning">Camera Positioning</string>
@@ -93,4 +108,10 @@
     <string name="help_close_camera_apps">Close other camera apps before using Live Target</string>
     <string name="help_restart_app">Restart app if detection becomes unresponsive</string>
     <string name="help_increase_frequency">Increase check frequency if device is struggling</string>
+    
+    <string name="help_watch_issues">Samsung Galaxy Watch Issues</string>
+    <string name="help_watch_pair_check">Check that watch is paired and companion app is installed</string>
+    <string name="help_watch_enable_integration">Ensure watch integration is enabled in settings</string>
+    <string name="help_watch_connection_verify">Verify watch is connected (green watch icon)</string>
+    <string name="help_watch_test_start">Try tapping Start button to test connectivity</string>
 </resources>

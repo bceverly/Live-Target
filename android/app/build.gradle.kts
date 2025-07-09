@@ -13,8 +13,8 @@ android {
         applicationId = "com.bceassociates.livetarget"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.9"
+        versionCode = 2
+        versionName = "0.91"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -91,6 +91,9 @@ dependencies {
     
     // Lifecycle
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    
+    // Samsung Accessory SDK for Galaxy Watch integration
+    implementation("com.samsung.android:accessory:1.4.0")
     
     // Testing
     testImplementation(libs.junit)

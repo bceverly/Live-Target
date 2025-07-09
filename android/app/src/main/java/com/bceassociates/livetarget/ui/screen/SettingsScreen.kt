@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -66,8 +67,8 @@ fun SettingsScreen(
         null
     }
     
-    val appVersion = packageInfo?.let { "${it.versionName} (${it.longVersionCode})" } ?: "0.9"
-    val buildDate = "January 8, 2025" // This would be set during build in production
+    val appVersion = packageInfo?.let { "${it.versionName} (${it.longVersionCode})" } ?: "0.91"
+    val buildDate = "January 9, 2025" // This would be set during build in production
     
     Column(
         modifier = Modifier
@@ -199,6 +200,100 @@ fun SettingsScreen(
                                 Text("+")
                             }
                         }
+                    }
+                }
+            }
+            
+            // Samsung Watch Section
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                ) {
+                    Text(
+                        text = "Samsung Galaxy Watch",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 12.dp),
+                    )
+                    
+                    // Watch Integration Toggle
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text("Watch Integration")
+                        Switch(
+                            checked = uiState.watchIntegrationEnabled,
+                            onCheckedChange = { viewModel.setWatchIntegrationEnabled(it) },
+                        )
+                    }
+                    
+                    // Watch Status
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            text = "Watch Status:",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            text = when {
+                                uiState.isWatchPaired -> "Paired"
+                                else -> "Not Paired"
+                            },
+                            fontWeight = FontWeight.Medium,
+                            color = when {
+                                uiState.isWatchPaired -> MaterialTheme.colorScheme.primary
+                                else -> MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                        )
+                    }
+                    
+                    // Connection Status
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            text = "Connection:",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            text = when (uiState.watchConnectionStatus) {
+                                com.bceassociates.livetarget.watch.WatchConnectionStatus.CONNECTED -> "Connected"
+                                com.bceassociates.livetarget.watch.WatchConnectionStatus.DISCONNECTED -> "Disconnected"
+                                com.bceassociates.livetarget.watch.WatchConnectionStatus.ERROR -> "Error"
+                                com.bceassociates.livetarget.watch.WatchConnectionStatus.UNKNOWN -> "Unknown"
+                            },
+                            fontWeight = FontWeight.Medium,
+                            color = when (uiState.watchConnectionStatus) {
+                                com.bceassociates.livetarget.watch.WatchConnectionStatus.CONNECTED -> MaterialTheme.colorScheme.primary
+                                com.bceassociates.livetarget.watch.WatchConnectionStatus.ERROR -> MaterialTheme.colorScheme.error
+                                else -> MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                        )
+                    }
+                    
+                    // Help text
+                    if (!uiState.isWatchPaired) {
+                        Text(
+                            text = "Pair a Samsung Galaxy Watch to receive impact notifications and alerts.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 8.dp),
+                        )
                     }
                 }
             }

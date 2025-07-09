@@ -24,6 +24,16 @@ struct HelpView: View {
                         Text("Live Target is an intelligent bullet impact detection system that uses your device's camera and computer vision to automatically identify and track bullet holes on targets during shooting practice.")
                             .fixedSize(horizontal: false, vertical: true)
                         
+                        Text("Available for both iOS (with Apple Watch) and Android (with Samsung Galaxy Watch) with full feature parity between platforms.")
+                            .fixedSize(horizontal: false, vertical: true)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        
+                        Text("Both versions include: zoom controls (1x-10x), configurable settings, impact detection, photo saving, and watch integration.")
+                            .fixedSize(horizontal: false, vertical: true)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
                         Text("The app continuously monitors your target through the camera feed and alerts you when new impacts are detected, making it perfect for:")
                             .fixedSize(horizontal: false, vertical: true)
                         
@@ -142,6 +152,10 @@ struct HelpView: View {
                                     Text("• Watch Status: Shows pairing and app installation status")
                                         .fixedSize(horizontal: false, vertical: true)
                                     Text("When enabled, your Apple Watch will receive haptic feedback and display impact details")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                    Text("Android users enjoy identical functionality with Samsung Galaxy Watch")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                         .fixedSize(horizontal: false, vertical: true)

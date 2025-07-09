@@ -22,6 +22,8 @@ import androidx.lifecycle.viewModelScope
 import com.bceassociates.livetarget.data.model.ChangePoint
 import com.bceassociates.livetarget.data.preferences.SettingsDataStore
 import com.bceassociates.livetarget.detection.ChangeDetector
+import com.bceassociates.livetarget.watch.WatchConnectivityManager
+import com.bceassociates.livetarget.watch.WatchConnectionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,6 +42,9 @@ data class MainUiState(
     val checkInterval: Double = 2.0,
     val bulletCaliber: Int = 22,
     val zoomFactor: Double = 1.0,
+    val watchIntegrationEnabled: Boolean = false,
+    val watchConnectionStatus: WatchConnectionStatus = WatchConnectionStatus.UNKNOWN,
+    val isWatchPaired: Boolean = false,
 )
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -50,6 +55,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val settingsDataStore = SettingsDataStore(application)
     private val changeDetector = ChangeDetector()
+    private val watchConnectivityManager = WatchConnectivityManager.getInstance(application)
 
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
@@ -90,6 +96,25 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
+        viewModelScope.launch {
+            settingsDataStore.watchIntegrationEnabled.collect { enabled ->
+                _uiState.value = _uiState.value.copy(watchIntegrationEnabled = enabled)
+            }
+        }
+
+        // Observe watch connectivity state
+        viewModelScope.launch {
+            watchConnectivityManager.watchConnectionStatus.collect { status ->
+                _uiState.value = _uiState.value.copy(watchConnectionStatus = status)
+            }
+        }
+
+        viewModelScope.launch {
+            watchConnectivityManager.isWatchPaired.collect { paired ->
+                _uiState.value = _uiState.value.copy(isWatchPaired = paired)
+            }
+        }
+
         // Observe change detector state
         viewModelScope.launch {
             changeDetector.isDetecting.collect { isDetecting ->
@@ -122,6 +147,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun processImage(bitmap: Bitmap) {
         currentBitmap = bitmap.copy(bitmap.config ?: Bitmap.Config.ARGB_8888, false)
         changeDetector.detectChanges(bitmap)
+        
+        // Send to watch if enabled
+        if (_uiState.value.watchIntegrationEnabled) {
+            // This will be handled by the ChangeDetector when it detects changes
+        }
     }
 
     fun saveImage() {
@@ -248,6 +278,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setZoomFactor(factor: Double) {
         viewModelScope.launch {
             settingsDataStore.setZoomFactor(factor)
+        }
+    }
+
+    fun setWatchIntegrationEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.setWatchIntegrationEnabled(enabled)
+        }
+    }
+
+    fun testWatchConnectivity() {
+        watchConnectivityManager.testWatchConnectivity()
+    }
+
+    fun sendImpactToWatch(impact: ChangePoint, image: Bitmap) {
+        if (_uiState.value.watchIntegrationEnabled) {
+            val circleColor = Color.parseColor("#${_uiState.value.circleColor}")
+            val numberColor = Color.parseColor("#${_uiState.value.numberColor}")
+            watchConnectivityManager.sendImpactToWatch(impact, image, circleColor, numberColor)
         }
     }
 }

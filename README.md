@@ -28,9 +28,10 @@ Live Target helps shooting enthusiasts automatically detect and track bullet imp
 
 | Platform | Status | Features |
 |----------|--------|----------|
-| **iOS** | ✅ **Active Development** | Camera, Detection, Settings, Watch Integration |
-| **watchOS** | ✅ **Active Development** | Impact Display, History, Haptic Feedback |
-| **Android** | ✅ **Completed** | Camera, Detection, Settings, Image Saving |
+| **iOS** | ✅ **Completed** | Camera, Detection, Settings, Apple Watch Integration |
+| **watchOS** | ✅ **Completed** | Impact Display, History, Haptic Feedback |
+| **Android** | ✅ **Completed** | Camera, Detection, Settings, Samsung Galaxy Watch Integration |
+| **Samsung Watch** | ✅ **Completed** | Impact Display, Notifications, Status Integration |
 
 ## Repository Structure
 
@@ -56,25 +57,47 @@ Live-Target/
 
 ## Features
 
-### Core Functionality
+### Core Functionality (Available on Both Platforms)
 - **Real-time camera feed** with live impact detection
-- **Automatic bullet impact detection** using computer vision
-- **Visual impact indicators** with numbered circles
-- **Configurable detection sensitivity** for different bullet calibers
-- **Photo saving** with impact annotations
-- **Zoom controls** for precise targeting
+- **Automatic bullet impact detection** using computer vision algorithms
+- **Visual impact indicators** with numbered circles and customizable colors
+- **Advanced zoom controls** with hardware zoom support (1x to 10x magnification)
+- **Configurable detection sensitivity** for different bullet calibers (17-70 caliber)
+- **Adjustable check frequency** for optimal performance (0.5-10 seconds)
+- **Photo saving** with impact annotations to device gallery
+- **Settings persistence** with comprehensive customization options
+- **Help system** with detailed usage instructions and troubleshooting
 
-### iOS-Specific Features
-- **Apple Watch integration** with impact notifications
-- **Haptic feedback** on Watch for new impacts  
-- **SwiftUI native interface** following iOS design guidelines
-- **Background processing** for optimal performance
+### Cross-Platform Feature Parity
+Both iOS and Android versions offer **identical functionality** with platform-optimized implementations:
 
-### Planned Android Features
-- **Material Design 3 interface** following Android guidelines
-- **CameraX integration** for modern camera handling
-- **OpenCV acceleration** for improved performance
-- **Flexible file system access** for image management
+| Feature | iOS Implementation | Android Implementation |
+|---------|-------------------|----------------------|
+| **Camera Integration** | AVFoundation with hardware zoom | CameraX with hardware zoom support |
+| **Watch Integration** | Apple Watch with WatchConnectivity | Samsung Galaxy Watch with Accessory SDK |
+| **Impact Notifications** | Haptic feedback + visual display | Notifications + visual display |
+| **Watch Status Icons** | Green/Red/Gray indicators | Green/Red/Gray indicators |
+| **Zoom Controls** | Native iOS zoom interface | Material Design zoom controls |
+| **Settings Storage** | UserDefaults persistence | DataStore preferences |
+| **Photo Saving** | Photos library integration | Android MediaStore gallery |
+| **UI Framework** | SwiftUI with iOS design guidelines | Jetpack Compose with Material Design 3 |
+
+### iOS-Specific Implementation Details
+- **Apple Watch companion app** with dedicated watchOS interface
+- **WatchConnectivity framework** for seamless iPhone-Watch communication
+- **SwiftUI native interface** following iOS Human Interface Guidelines
+- **Background processing** with AVFoundation optimization
+- **Haptic feedback** on Watch for tactile impact notifications
+- **Watch app installation** through paired iPhone
+
+### Android-Specific Implementation Details  
+- **Samsung Galaxy Watch integration** with dedicated watch notifications
+- **Samsung Accessory SDK** for robust Galaxy Watch communication
+- **Material Design 3 interface** with dynamic theming support
+- **Jetpack Compose UI** with reactive state management
+- **CameraX integration** for modern camera handling and optimization
+- **DataStore preferences** for efficient settings persistence
+- **Flexible file system access** for advanced image management
 
 ## Development Environment Setup
 
@@ -89,13 +112,22 @@ Live-Target/
 | **Homebrew** | Latest | Package manager for dev tools | `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` |
 | **SwiftLint** | 0.50+ | Code quality and style checking | `brew install swiftlint` |
 
-#### For Android Development (Planned)
+#### For Android Development
 | Software | Version | Purpose | Installation |
 |----------|---------|---------|--------------|
 | **Android Studio** | 2023.1+ | Android development IDE | [Download from Google](https://developer.android.com/studio) |
 | **Java JDK** | 17+ | Required for Android development | `brew install openjdk@17` |
 | **Android SDK** | API 24+ | Android development framework | Installed via Android Studio |
 | **Gradle** | 8.0+ | Android build system | Bundled with Android Studio |
+
+#### For Samsung Galaxy Watch Development
+| Software | Version | Purpose | Installation |
+|----------|---------|---------|--------------|
+| **Samsung Accessory SDK** | 1.4.0+ | Galaxy Watch communication | [Samsung Developer Portal](https://developer.samsung.com/galaxy-watch) |
+| **Galaxy Watch Studio** | Latest | Watch face and app development | [Download from Samsung](https://developer.samsung.com/galaxy-watch-studio) |
+| **Samsung Galaxy Watch** | Series 4+ | Physical device for testing | Required for watch integration testing |
+| **Samsung Health SDK** | Optional | Health data integration | [Samsung Developer Portal](https://developer.samsung.com/health) |
+| **Tizen Studio** | Optional | Advanced watch development | [Download from Samsung](https://developer.tizen.org/development/tizen-studio) |
 
 #### Optional Development Tools
 | Software | Purpose | Installation |
@@ -175,7 +207,7 @@ xcodebuild test -project "Live Target.xcodeproj" -scheme "Live Target" -destinat
 ../tools/scripts/build-ios.sh
 ```
 
-### Android Development Setup (Completed)
+### Android Development Setup
 
 #### 1. Install Java JDK
 ```bash
@@ -234,6 +266,69 @@ cd android/
 # Or use build script
 ../tools/scripts/build-android.sh
 ```
+
+#### 6. Setup Samsung Galaxy Watch Development (Optional)
+
+**Prerequisites:**
+- Samsung Galaxy Watch (Series 4 or later) paired with Android phone
+- Samsung Galaxy Wearable app installed on phone
+- Developer mode enabled on watch
+
+**Samsung Accessory SDK Setup:**
+```bash
+# 1. Register as Samsung Developer
+# Visit: https://developer.samsung.com/
+# Create account and accept terms
+
+# 2. Download Samsung Accessory SDK
+# Visit: https://developer.samsung.com/galaxy-watch
+# Download latest SDK version (1.4.0+)
+
+# 3. Add SDK to Android project
+# The SDK dependency is already included in build.gradle.kts:
+# implementation("com.samsung.android:accessory:1.4.0")
+```
+
+**Galaxy Watch Setup for Development:**
+1. **Enable Developer Mode on Watch:**
+   - Go to **Settings > About watch**
+   - Tap **Software version** 7 times
+   - Developer options will appear in Settings
+
+2. **Enable Debug Mode:**
+   - In **Settings > Developer options**
+   - Enable **Debugging over Wi-Fi** or **ADB debugging**
+   - Enable **Debug applications**
+
+3. **Install Galaxy Watch Studio (Optional):**
+   ```bash
+   # Download from Samsung Developer Portal
+   # Used for watch face development and advanced debugging
+   # Not required for Accessory SDK integration
+   ```
+
+4. **Test Connection:**
+   ```bash
+   # Build and run Android app
+   cd android/
+   ./gradlew assembleDebug
+   
+   # Install on phone paired with Galaxy Watch
+   # Enable watch integration in app settings
+   # Test connectivity with "Start" button
+   ```
+
+**Samsung Developer Account Requirements:**
+- Required for publishing watch apps to Galaxy Store
+- Free registration at https://developer.samsung.com/
+- Certificate signing for production watch apps
+- Not required for testing Accessory SDK integration
+
+**Troubleshooting Galaxy Watch Development:**
+- Ensure watch and phone are on same Wi-Fi network
+- Check Samsung Galaxy Wearable app permissions
+- Verify Bluetooth connection is stable
+- Restart both devices if connection issues persist
 
 ### Development Workflow
 
@@ -309,7 +404,7 @@ rm -rf ~/Library/Developer/Xcode/DerivedData
 # Clean project in Xcode: Product > Clean Build Folder (⌘+Shift+K)
 ```
 
-#### Common Android Issues (Future)
+#### Common Android Issues
 
 **Gradle Issues:**
 ```bash
@@ -326,6 +421,24 @@ rm -rf ~/Library/Developer/Xcode/DerivedData
 # Tools > SDK Manager > Update
 ```
 
+**Samsung Galaxy Watch Issues:**
+```bash
+# Check Samsung Accessory SDK integration
+./gradlew build --info | grep "samsung"
+
+# Verify watch connection
+# Check Samsung Galaxy Wearable app on phone
+# Ensure watch and phone are paired
+# Test with watch integration toggle in app settings
+```
+
+**Watch Connection Troubleshooting:**
+- Ensure Galaxy Watch is paired and connected via Samsung Galaxy Wearable app
+- Check Bluetooth connectivity between phone and watch
+- Verify watch is unlocked and within range
+- Restart Samsung Accessory Service if connection fails
+- Check app permissions for Samsung Accessory framework
+
 ### Hardware Requirements
 
 #### iOS Development
@@ -340,6 +453,7 @@ rm -rf ~/Library/Developer/Xcode/DerivedData
 - **8GB RAM minimum** (16GB+ recommended for Android Studio)
 - **30GB free disk space** (for Android Studio, SDK, emulators)
 - **Android device** for camera functionality testing
+- **Samsung Galaxy Watch** (optional, Series 4+ for watch integration testing)
 
 ### Getting Started
 
@@ -437,24 +551,37 @@ For security issues, please contact: security@bceassociates.com
 
 ## Roadmap
 
-### iOS (Current Focus)
-- [x] Core bullet detection algorithm
-- [x] Real-time camera integration
-- [x] Apple Watch companion app
-- [x] Settings and customization
-- [x] Photo saving functionality
-- [x] Zoom controls
-- [ ] Advanced calibration options
-- [ ] Multiple target support
-- [ ] Shot grouping analysis
+### iOS (Completed v0.91)
+- [x] Core bullet detection algorithm with configurable sensitivity
+- [x] Real-time camera integration with AVFoundation
+- [x] Apple Watch companion app with dedicated watchOS interface
+- [x] Comprehensive settings and customization options
+- [x] Photo saving functionality with impact annotations
+- [x] Advanced zoom controls (1x-10x hardware zoom)
+- [x] Help system with detailed usage instructions
+- [x] Complete feature parity with Android version
 
-### Android (Planned)
-- [ ] Project setup and basic camera integration
-- [ ] Core detection algorithm port
-- [ ] Material Design 3 interface
-- [ ] Settings and preferences
-- [ ] Photo gallery integration
-- [ ] Performance optimization
+### Future Enhancements (Both Platforms)
+- [ ] Advanced calibration options for different distances
+- [ ] Multiple target support for complex ranges
+- [ ] Shot grouping analysis with accuracy metrics
+- [ ] Cloud sync for impact history
+- [ ] Video recording with impact detection overlay
+
+### Android (Completed v0.91)
+- [x] Project setup with modern Gradle build system
+- [x] CameraX integration with hardware zoom support
+- [x] Core detection algorithm implementation with pixel-level analysis
+- [x] Material Design 3 interface with Jetpack Compose
+- [x] Comprehensive settings and preferences with DataStore
+- [x] Samsung Galaxy Watch integration with Accessory SDK
+- [x] Watch status indicators and real-time connectivity monitoring
+- [x] Impact notifications to watch with visual feedback
+- [x] Photo gallery integration with MediaStore
+- [x] Advanced zoom controls (1x-10x magnification)
+- [x] Help system with detailed usage instructions
+- [x] Performance optimization for real-time detection
+- [x] Complete feature parity with iOS version
 
 ### Shared Infrastructure
 - [x] Multi-platform repository structure

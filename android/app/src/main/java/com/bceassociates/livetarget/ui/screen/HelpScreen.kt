@@ -85,6 +85,13 @@ fun HelpScreen(
                                 )
                                 
                                 Text(
+                                    text = stringResource(R.string.help_feature_parity),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(top = 8.dp),
+                                )
+                                
+                                Text(
                                     text = stringResource(R.string.help_what_is_use_cases),
                                     style = MaterialTheme.typography.bodyMedium,
                                     modifier = Modifier.padding(top = 12.dp),
@@ -156,6 +163,16 @@ fun HelpScreen(
                                     ),
                                     modifier = Modifier.padding(top = 16.dp),
                                 )
+                                
+                                SettingGroup(
+                                    title = stringResource(R.string.help_watch_title),
+                                    items = listOf(
+                                        stringResource(R.string.help_watch_integration),
+                                        stringResource(R.string.help_watch_status),
+                                        stringResource(R.string.help_watch_notifications),
+                                    ),
+                                    modifier = Modifier.padding(top = 16.dp),
+                                )
                             },
                         )
                     }
@@ -172,6 +189,26 @@ fun HelpScreen(
                                         stringResource(R.string.help_save),
                                         stringResource(R.string.help_settings_button),
                                     ),
+                                )
+                                
+                                SettingGroup(
+                                    title = stringResource(R.string.help_watch_status_icons),
+                                    items = listOf(
+                                        stringResource(R.string.help_watch_green),
+                                        stringResource(R.string.help_watch_red),
+                                        stringResource(R.string.help_watch_gray),
+                                    ),
+                                    modifier = Modifier.padding(top = 16.dp),
+                                )
+                                
+                                SettingGroup(
+                                    title = stringResource(R.string.help_zoom_controls_title),
+                                    items = listOf(
+                                        stringResource(R.string.help_zoom_controls),
+                                        stringResource(R.string.help_zoom_range),
+                                        stringResource(R.string.help_zoom_detail),
+                                    ),
+                                    modifier = Modifier.padding(top = 16.dp),
                                 )
                             },
                         )
@@ -235,6 +272,17 @@ fun HelpScreen(
                                         stringResource(R.string.help_close_camera_apps),
                                         stringResource(R.string.help_restart_app),
                                         stringResource(R.string.help_increase_frequency),
+                                    ),
+                                    modifier = Modifier.padding(top = 16.dp),
+                                )
+                                
+                                SettingGroup(
+                                    title = stringResource(R.string.help_watch_issues),
+                                    items = listOf(
+                                        stringResource(R.string.help_watch_pair_check),
+                                        stringResource(R.string.help_watch_enable_integration),
+                                        stringResource(R.string.help_watch_connection_verify),
+                                        stringResource(R.string.help_watch_test_start),
                                     ),
                                     modifier = Modifier.padding(top = 16.dp),
                                 )

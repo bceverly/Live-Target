@@ -10,6 +10,7 @@ package com.bceassociates.livetarget.data.preferences
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -28,6 +29,7 @@ class SettingsDataStore(private val context: Context) {
         private val CHECK_INTERVAL_KEY = doublePreferencesKey("check_interval")
         private val BULLET_CALIBER_KEY = intPreferencesKey("bullet_caliber")
         private val ZOOM_FACTOR_KEY = doublePreferencesKey("zoom_factor")
+        private val WATCH_INTEGRATION_ENABLED_KEY = booleanPreferencesKey("watch_integration_enabled")
     }
 
     val circleColor: Flow<String> =
@@ -53,6 +55,11 @@ class SettingsDataStore(private val context: Context) {
     val zoomFactor: Flow<Double> =
         context.dataStore.data.map { preferences ->
             preferences[ZOOM_FACTOR_KEY] ?: 1.0
+        }
+
+    val watchIntegrationEnabled: Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[WATCH_INTEGRATION_ENABLED_KEY] ?: false
         }
 
     suspend fun setCircleColor(color: String) {
@@ -82,6 +89,12 @@ class SettingsDataStore(private val context: Context) {
     suspend fun setZoomFactor(factor: Double) {
         context.dataStore.edit { settings ->
             settings[ZOOM_FACTOR_KEY] = factor
+        }
+    }
+
+    suspend fun setWatchIntegrationEnabled(enabled: Boolean) {
+        context.dataStore.edit { settings ->
+            settings[WATCH_INTEGRATION_ENABLED_KEY] = enabled
         }
     }
 }
