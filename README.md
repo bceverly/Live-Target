@@ -504,6 +504,81 @@ xcodebuild test -project "Live Target.xcodeproj" -scheme "Live Target" -destinat
 
 See test files in `ios/Live TargetTests/` for detailed test coverage.
 
+## Local CI/CD Testing
+
+### Setting Up Local CI/CD with act
+
+To catch CI/CD issues before pushing to GitHub, you can run the GitHub Actions locally using `act`:
+
+#### Installation
+```bash
+# Install act (GitHub Actions local runner)
+brew install act
+
+# Install Docker Desktop (required for act)
+brew install --cask docker
+
+# Start Docker Desktop
+open -a Docker
+```
+
+#### Running Local CI/CD
+```bash
+# Run all CI/CD checks locally (recommended before every push)
+./scripts/local-ci.sh
+
+# Run specific GitHub Actions workflows
+act push                    # Run all push workflows
+act -j lint-and-test       # Run Android lint and test job
+act -j build              # Run Android build job
+
+# Run with specific event
+act pull_request           # Run PR checks
+
+# List available workflows
+act -l
+```
+
+#### Local CI/CD Script
+The `scripts/local-ci.sh` script runs the same checks as GitHub Actions:
+
+- ✅ **Android lint** (`gradlew lintDebug`)
+- ✅ **Android unit tests** (`gradlew testDebugUnitTest`)
+- ✅ **Android build** (`gradlew assembleDebug`)
+- ✅ **iOS build** (`xcodebuild build`) *if Xcode available*
+- ✅ **iOS unit tests** (`xcodebuild test`) *if Xcode available*
+- ✅ **SwiftLint** (`swiftlint`) *if installed*
+- ✅ **Security scan** (secret detection)
+
+#### Quick Check Commands
+```bash
+# Android only
+cd android && ./gradlew lintDebug testDebugUnitTest assembleDebug
+
+# iOS only (if Xcode installed)
+cd ios && xcodebuild -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 15" build test
+
+# Full local CI/CD
+./scripts/local-ci.sh
+```
+
+### Benefits of Local CI/CD
+
+- 🚀 **Faster feedback** - catch issues before pushing
+- 💰 **Save CI minutes** - reduce failed builds in GitHub Actions
+- 🔒 **Security** - detect secrets and vulnerabilities locally
+- 🛡️ **Quality** - ensure code passes all checks before PR
+
+### CI/CD Configuration
+
+The project includes comprehensive CI/CD pipelines:
+
+- **`.github/workflows/ci-cd.yml`** - Main orchestration workflow
+- **`.github/workflows/android-ci.yml`** - Android-specific pipeline
+- **`.github/workflows/ios-ci.yml`** - iOS-specific pipeline
+- **`.actrc`** - Local act configuration
+- **`scripts/local-ci.sh`** - Local CI/CD runner script
+
 ## Contributing
 
 ### Development Workflow
