@@ -12,6 +12,8 @@ struct SettingsView: View {
     @AppStorage("numberColor") private var numberColorHex: String = "FF0000"
     @AppStorage("checkInterval") private var checkInterval: Double = 2.0
     @AppStorage("bulletCaliber") private var bulletCaliber: Int = 22
+    @AppStorage("watchIntegrationEnabled") private var watchIntegrationEnabled: Bool = false
+    @StateObject private var watchConnectivity = WatchConnectivityManager.shared
     @Environment(\.dismiss) private var dismiss
     
     // MARK: - App Information
@@ -72,6 +74,50 @@ struct SettingsView: View {
                     }
                 }
                 
+                Section(header: Text("Apple Watch")) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Toggle("Watch Integration", isOn: $watchIntegrationEnabled)
+                            .onChange(of: watchIntegrationEnabled) { _, newValue in
+                                if newValue {
+                                    // Test connectivity when enabling integration
+                                    watchConnectivity.testWatchConnectivity()
+                                }
+                            }
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Text("Watch Status:")
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                if watchConnectivity.isWatchPaired {
+                                    if watchConnectivity.isWatchAppInstalled {
+                                        Text("App Installed")
+                                            .foregroundColor(.green)
+                                    } else {
+                                        Text("Paired, No App")
+                                            .foregroundColor(.orange)
+                                    }
+                                } else {
+                                    Text("No Watch Paired")
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            
+                            if watchConnectivity.isWatchPaired && !watchConnectivity.isWatchAppInstalled {
+                                Text("Install the Live Target app on your Apple Watch to receive impact notifications.")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            } else if !watchConnectivity.isWatchPaired {
+                                Text("Pair an Apple Watch to enable watch integration features.")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                    }
+                }
+                
                 Section(header: Text("About")) {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
@@ -118,6 +164,13 @@ struct SettingsView: View {
                     Button("Done") {
                         dismiss()
                     }
+                }
+            }
+            .onAppear {
+                // Set smart default for watch integration based on pairing status
+                // Only set default if this is the first time opening settings
+                if UserDefaults.standard.object(forKey: "watchIntegrationEnabled") == nil {
+                    watchIntegrationEnabled = watchConnectivity.isWatchPaired
                 }
             }
         }

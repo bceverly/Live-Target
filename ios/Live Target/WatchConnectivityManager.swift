@@ -10,11 +10,20 @@ import WatchConnectivity
 import UIKit
 import os.log
 
+enum WatchConnectionStatus {
+    case unknown
+    case connected
+    case disconnected
+    case error
+}
+
 class WatchConnectivityManager: NSObject, ObservableObject {
     static let shared = WatchConnectivityManager()
     
     @Published var isWatchConnected = false
     @Published var isWatchAppInstalled = false
+    @Published var isWatchPaired = false
+    @Published var watchConnectionStatus: WatchConnectionStatus = .unknown
     
     private let logger = Logger(subsystem: "com.bceassociates.Live-Target", category: "WatchConnectivity")
     
@@ -27,9 +36,60 @@ class WatchConnectivityManager: NSObject, ObservableObject {
         }
     }
     
+    func testWatchConnectivity() {
+        guard WCSession.isSupported() else {
+            logger.warning("Watch connectivity not supported")
+            DispatchQueue.main.async {
+                self.watchConnectionStatus = .error
+            }
+            return
+        }
+        
+        guard WCSession.default.activationState == .activated else {
+            logger.warning("Watch session not activated")
+            DispatchQueue.main.async {
+                self.watchConnectionStatus = .disconnected
+            }
+            return
+        }
+        
+        guard WCSession.default.isReachable else {
+            logger.warning("Watch is not reachable")
+            DispatchQueue.main.async {
+                self.watchConnectionStatus = .disconnected
+            }
+            return
+        }
+        
+        // Send a test message to verify connectivity
+        let testMessage: [String: Any] = [
+            "type": "connectivityTest",
+            "timestamp": Date().timeIntervalSince1970
+        ]
+        
+        WCSession.default.sendMessage(
+            testMessage,
+            replyHandler: { response in
+                self.logger.info("Watch connectivity test successful: \(response)")
+                DispatchQueue.main.async {
+                    self.watchConnectionStatus = .connected
+                }
+            },
+            errorHandler: { error in
+                self.logger.error("Watch connectivity test failed: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.watchConnectionStatus = .error
+                }
+            }
+        )
+    }
+    
     func sendImpactToWatch(_ impact: ChangePoint, originalImage: UIImage, circleColor: UIColor, numberColor: UIColor) {
         guard WCSession.default.isReachable else {
             logger.warning("Watch is not reachable")
+            DispatchQueue.main.async {
+                self.watchConnectionStatus = .error
+            }
             return
         }
         
@@ -156,9 +216,15 @@ class WatchConnectivityManager: NSObject, ObservableObject {
             message,
             replyHandler: { response in
                 self.logger.info("Watch acknowledged impact: \(response)")
+                DispatchQueue.main.async {
+                    self.watchConnectionStatus = .connected
+                }
             },
             errorHandler: { error in
                 self.logger.error("Failed to send impact to watch: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.watchConnectionStatus = .error
+                }
             }
         )
     }
@@ -176,6 +242,14 @@ extension WatchConnectivityManager: WCSessionDelegate {
         DispatchQueue.main.async {
             self.isWatchConnected = activationState == .activated
             self.isWatchAppInstalled = session.isWatchAppInstalled
+            self.isWatchPaired = session.isPaired
+            
+            // Don't automatically set connection status - wait for explicit connectivity test
+            // Keep status as .unknown until testWatchConnectivity() is called
+            if let error = error {
+                self.watchConnectionStatus = .error
+            }
+            // Remove automatic status setting - let testWatchConnectivity() handle this
         }
         
         if let error = error {
@@ -196,6 +270,13 @@ extension WatchConnectivityManager: WCSessionDelegate {
         DispatchQueue.main.async {
             self.isWatchConnected = session.activationState == .activated
             self.isWatchAppInstalled = session.isWatchAppInstalled
+            self.isWatchPaired = session.isPaired
+            
+            // Don't automatically change connection status - let testWatchConnectivity() handle this
+            // Only reset to unknown if the session becomes inactive
+            if session.activationState != .activated {
+                self.watchConnectionStatus = .unknown
+            }
         }
     }
     

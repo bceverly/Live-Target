@@ -68,6 +68,9 @@ extension WatchConnectivityManager: WCSessionDelegate {
             case "newImpact":
                 handleNewImpact(message: message)
                 replyHandler(["status": "received"])
+            case "connectivityTest":
+                // Handle connectivity test - just reply with success
+                replyHandler(["status": "connected", "timestamp": Date().timeIntervalSince1970])
             default:
                 replyHandler(["status": "unknown_type"])
             }

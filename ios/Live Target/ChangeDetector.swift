@@ -101,6 +101,12 @@ class ChangeDetector: ObservableObject {
     }
     
     private func sendImpactToWatch(_ impact: ChangePoint, image: UIImage) {
+        // Check if watch integration is enabled
+        let watchIntegrationEnabled = UserDefaults.standard.bool(forKey: "watchIntegrationEnabled")
+        guard watchIntegrationEnabled else {
+            return
+        }
+        
         // Get current colors from UserDefaults
         let circleColorHex = UserDefaults.standard.string(forKey: "circleColor") ?? "FF0000"
         let numberColorHex = UserDefaults.standard.string(forKey: "numberColor") ?? "FF0000"

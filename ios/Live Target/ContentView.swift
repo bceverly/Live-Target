@@ -9,16 +9,56 @@
 import SwiftUI
 import SwiftData
 
+struct WatchStatusIcon: View {
+    let status: WatchConnectionStatus
+    let integrationEnabled: Bool
+    
+    var body: some View {
+        ZStack {
+            // Base watch icon
+            Image(systemName: "applewatch")
+                .foregroundColor(iconColor)
+                .font(.system(size: 16))
+            
+            // Error overlay (circle with diagonal line) - only if integration is enabled
+            if integrationEnabled && (status == .disconnected || status == .error) {
+                Image(systemName: "circle.slash")
+                    .foregroundColor(.red)
+                    .font(.system(size: 20))
+                    .background(Color.clear)
+            }
+        }
+    }
+    
+    private var iconColor: Color {
+        // If integration is disabled, always show grey
+        guard integrationEnabled else {
+            return .gray
+        }
+        
+        switch status {
+        case .connected:
+            return .green
+        case .disconnected, .error:
+            return .red
+        case .unknown:
+            return .gray
+        }
+    }
+}
+
 struct ContentView: View {
     @State private var capturedImage: UIImage?
     @StateObject private var changeDetector = ChangeDetector()
     @StateObject private var watchConnectivity = WatchConnectivityManager.shared
     @State private var showingSettings = false
+    @State private var showingHelp = false
     @AppStorage("circleColor") private var circleColorHex: String = "FF0000"
     @AppStorage("numberColor") private var numberColorHex: String = "FF0000"
     @AppStorage("checkInterval") private var checkInterval: Double = 2.0
     @AppStorage("bulletCaliber") private var bulletCaliber: Int = 22
     @AppStorage("zoomFactor") private var zoomFactor: Double = 1.0
+    @AppStorage("watchIntegrationEnabled") private var watchIntegrationEnabled: Bool = false
     
     var body: some View {
         NavigationView {
@@ -73,16 +113,16 @@ struct ContentView: View {
             .navigationTitle("Live Target")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Help") {
+                        showingHelp = true
+                    }
+                }
+                
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
                         // Watch connectivity status
-                        if watchConnectivity.isWatchConnected {
-                            Image(systemName: "applewatch")
-                                .foregroundColor(.green)
-                        } else if watchConnectivity.isWatchAppInstalled {
-                            Image(systemName: "applewatch")
-                                .foregroundColor(.orange)
-                        }
+                        WatchStatusIcon(status: watchConnectivity.watchConnectionStatus, integrationEnabled: watchIntegrationEnabled)
                         
                         Button("Settings") {
                             showingSettings = true
@@ -120,6 +160,8 @@ struct ContentView: View {
                     } else {
                         // When stopped: show Start and Save buttons
                         Button("Start") {
+                            // Always test watch connectivity when starting (for icon status)
+                            watchConnectivity.testWatchConnectivity()
                             changeDetector.startDetection()
                         }
                         .foregroundColor(.green)
@@ -142,9 +184,26 @@ struct ContentView: View {
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
             }
+            .sheet(isPresented: $showingHelp) {
+                HelpView()
+            }
             .onAppear {
                 changeDetector.setCheckInterval(checkInterval)
                 changeDetector.setMinChangeSize(bulletCaliber * 2)
+                
+                // Always test watch connectivity on app launch for icon status
+                watchConnectivity.testWatchConnectivity()
+            }
+            .task {
+                // Set smart default for watch integration if not set yet
+                // Use .task to ensure this runs early and only once
+                if UserDefaults.standard.object(forKey: "watchIntegrationEnabled") == nil {
+                    // Wait a moment for watch connectivity to initialize
+                    try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+                    await MainActor.run {
+                        watchIntegrationEnabled = watchConnectivity.isWatchPaired
+                    }
+                }
             }
         }
     }
