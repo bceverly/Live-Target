@@ -228,7 +228,7 @@ cd android/
 # Run unit tests
 ./gradlew test
 
-# Run instrumented tests (local only - disabled in CI due to emulator issues)
+# Run instrumented tests (runs both locally and in CI)
 ./gradlew connectedDebugAndroidTest
 
 # Or use build script
