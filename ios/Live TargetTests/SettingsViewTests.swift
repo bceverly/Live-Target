@@ -13,28 +13,29 @@ import SwiftUI
 struct SettingsViewTests {
     
     @Test func testSettingsViewInitialization() async throws {
-        let settingsView = SettingsView()
+        let settingsView = await SettingsView()
         
         // Basic initialization test - the view should be created without errors
-        #expect(settingsView != nil)
+        // SettingsView is a struct, so it's never nil - just test that it compiles
+        #expect(true) // Test passes if SettingsView initializes without throwing
     }
     
     @Test func testAppVersionFormat() async throws {
-        let settingsView = SettingsView()
+        let settingsView = await SettingsView()
         
         // Test that app version is accessible (indirectly through the view structure)
         // Note: Since appVersion is private, we can't test it directly,
         // but we can verify the SettingsView compiles and initializes correctly
-        #expect(settingsView != nil)
+        #expect(true) // Test passes if SettingsView initializes without throwing
     }
     
     @Test func testBuildDateFormat() async throws {
-        let settingsView = SettingsView()
+        let settingsView = await SettingsView()
         
         // Test that build date is accessible (indirectly through the view structure)
         // Note: Since buildDate is private, we can't test it directly,
         // but we can verify the SettingsView compiles and initializes correctly
-        #expect(settingsView != nil)
+        #expect(true) // Test passes if SettingsView initializes without throwing
     }
     
     @Test func testDefaultSettingsValues() async throws {

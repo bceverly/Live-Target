@@ -30,11 +30,11 @@ struct WatchConnectivityTests {
     
     @Test func testImageResizing() async throws {
         // Test the private resizeImage method indirectly by testing image size limits
-        let manager = WatchConnectivityManager.shared
+        _ = WatchConnectivityManager.shared
         
         // Create a large test image
         let largeImage = createTestImage(width: 1000, height: 1000, color: .blue)
-        let testImpact = ChangePoint(location: CGPoint(x: 0.5, y: 0.5), number: 1)
+        _ = ChangePoint(location: CGPoint(x: 0.5, y: 0.5), number: 1)
         
         // This should not crash even with a large image
         // (The actual message sending will fail in tests since WCSession isn't available,

@@ -21,7 +21,8 @@ struct ChangePointTests {
         #expect(changePoint.location.x == 0.5)
         #expect(changePoint.location.y == 0.3)
         #expect(changePoint.number == 5)
-        #expect(changePoint.id != nil) // UUID should be generated
+        // UUID is always generated, so just verify it exists by checking it's not empty
+        #expect(!changePoint.id.uuidString.isEmpty)
     }
     
     @Test func testChangePointUniqueIDs() async throws {

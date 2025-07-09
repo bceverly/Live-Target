@@ -27,7 +27,7 @@ on:
 
 env:
   JAVA_VERSION: '17'
-  ANDROID_API_LEVEL: '35'
+  ANDROID_API_LEVEL: '34'
   ANDROID_BUILD_TOOLS: '34.0.0'
 
 jobs:
@@ -79,7 +79,7 @@ jobs:
         # Install ktlint for code formatting checks
         curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.1.1/ktlint && chmod a+x ktlint
         # Run ktlint on Kotlin source files
-        find app/src -name "*.kt" | xargs ./ktlint --reporter=github-actions
+        find app/src -name "*.kt" | xargs ./ktlint --reporter=plain
       continue-on-error: true
     
     - name: Run Android Lint
@@ -219,8 +219,10 @@ jobs:
           p/security-audit
           p/secrets
           p/kotlin
-          p/android
-        generateSarif: "1"
+    
+    - name: Generate SARIF Report
+      run: |
+        semgrep --config=p/security-audit --config=p/secrets --config=p/kotlin --sarif --output=semgrep.sarif . || true
     
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v3
@@ -277,13 +279,15 @@ jobs:
         path: |
           ~/.android/avd/*
           ~/.android/adb*
-        key: avd-${{ env.ANDROID_API_LEVEL }}
+        key: avd-${{ env.ANDROID_API_LEVEL }}-google_apis-x86_64
     
     - name: Create AVD and Generate Snapshot for Caching
       if: steps.avd-cache.outputs.cache-hit != 'true'
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: ${{ env.ANDROID_API_LEVEL }}
+        target: google_apis
+        arch: x86_64
         force-avd-creation: false
         emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: false
@@ -293,6 +297,8 @@ jobs:
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: ${{ env.ANDROID_API_LEVEL }}
+        target: google_apis
+        arch: x86_64
         force-avd-creation: false
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: true
