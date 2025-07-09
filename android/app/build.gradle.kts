@@ -93,7 +93,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     
     // Samsung Accessory SDK for Galaxy Watch integration
-    implementation("com.samsung.android:accessory:1.4.0")
+    // Note: Samsung Accessory SDK is not available in public Maven repositories
+    // For CI/CD builds, we use stub implementations
+    // implementation("com.samsung.android:accessory:1.4.0")
     
     // Testing
     testImplementation(libs.junit)
@@ -127,7 +129,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         "**/generated/**"
     )
     
-    val debugTree = fileTree("${project.buildDir}/tmp/kotlin-classes/debug") {
+    val debugTree = fileTree("${project.layout.buildDirectory.get().asFile}/tmp/kotlin-classes/debug") {
         exclude(fileFilter)
     }
     
@@ -135,7 +137,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     
     sourceDirectories.setFrom(files(mainSrc))
     classDirectories.setFrom(files(debugTree))
-    executionData.setFrom(fileTree(project.buildDir) {
+    executionData.setFrom(fileTree(project.layout.buildDirectory.get().asFile) {
         include("jacoco/testDebugUnitTest.exec")
     })
 }

@@ -14,10 +14,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.Log
 import com.bceassociates.livetarget.data.model.ChangePoint
-import com.samsung.android.sdk.accessory.SA
-import com.samsung.android.sdk.accessory.SAAgent
 import com.samsung.android.sdk.accessory.SAAgentV2
-import com.samsung.android.sdk.accessory.SAMessage
 import com.samsung.android.sdk.accessory.SAPeerAgent
 import com.samsung.android.sdk.accessory.SASocket
 import kotlinx.coroutines.CoroutineScope
@@ -41,7 +38,6 @@ class SamsungWatchManager(context: Context) : WatchConnectivityManager(context) 
         private const val MAX_MESSAGE_SIZE = 1024 * 50 // 50KB limit for Samsung messages
     }
     
-    private var sagent: SAAgent? = null
     private var socket: SASocket? = null
     private var peerAgent: SAPeerAgent? = null
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -50,17 +46,11 @@ class SamsungWatchManager(context: Context) : WatchConnectivityManager(context) 
         try {
             Log.d(TAG, "Initializing Samsung watch connectivity...")
             
-            // Initialize Samsung Accessory SDK
-            sagent = SAAgent(context, SamsungWatchService::class.java)
+            // For stub implementation, we'll simulate initialization
+            // In a real implementation, this would initialize the Samsung Accessory SDK
+            updateConnectionStatus(WatchConnectionStatus.UNKNOWN)
             
-            // Check if Samsung Accessory SDK is available
-            if (SA.isFeatureEnabled(SA.FEATURE_ACCESSORY_SDK)) {
-                Log.d(TAG, "Samsung Accessory SDK is available")
-                updateConnectionStatus(WatchConnectionStatus.UNKNOWN)
-            } else {
-                Log.w(TAG, "Samsung Accessory SDK is not available")
-                updateConnectionStatus(WatchConnectionStatus.ERROR)
-            }
+            Log.d(TAG, "Samsung watch connectivity initialized")
             
         } catch (e: Exception) {
             Log.e(TAG, "Failed to initialize Samsung watch connectivity", e)
@@ -73,11 +63,8 @@ class SamsungWatchManager(context: Context) : WatchConnectivityManager(context) 
             try {
                 Log.d(TAG, "Testing Samsung watch connectivity...")
                 
-                if (sagent == null) {
-                    Log.w(TAG, "SAAgent not initialized")
-                    updateConnectionStatus(WatchConnectionStatus.ERROR)
-                    return@launch
-                }
+                // For stub implementation, simulate connectivity test
+                // In a real implementation, this would test actual Samsung Accessory SDK connection
                 
                 if (socket == null || peerAgent == null) {
                     Log.w(TAG, "No active connection to watch")

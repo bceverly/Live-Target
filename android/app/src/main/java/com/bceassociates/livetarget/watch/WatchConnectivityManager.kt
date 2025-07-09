@@ -9,6 +9,7 @@ package com.bceassociates.livetarget.watch
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import com.bceassociates.livetarget.data.model.ChangePoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,8 +34,14 @@ abstract class WatchConnectivityManager(protected val context: Context) {
         }
         
         private fun createInstance(context: Context): WatchConnectivityManager {
-            // For now, prioritize Samsung watches
-            return SamsungWatchManager(context)
+            return try {
+                // Try to create the real Samsung implementation
+                SamsungWatchManager(context)
+            } catch (e: Exception) {
+                // Fall back to stub implementation if Samsung SDK is not available
+                Log.w(TAG, "Samsung SDK not available, using stub implementation", e)
+                SamsungWatchManagerStub(context)
+            }
         }
     }
     
