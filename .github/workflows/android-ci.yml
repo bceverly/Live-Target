@@ -18,6 +18,7 @@ on:
     paths:
       - 'android/**'
       - '.github/workflows/android-ci.yml'
+  workflow_call:
 
 env:
   JAVA_VERSION: '17'
