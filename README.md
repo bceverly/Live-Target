@@ -175,7 +175,7 @@ xcodebuild test -project "Live Target.xcodeproj" -scheme "Live Target" -destinat
 ../tools/scripts/build-ios.sh
 ```
 
-### Android Development Setup (When Available)
+### Android Development Setup (Completed)
 
 #### 1. Install Java JDK
 ```bash
@@ -217,7 +217,7 @@ export PATH=$PATH:$ANDROID_HOME/tools
 source ~/.zshrc
 ```
 
-#### 5. Setup Android Project (When Available)
+#### 5. Setup Android Project
 ```bash
 # Navigate to Android project
 cd android/
@@ -225,8 +225,11 @@ cd android/
 # Build with Gradle
 ./gradlew assembleDebug
 
-# Run tests
+# Run unit tests
 ./gradlew test
+
+# Run instrumented tests (local only - disabled in CI due to emulator issues)
+./gradlew connectedDebugAndroidTest
 
 # Or use build script
 ../tools/scripts/build-android.sh

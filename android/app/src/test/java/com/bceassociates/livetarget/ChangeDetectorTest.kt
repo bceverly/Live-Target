@@ -9,9 +9,11 @@ package com.bceassociates.livetarget
 
 import android.graphics.Bitmap
 import com.bceassociates.livetarget.detection.ChangeDetector
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -19,7 +21,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
 class ChangeDetectorTest {
-    
     private lateinit var changeDetector: ChangeDetector
     
     @Before

@@ -23,33 +23,36 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFFD32F2F),
-    secondary = Color(0xFFFF5722),
-    tertiary = Color(0xFFFF9800)
-)
+private val DarkColorScheme =
+    darkColorScheme(
+        primary = Color(0xFFD32F2F),
+        secondary = Color(0xFFFF5722),
+        tertiary = Color(0xFFFF9800),
+    )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFFD32F2F),
-    secondary = Color(0xFFFF5722),
-    tertiary = Color(0xFFFF9800)
-)
+private val LightColorScheme =
+    lightColorScheme(
+        primary = Color(0xFFD32F2F),
+        secondary = Color(0xFFFF5722),
+        tertiary = Color(0xFFFF9800),
+    )
 
 @Composable
 fun LiveTargetTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val colorScheme =
+        when {
+            dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                val context = LocalContext.current
+                if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+            darkTheme -> DarkColorScheme
+            else -> LightColorScheme
+        }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -62,6 +65,6 @@ fun LiveTargetTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }

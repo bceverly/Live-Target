@@ -13,7 +13,7 @@ import SwiftUI
 struct SettingsViewTests {
     
     @Test func testSettingsViewInitialization() async throws {
-        let settingsView = await SettingsView()
+        _ = await SettingsView()
         
         // Basic initialization test - the view should be created without errors
         // SettingsView is a struct, so it's never nil - just test that it compiles
@@ -21,7 +21,7 @@ struct SettingsViewTests {
     }
     
     @Test func testAppVersionFormat() async throws {
-        let settingsView = await SettingsView()
+        _ = await SettingsView()
         
         // Test that app version is accessible (indirectly through the view structure)
         // Note: Since appVersion is private, we can't test it directly,
@@ -30,7 +30,7 @@ struct SettingsViewTests {
     }
     
     @Test func testBuildDateFormat() async throws {
-        let settingsView = await SettingsView()
+        _ = await SettingsView()
         
         // Test that build date is accessible (indirectly through the view structure)
         // Note: Since buildDate is private, we can't test it directly,

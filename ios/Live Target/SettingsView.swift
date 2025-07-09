@@ -129,6 +129,12 @@ extension Color {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
         
+        // Validate hex string is exactly 6 characters
+        guard hexSanitized.count == 6 else { return nil }
+        
+        // Validate all characters are valid hex digits
+        guard hexSanitized.allSatisfy({ "0123456789ABCDEFabcdef".contains($0) }) else { return nil }
+        
         var rgb: UInt64 = 0
         
         guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else { return nil }

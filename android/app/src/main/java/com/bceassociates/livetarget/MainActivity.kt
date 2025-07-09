@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
             LiveTargetTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     MainScreen(
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding),
                     )
                 }
             }
@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
 
 @Preview(showBackground = true)
 @Composable
-fun LiveTargetPreview() {
+fun liveTargetPreview() {
     LiveTargetTheme {
         MainScreen()
     }

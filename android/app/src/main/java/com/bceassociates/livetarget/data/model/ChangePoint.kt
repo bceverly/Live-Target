@@ -18,7 +18,7 @@ data class ChangePoint(
     /** Normalized coordinates (0-1) relative to image size */
     val location: Point,
     /** Sequential number assigned to this impact */
-    val number: Int
+    val number: Int,
 )
 
 /**
@@ -26,7 +26,7 @@ data class ChangePoint(
  */
 data class Point(
     val x: Float,
-    val y: Float
+    val y: Float,
 ) {
     init {
         require(x in 0f..1f) { "X coordinate must be between 0 and 1" }

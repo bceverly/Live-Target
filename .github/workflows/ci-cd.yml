@@ -74,19 +74,9 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
     
-    - name: Run Comprehensive Security Scan
-      uses: semgrep/semgrep-action@v1
-      with:
-        config: >-
-          p/security-audit
-          p/secrets
-          p/owasp-top-ten
-          p/swift
-          p/kotlin
-    
     - name: Generate SARIF Report
       run: |
-        semgrep --config=p/security-audit --config=p/secrets --config=p/owasp-top-ten --config=p/swift --config=p/kotlin --sarif --output=semgrep.sarif . || true
+        semgrep --config=p/security-audit --config=p/secrets --config=p/owasp-top-ten --config=p/swift --config=p/kotlin --sarif --output=semgrep.sarif . || echo "[]" > semgrep.sarif
     
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v3

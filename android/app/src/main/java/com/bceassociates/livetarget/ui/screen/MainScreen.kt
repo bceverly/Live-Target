@@ -12,11 +12,32 @@ import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.weight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,7 +45,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -50,15 +70,15 @@ fun MainScreen(
         mutableStateOf(
             ContextCompat.checkSelfPermission(
                 context,
-                Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED
+                Manifest.permission.CAMERA,
+            ) == PackageManager.PERMISSION_GRANTED,
         )
     }
     
     var showSettings by remember { mutableStateOf(false) }
     
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
+        contract = ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
         hasCameraPermission = isGranted
     }
@@ -73,14 +93,15 @@ fun MainScreen(
                 IconButton(onClick = { showSettings = true }) {
                     Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings))
                 }
-            }
+            },
+        )
         )
         
         // Main Content
         Box(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         ) {
             if (hasCameraPermission) {
                 // Camera Preview with Impact Overlays
@@ -89,7 +110,7 @@ fun MainScreen(
                         onImageCaptured = { bitmap ->
                             viewModel.processImage(bitmap)
                         },
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     )
                     
                     // Impact overlays
@@ -97,7 +118,7 @@ fun MainScreen(
                         drawImpacts(
                             impacts = uiState.detectedChanges,
                             circleColor = Color(android.graphics.Color.parseColor("#${uiState.circleColor}")),
-                            numberColor = Color(android.graphics.Color.parseColor("#${uiState.numberColor}"))
+                            numberColor = Color(android.graphics.Color.parseColor("#${uiState.numberColor}")),
                         )
                     }
                     
@@ -109,22 +130,25 @@ fun MainScreen(
                     ) {
                         Card(
                             colors = CardDefaults.cardColors(
-                                containerColor = if (uiState.isDetecting) 
-                                    MaterialTheme.colorScheme.errorContainer 
-                                else 
+                                containerColor = if (uiState.isDetecting) {
+                                    MaterialTheme.colorScheme.errorContainer
+                                } else {
                                     MaterialTheme.colorScheme.secondaryContainer
-                            )
+                                },
+                            ),
                         ) {
                             Text(
-                                text = if (uiState.isDetecting) 
-                                    stringResource(R.string.detecting) 
-                                else 
-                                    stringResource(R.string.stopped),
+                                text = if (uiState.isDetecting) {
+                                    stringResource(R.string.detecting)
+                                } else {
+                                    stringResource(R.string.stopped)
+                                },
                                 modifier = Modifier.padding(8.dp),
-                                color = if (uiState.isDetecting) 
-                                    MaterialTheme.colorScheme.onErrorContainer 
-                                else 
+                                color = if (uiState.isDetecting) {
+                                    MaterialTheme.colorScheme.onErrorContainer
+                                } else {
                                     MaterialTheme.colorScheme.onSecondaryContainer
+                                },
                             )
                         }
                     }
@@ -136,15 +160,15 @@ fun MainScreen(
                         .fillMaxSize()
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
                 ) {
                     Text(
                         text = stringResource(R.string.camera_permission_required),
                         style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        modifier = Modifier.padding(bottom = 16.dp),
                     )
                     Button(
-                        onClick = { launcher.launch(Manifest.permission.CAMERA) }
+                        onClick = { launcher.launch(Manifest.permission.CAMERA) },
                     ) {
                         Text(stringResource(R.string.grant_permission))
                     }
@@ -157,19 +181,19 @@ fun MainScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             Button(
                 onClick = { viewModel.clearChanges() },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary
-                )
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                ),
             ) {
                 Text(stringResource(R.string.clear))
             }
             
             Button(
-                onClick = { 
+                onClick = {
                     if (uiState.isDetecting) {
                         viewModel.stopDetection()
                     } else {
@@ -177,25 +201,27 @@ fun MainScreen(
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (uiState.isDetecting) 
-                        MaterialTheme.colorScheme.error 
-                    else 
+                    containerColor = if (uiState.isDetecting) {
+                        MaterialTheme.colorScheme.error
+                    } else {
                         MaterialTheme.colorScheme.primary
-                )
+                    },
+                ),
             ) {
                 Text(
-                    if (uiState.isDetecting) 
-                        stringResource(R.string.stop) 
-                    else 
+                    if (uiState.isDetecting) {
+                        stringResource(R.string.stop)
+                    } else {
                         stringResource(R.string.start)
+                    },
                 )
             }
             
             Button(
                 onClick = { viewModel.saveImage() },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiary
-                )
+                    containerColor = MaterialTheme.colorScheme.tertiary,
+                ),
             ) {
                 Text(stringResource(R.string.save))
             }
@@ -206,7 +232,7 @@ fun MainScreen(
     if (showSettings) {
         SettingsScreen(
             onDismiss = { showSettings = false },
-            viewModel = viewModel
+            viewModel = viewModel,
         )
     }
 }
@@ -214,7 +240,7 @@ fun MainScreen(
 private fun DrawScope.drawImpacts(
     impacts: List<com.bceassociates.livetarget.data.model.ChangePoint>,
     circleColor: Color,
-    numberColor: Color
+    numberColor: Color,
 ) {
     impacts.forEach { impact ->
         val centerX = impact.location.x * size.width
@@ -226,7 +252,7 @@ private fun DrawScope.drawImpacts(
             color = circleColor,
             radius = radius,
             center = androidx.compose.ui.geometry.Offset(centerX, centerY),
-            style = Stroke(width = 3.dp.toPx())
+            style = Stroke(width = 3.dp.toPx()),
         )
         
         // Draw impact number
@@ -243,7 +269,7 @@ private fun DrawScope.drawImpacts(
                 impact.number.toString(),
                 centerX,
                 centerY + paint.textSize / 3f, // Offset to center vertically
-                paint
+                paint,
             )
         }
     }

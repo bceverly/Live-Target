@@ -19,61 +19,66 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class SettingsDataStore(private val context: Context) {
-    
+
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
-        
+
         private val CIRCLE_COLOR_KEY = stringPreferencesKey("circle_color")
         private val NUMBER_COLOR_KEY = stringPreferencesKey("number_color")
         private val CHECK_INTERVAL_KEY = doublePreferencesKey("check_interval")
         private val BULLET_CALIBER_KEY = intPreferencesKey("bullet_caliber")
         private val ZOOM_FACTOR_KEY = doublePreferencesKey("zoom_factor")
     }
-    
-    val circleColor: Flow<String> = context.dataStore.data.map { preferences ->
-        preferences[CIRCLE_COLOR_KEY] ?: "FF0000"
-    }
-    
-    val numberColor: Flow<String> = context.dataStore.data.map { preferences ->
-        preferences[NUMBER_COLOR_KEY] ?: "FF0000"
-    }
-    
-    val checkInterval: Flow<Double> = context.dataStore.data.map { preferences ->
-        preferences[CHECK_INTERVAL_KEY] ?: 2.0
-    }
-    
-    val bulletCaliber: Flow<Int> = context.dataStore.data.map { preferences ->
-        preferences[BULLET_CALIBER_KEY] ?: 22
-    }
-    
-    val zoomFactor: Flow<Double> = context.dataStore.data.map { preferences ->
-        preferences[ZOOM_FACTOR_KEY] ?: 1.0
-    }
-    
+
+    val circleColor: Flow<String> =
+        context.dataStore.data.map { preferences ->
+            preferences[CIRCLE_COLOR_KEY] ?: "FF0000"
+        }
+
+    val numberColor: Flow<String> =
+        context.dataStore.data.map { preferences ->
+            preferences[NUMBER_COLOR_KEY] ?: "FF0000"
+        }
+
+    val checkInterval: Flow<Double> =
+        context.dataStore.data.map { preferences ->
+            preferences[CHECK_INTERVAL_KEY] ?: 2.0
+        }
+
+    val bulletCaliber: Flow<Int> =
+        context.dataStore.data.map { preferences ->
+            preferences[BULLET_CALIBER_KEY] ?: 22
+        }
+
+    val zoomFactor: Flow<Double> =
+        context.dataStore.data.map { preferences ->
+            preferences[ZOOM_FACTOR_KEY] ?: 1.0
+        }
+
     suspend fun setCircleColor(color: String) {
         context.dataStore.edit { settings ->
             settings[CIRCLE_COLOR_KEY] = color
         }
     }
-    
+
     suspend fun setNumberColor(color: String) {
         context.dataStore.edit { settings ->
             settings[NUMBER_COLOR_KEY] = color
         }
     }
-    
+
     suspend fun setCheckInterval(interval: Double) {
         context.dataStore.edit { settings ->
             settings[CHECK_INTERVAL_KEY] = interval
         }
     }
-    
+
     suspend fun setBulletCaliber(caliber: Int) {
         context.dataStore.edit { settings ->
             settings[BULLET_CALIBER_KEY] = caliber
         }
     }
-    
+
     suspend fun setZoomFactor(factor: Double) {
         context.dataStore.edit { settings ->
             settings[ZOOM_FACTOR_KEY] = factor
