@@ -28,4 +28,69 @@
     <string name="stopped">Stopped</string>
     <string name="image_saved">Image saved to gallery</string>
     <string name="save_failed">Failed to save image</string>
+    <string name="help">Help</string>
+    <string name="close">Close</string>
+    
+    <!-- Help Screen Content -->
+    <string name="help_what_is_title">What is Live Target?</string>
+    <string name="help_what_is_description">Live Target is an intelligent bullet impact detection system that uses your device\'s camera and computer vision to automatically identify and track bullet holes on targets during shooting practice.</string>
+    <string name="help_what_is_use_cases">The app continuously monitors your target through the camera feed and alerts you when new impacts are detected, making it perfect for:</string>
+    <string name="help_use_case_practice">Target shooting practice</string>
+    <string name="help_use_case_accuracy">Accuracy training</string>
+    <string name="help_use_case_analysis">Shot group analysis</string>
+    <string name="help_use_case_monitoring">Remote target monitoring</string>
+    
+    <string name="help_how_to_use_title">How to Use Live Target</string>
+    <string name="help_step_1">Position your device so the target is clearly visible in the camera view</string>
+    <string name="help_step_2">Adjust settings (caliber, colors, check frequency) as needed</string>
+    <string name="help_step_3">Tap \'Start\' to begin impact detection</string>
+    <string name="help_step_4">Fire at your target - new impacts will be automatically detected and numbered</string>
+    <string name="help_step_5">Use \'Save\' to capture target images with impact annotations</string>
+    
+    <string name="help_settings_title">Settings Explained</string>
+    <string name="help_colors_title">Colors</string>
+    <string name="help_circle_color">Circle Color: Color of the circles drawn around detected impacts</string>
+    <string name="help_number_color">Number Color: Color of the impact numbers displayed on screen</string>
+    
+    <string name="help_detection_title">Change Detection</string>
+    <string name="help_check_frequency">Check Frequency: How often the app compares camera frames (0.5-10 seconds)</string>
+    <string name="help_bullet_caliber">Bullet Caliber: Sets the minimum size for impact detection (17-70 caliber)</string>
+    <string name="help_caliber_note">Higher caliber = larger minimum detection size</string>
+    
+    <string name="help_controls_title">Controls</string>
+    <string name="help_main_controls_title">Main Controls</string>
+    <string name="help_start_stop">Start/Stop: Begin or end impact detection</string>
+    <string name="help_clear">Clear: Remove all detected impact markers from screen</string>
+    <string name="help_save">Save: Capture current view with impact annotations to Photos</string>
+    <string name="help_settings_button">Settings: Access app configuration options</string>
+    
+    <string name="help_tips_title">Tips for Best Results</string>
+    <string name="help_camera_positioning">Camera Positioning</string>
+    <string name="help_mount_device">Mount device securely to minimize camera shake</string>
+    <string name="help_target_fills_view">Ensure target fills a good portion of the camera view</string>
+    <string name="help_avoid_backlighting">Avoid backlighting or extreme shadows on target</string>
+    <string name="help_perpendicular_position">Position camera perpendicular to target face</string>
+    
+    <string name="help_optimal_settings">Optimal Settings</string>
+    <string name="help_start_2_second">Start with 2-second check frequency for most situations</string>
+    <string name="help_set_caliber">Set bullet caliber close to your actual ammunition</string>
+    <string name="help_contrasting_colors">Use contrasting colors for impact markers</string>
+    <string name="help_lower_frequency">Lower check frequency in bright, stable lighting</string>
+    
+    <string name="help_environment">Environment</string>
+    <string name="help_consistent_lighting">Use consistent, even lighting on target</string>
+    <string name="help_minimize_movement">Minimize movement around the target area</string>
+    <string name="help_start_before_first">Start detection before first shot for best baseline</string>
+    <string name="help_clean_background">Clean target background improves detection accuracy</string>
+    
+    <string name="help_troubleshooting_title">Troubleshooting</string>
+    <string name="help_detection_issues">Detection Issues</string>
+    <string name="help_false_detections">False detections: Increase bullet caliber setting or check frequency</string>
+    <string name="help_missed_impacts">Missed impacts: Decrease bullet caliber setting or improve lighting</string>
+    <string name="help_multiple_detections">Multiple detections per shot: Increase check frequency</string>
+    
+    <string name="help_performance_issues">Performance Issues</string>
+    <string name="help_close_camera_apps">Close other camera apps before using Live Target</string>
+    <string name="help_restart_app">Restart app if detection becomes unresponsive</string>
+    <string name="help_increase_frequency">Increase check frequency if device is struggling</string>
 </resources>

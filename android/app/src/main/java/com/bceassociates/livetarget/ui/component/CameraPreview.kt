@@ -11,6 +11,8 @@ import android.graphics.Bitmap
 import android.graphics.ImageFormat
 import android.media.Image
 import android.util.Log
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -20,7 +22,11 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -32,12 +38,19 @@ import java.util.concurrent.Executors
 @Composable
 fun CameraPreview(
     onImageCaptured: (Bitmap) -> Unit,
+    zoomFactor: Float = 1.0f,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val cameraExecutor: ExecutorService = remember { Executors.newSingleThreadExecutor() }
+    var camera by remember { mutableStateOf<Camera?>(null) }
+    
+    // Apply zoom when zoomFactor changes
+    LaunchedEffect(zoomFactor, camera) {
+        camera?.cameraControl?.setZoomRatio(zoomFactor)
+    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -82,12 +95,18 @@ fun CameraPreview(
                         cameraProvider.unbindAll()
 
                         // Bind use cases to camera
-                        val camera = cameraProvider.bindToLifecycle(
+                        val boundCamera = cameraProvider.bindToLifecycle(
                             lifecycleOwner,
                             cameraSelector,
                             preview,
                             imageAnalyzer,
                         )
+                        
+                        // Store camera reference for zoom control
+                        camera = boundCamera
+                        
+                        // Set initial zoom
+                        boundCamera.cameraControl.setZoomRatio(zoomFactor)
 
                         Log.d("CameraPreview", "Camera bound successfully")
                     } catch (exc: Exception) {

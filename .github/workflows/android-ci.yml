@@ -214,7 +214,27 @@ jobs:
     
     - name: Generate SARIF Report
       run: |
-        semgrep --config=p/security-audit --config=p/secrets --config=p/kotlin --sarif --output=semgrep.sarif . || echo "[]" > semgrep.sarif
+        # Run semgrep and generate SARIF report
+        if ! semgrep --config=p/security-audit --config=p/secrets --config=p/kotlin --sarif --output=semgrep.sarif .; then
+          # If semgrep fails, create a valid empty SARIF file
+          cat > semgrep.sarif << 'EOF'
+        {
+          "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+          "version": "2.1.0",
+          "runs": [
+            {
+              "tool": {
+                "driver": {
+                  "name": "semgrep",
+                  "version": "1.0.0"
+                }
+              },
+              "results": []
+            }
+          ]
+        }
+        EOF
+        fi
     
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v3

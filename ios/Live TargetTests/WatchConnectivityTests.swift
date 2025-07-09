@@ -23,9 +23,22 @@ struct WatchConnectivityTests {
     @Test func testInitialWatchConnectionState() async throws {
         let manager = WatchConnectivityManager.shared
         
-        // Initial state should be disconnected
+        // Initial state should be unknown/disconnected
         #expect(manager.isWatchConnected == false)
         #expect(manager.isWatchAppInstalled == false)
+        #expect(manager.isWatchPaired == false)
+        #expect(manager.watchConnectionStatus == .unknown)
+    }
+    
+    @Test func testWatchConnectivityTest() async throws {
+        let manager = WatchConnectivityManager.shared
+        
+        // Test that testWatchConnectivity doesn't crash and sets proper state
+        // In test environment, it should set status to .error since WCSession isn't supported
+        manager.testWatchConnectivity()
+        
+        // Should set error status when WCSession is not supported (in test environment)
+        #expect(manager.watchConnectionStatus == .error)
     }
     
     @Test func testImageResizing() async throws {

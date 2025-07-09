@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.weight
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -56,6 +57,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bceassociates.livetarget.R
 import com.bceassociates.livetarget.ui.component.CameraPreview
+import com.bceassociates.livetarget.ui.component.ZoomControl
 import com.bceassociates.livetarget.ui.theme.LiveTargetTheme
 import com.bceassociates.livetarget.viewmodel.MainViewModel
 
@@ -76,6 +78,7 @@ fun MainScreen(
     }
     
     var showSettings by remember { mutableStateOf(false) }
+    var showHelp by remember { mutableStateOf(false) }
     
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
@@ -90,6 +93,9 @@ fun MainScreen(
         TopAppBar(
             title = { Text(stringResource(R.string.app_name)) },
             actions = {
+                IconButton(onClick = { showHelp = true }) {
+                    Icon(Icons.Default.Help, contentDescription = stringResource(R.string.help))
+                }
                 IconButton(onClick = { showSettings = true }) {
                     Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings))
                 }
@@ -110,6 +116,7 @@ fun MainScreen(
                         onImageCaptured = { bitmap ->
                             viewModel.processImage(bitmap)
                         },
+                        zoomFactor = uiState.zoomFactor.toFloat(),
                         modifier = Modifier.fillMaxSize(),
                     )
                     
@@ -151,6 +158,20 @@ fun MainScreen(
                                 },
                             )
                         }
+                    }
+                    
+                    // Zoom Control positioned at the bottom
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 100.dp), // Space for bottom controls
+                    ) {
+                        ZoomControl(
+                            zoomFactor = uiState.zoomFactor.toFloat(),
+                            onZoomChange = { newZoom ->
+                                viewModel.setZoomFactor(newZoom.toDouble())
+                            },
+                        )
                     }
                 }
             } else {
@@ -233,6 +254,13 @@ fun MainScreen(
         SettingsScreen(
             onDismiss = { showSettings = false },
             viewModel = viewModel,
+        )
+    }
+    
+    // Help Screen
+    if (showHelp) {
+        HelpScreen(
+            onDismiss = { showHelp = false },
         )
     }
 }
