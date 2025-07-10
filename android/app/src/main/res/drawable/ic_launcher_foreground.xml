@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_launcher_foreground.xml
+  Live Target Android App Icon Foreground
+  
+  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Target/Bullseye Design -->
+    <group android:scaleX="0.8"
+        android:scaleY="0.8"
+        android:translateX="10.8"
+        android:translateY="10.8">
+        
+        <!-- Outer white circle -->
+        <circle
+            android:cx="54"
+            android:cy="54"
+            android:r="45"
+            android:fillColor="#FFFFFF"
+            android:strokeColor="#000000"
+            android:strokeWidth="2"/>
+        
+        <!-- Second ring - red -->
+        <circle
+            android:cx="54"
+            android:cy="54"
+            android:r="36"
+            android:fillColor="#DC143C"
+            android:strokeColor="#000000"
+            android:strokeWidth="1"/>
+        
+        <!-- Third ring - white -->
+        <circle
+            android:cx="54"
+            android:cy="54"
+            android:r="27"
+            android:fillColor="#FFFFFF"
+            android:strokeColor="#000000"
+            android:strokeWidth="1"/>
+        
+        <!-- Fourth ring - red -->
+        <circle
+            android:cx="54"
+            android:cy="54"
+            android:r="18"
+            android:fillColor="#DC143C"
+            android:strokeColor="#000000"
+            android:strokeWidth="1"/>
+        
+        <!-- Center bullseye - white -->
+        <circle
+            android:cx="54"
+            android:cy="54"
+            android:r="9"
+            android:fillColor="#FFFFFF"
+            android:strokeColor="#000000"
+            android:strokeWidth="1"/>
+        
+        <!-- Center dot - red -->
+        <circle
+            android:cx="54"
+            android:cy="54"
+            android:r="4"
+            android:fillColor="#DC143C"/>
+    </group>
+</vector>

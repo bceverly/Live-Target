@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_launcher_legacy.xml
+  Live Target Android Legacy Icon
+  
+  Copyright © 2025 BCEAssociates, Inc. All rights reserved.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    
+    <!-- Red background circle -->
+    <circle
+        android:cx="24"
+        android:cy="24"
+        android:r="24"
+        android:fillColor="#DC143C"/>
+    
+    <!-- Target/Bullseye Design -->
+    <group android:translateX="4"
+        android:translateY="4">
+        
+        <!-- Outer white circle -->
+        <circle
+            android:cx="20"
+            android:cy="20"
+            android:r="18"
+            android:fillColor="#FFFFFF"
+            android:strokeColor="#000000"
+            android:strokeWidth="1"/>
+        
+        <!-- Second ring - red -->
+        <circle
+            android:cx="20"
+            android:cy="20"
+            android:r="14"
+            android:fillColor="#DC143C"
+            android:strokeColor="#000000"
+            android:strokeWidth="0.5"/>
+        
+        <!-- Third ring - white -->
+        <circle
+            android:cx="20"
+            android:cy="20"
+            android:r="10"
+            android:fillColor="#FFFFFF"
+            android:strokeColor="#000000"
+            android:strokeWidth="0.5"/>
+        
+        <!-- Fourth ring - red -->
+        <circle
+            android:cx="20"
+            android:cy="20"
+            android:r="6"
+            android:fillColor="#DC143C"
+            android:strokeColor="#000000"
+            android:strokeWidth="0.5"/>
+        
+        <!-- Center bullseye - white -->
+        <circle
+            android:cx="20"
+            android:cy="20"
+            android:r="3"
+            android:fillColor="#FFFFFF"/>
+        
+        <!-- Center dot - red -->
+        <circle
+            android:cx="20"
+            android:cy="20"
+            android:r="1.5"
+            android:fillColor="#DC143C"/>
+    </group>
+</vector>
