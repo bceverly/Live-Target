@@ -28,11 +28,12 @@ extension UIImage {
             height: size.height * scale
         )
         
-        // Resize image using efficient memory approach
-        let renderer = UIGraphicsImageRenderer(size: newSize)
-        return renderer.image { _ in
-            self.draw(in: CGRect(origin: .zero, size: newSize))
-        }
+        // Use watchOS-compatible image resizing
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+        defer { UIGraphicsEndImageContext() }
+        
+        self.draw(in: CGRect(origin: .zero, size: newSize))
+        return UIGraphicsGetImageFromCurrentImageContext()
     }
     
     /// Compress image for better memory management
@@ -46,11 +47,10 @@ extension UIImage {
     
     /// Battery optimization cleanup
     static func performBatteryOptimization() {
-        // Force memory cleanup
+        // Force memory cleanup on watchOS
         DispatchQueue.main.async {
-            // This will trigger ARC cleanup of any unreferenced images
             autoreleasepool {
-                // Minimal operation to trigger cleanup
+                // Trigger memory cleanup for Watch
                 _ = UIImage()
             }
         }
