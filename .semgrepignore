@@ -1,0 +1,21 @@
+# Semgrep ignore file for Live Target project
+# Excludes files from security scanning
+
+# Build artifacts and generated code
+**/build/
+**/target/
+**/dist/
+**/node_modules/
+**/.gradle/
+
+# IDE files
+**/.idea/
+**/.vscode/
+**/*.iml
+
+# OS files
+**/.DS_Store
+**/Thumbs.db
+
+# Samsung Accessory SDK stub files - these are mock implementations for CI/CD
+android/app/src/main/java/com/samsung/android/sdk/accessory/

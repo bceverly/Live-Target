@@ -37,11 +37,11 @@ struct ZoomControl: View {
                 }
                 
                 // Toggle slider button
-                Button(action: {
+                Button {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         showingZoomSlider.toggle()
                     }
-                }) {
+                } label: {
                     Image(systemName: showingZoomSlider ? "slider.horizontal.3" : "plus.magnifyingglass")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)

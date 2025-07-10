@@ -1,0 +1,14 @@
+# act configuration file
+# This file configures the act tool for running GitHub Actions locally
+
+# Use medium-sized Docker image for good balance of size and functionality
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+
+# Use ARM architecture for Apple Silicon Macs
+--container-architecture linux/amd64
+
+# Enable verbose output for debugging
+-v
+
+# Set default platform
+--platform ubuntu-latest=catthehacker/ubuntu:act-latest

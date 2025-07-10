@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var watchConnectivity = WatchConnectivityManager()
+    @StateObject private var watchConnectivity = WatchConnectivityManager.shared
     @StateObject private var impactStore = ImpactStore.shared
     @State private var isLoading = true
     
@@ -90,6 +90,7 @@ struct LatestImpactView: View {
                     .cornerRadius(8)
                     .frame(minHeight: 120)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .drawingGroup() // Optimize for battery by reducing redraws
             } else {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Color.gray.opacity(0.3))

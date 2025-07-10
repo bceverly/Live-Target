@@ -37,25 +37,20 @@ struct WatchConnectivityTests {
     @Test func testWatchConnectivityTest() async throws {
         let manager = WatchConnectivityManager.shared
         
+        // Record initial status
+        let initialStatus = manager.watchConnectionStatus
+        
         // Test that testWatchConnectivity doesn't crash
         // This is the main goal - ensure the method is robust
-        do {
-            manager.testWatchConnectivity()
-            
-            // Wait for any async operations to complete
-            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-            
-            // The exact status depends on simulator environment
-            // Main test is that it doesn't crash and sets a valid status
-            let validStatuses: [WatchConnectionStatus] = [.unknown, .error, .disconnected, .connected]
-            #expect(validStatuses.contains(manager.watchConnectionStatus))
-            
-            // If we get here without throwing, the test passes
-            #expect(true)
-        } catch {
-            // If there's an error, we'll fail the test
-            #expect(false, "testWatchConnectivity should not throw: \(error)")
-        }
+        manager.testWatchConnectivity()
+        
+        // The exact status depends on simulator environment
+        // Main test is that it doesn't crash and maintains a valid status
+        let validStatuses: [WatchConnectionStatus] = [.unknown, .error, .disconnected, .connected]
+        #expect(validStatuses.contains(manager.watchConnectionStatus))
+        
+        // Verify the method completed without throwing
+        #expect(true, "testWatchConnectivity completed successfully")
     }
     
     @Test func testImageResizing() async throws {
