@@ -101,11 +101,13 @@ class WatchConnectivityManager: NSObject, ObservableObject {
             numberColor: numberColor
         )
         
-        // Prepare data for watch - compress more aggressively for Watch
+        // Prepare data for watch - ensure JPEG format (not HEIC)
         guard let imageData = zoomedImage.jpegData(compressionQuality: 0.3) else {
-            logger.error("Failed to create image data")
+            logger.error("Failed to create JPEG image data from image")
             return
         }
+        
+        logger.info("Created JPEG image data: \(imageData.count) bytes")
         
         // Check payload size (WatchConnectivity has ~65KB limit)
         if imageData.count > 60000 {

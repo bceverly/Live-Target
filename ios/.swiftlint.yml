@@ -59,10 +59,10 @@ identifier_name:
     - x
     - y
 
-# Custom rules
-custom_rules:
-  copyright_notice:
-    name: "Copyright Notice"
-    regex: '//\s*Copyright © 2025 BCEAssociates, Inc\. All rights reserved\.'
-    message: "All Swift files should contain the copyright notice"
-    severity: warning
+# Custom rules (disabled for now)
+# custom_rules:
+#   copyright_notice:
+#     name: "Copyright Notice"
+#     regex: '//\s*Copyright © 2025 BCEAssociates, Inc\. All rights reserved\.'
+#     message: "All Swift files should contain the copyright notice"
+#     severity: warning

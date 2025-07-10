@@ -76,37 +76,58 @@ print_success "Android test coverage report generated"
 cd ..
 
 # iOS CI/CD Steps (if Xcode is available)
-if command -v xcodebuild &> /dev/null && xcodebuild -version &> /dev/null; then
+# Check if Xcode is properly configured
+if command -v xcodebuild &> /dev/null; then
+    # Check if xcode-select is pointing to Command Line Tools instead of Xcode
+    if xcodebuild -version &> /dev/null; then
+        XCODE_CONFIGURED=true
+    else
+        print_warning "Xcode detected but not configured properly"
+        print_warning "Run: sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer"
+        XCODE_CONFIGURED=false
+    fi
+else
+    XCODE_CONFIGURED=false
+fi
+
+if [ "$XCODE_CONFIGURED" = true ]; then
     print_status "Starting iOS CI/CD checks..."
     echo ""
     
     cd ios
     
-    print_status "🍎 Running iOS build..."
-    if xcodebuild -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 15" build &> /dev/null; then
+    print_status "🍎 Running iOS build (matching GitHub Actions)..."
+    if xcodebuild -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5" -configuration Debug clean build CODE_SIGNING_ALLOWED=NO; then
         print_success "iOS build passed"
     else
-        print_warning "iOS build failed or simulator not available"
+        print_error "iOS build failed - this will fail in GitHub Actions!"
+        exit 1
     fi
     
-    print_status "🍎 Running iOS unit tests..."
-    if xcodebuild -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 15" test &> /dev/null; then
+    print_status "🍎 Running iOS unit tests (matching GitHub Actions)..."
+    if xcodebuild -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5" -configuration Debug test CODE_SIGNING_ALLOWED=NO; then
         print_success "iOS unit tests passed"
     else
-        print_warning "iOS unit tests failed or simulator not available"
+        print_error "iOS unit tests failed - this will fail in GitHub Actions!"
+        exit 1
     fi
     
-    print_status "🍎 Running SwiftLint..."
+    print_status "🍎 Running SwiftLint (matching GitHub Actions)..."
     if command -v swiftlint &> /dev/null; then
         cd ..
-        if swiftlint ios/ &> /dev/null; then
-            print_success "SwiftLint passed"
+        # Match GitHub Actions SwiftLint behavior
+        cd ios
+        if swiftlint lint; then
+            print_success "SwiftLint passed (matching GitHub Actions)"
         else
-            print_warning "SwiftLint found issues"
+            print_error "SwiftLint found critical errors - this will fail in GitHub Actions!"
+            exit 1
         fi
+        cd ..
         cd ios
     else
-        print_warning "SwiftLint not installed, skipping..."
+        print_error "SwiftLint not installed - install with: brew install swiftlint"
+        exit 1
     fi
     
     cd ..
@@ -115,25 +136,38 @@ else
     print_warning "Install Xcode from the App Store to enable iOS CI/CD"
 fi
 
-# Security checks
+# Security checks (matching GitHub Actions)
 print_status "Running security checks..."
 echo ""
 
-print_status "🔒 Checking for potential secrets..."
-SECRET_PATTERNS="api_key|password|secret|token|private_key|keystore|certificate"
-
-# Check iOS files
-if find ios/ -name "*.swift" -exec grep -l -i "$SECRET_PATTERNS" {} \; 2>/dev/null | grep -v "Test" | grep -v "\.git"; then
-    print_warning "Potential secrets found in iOS code!"
+print_status "🔒 Running semgrep security scan (matching GitHub Actions)..."
+if command -v semgrep &> /dev/null; then
+    if semgrep --config=p/security-audit --config=p/secrets --config=p/kotlin --sarif --output=semgrep.sarif .; then
+        print_success "Semgrep security scan passed"
+    else
+        print_error "Semgrep security scan failed - this will fail in GitHub Actions!"
+        exit 1
+    fi
 else
-    print_success "No secrets detected in iOS code"
+    print_warning "Semgrep not installed - install with: pip3 install semgrep"
 fi
 
-# Check Android files
-if find android/ -name "*.kt" -o -name "*.java" -exec grep -l -i "$SECRET_PATTERNS" {} \; 2>/dev/null | grep -v "Test" | grep -v "\.git"; then
-    print_warning "Potential secrets found in Android code!"
+print_status "🔒 Checking for hardcoded secrets (matching GitHub Actions)..."
+# Android secret detection (matching GitHub Actions pattern)
+if grep -r -i "api_key\|password\|secret\|token\|keystore" --include="*.kt" --include="*.java" --include="*.xml" android/app/src/ | grep -v "//.*TODO\|//.*FIXME" | grep -v "samsung/android/sdk/accessory" | grep -v "STUB_" | grep -v "class.*Token" | grep -v "authToken:" | grep -v "onAuth" | grep -v "import.*Token"; then
+    print_error "Potential secrets found in Android code - this will fail in GitHub Actions!"
+    exit 1
 else
     print_success "No secrets detected in Android code"
+fi
+
+# iOS secret detection
+SECRET_PATTERNS="api_key|password|secret|token|private_key|keystore|certificate"
+if find ios/ -name "*.swift" -exec grep -l -i "$SECRET_PATTERNS" {} \; 2>/dev/null | grep -v "Test" | grep -v "\.git"; then
+    print_error "Potential secrets found in iOS code - this will fail in GitHub Actions!"
+    exit 1
+else
+    print_success "No secrets detected in iOS code"
 fi
 
 echo ""

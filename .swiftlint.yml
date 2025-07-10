@@ -1,0 +1,59 @@
+# SwiftLint Configuration for Live Target
+# This file configures SwiftLint rules for the iOS project
+
+# Directories to include in linting
+included:
+  - ios
+
+# Directories to exclude from linting
+excluded:
+  - ios/DerivedData
+  - ios/build
+  - ios/.build
+
+# Rules to disable entirely
+disabled_rules:
+  - type_name  # Disable for Xcode-generated test files with underscores
+
+# Rules that should be warnings instead of errors
+opt_in_rules:
+  - trailing_newline
+  - trailing_whitespace
+
+# Rule customizations
+trailing_newline:
+  severity: error
+
+trailing_whitespace:
+  severity: error
+
+# Line length configuration
+line_length:
+  warning: 120
+  error: 150
+
+# Function length configuration
+function_body_length:
+  warning: 50
+  error: 100
+
+# File length configuration
+file_length:
+  warning: 400
+  error: 500
+
+# Type body length configuration
+type_body_length:
+  warning: 200
+  error: 300
+
+# Identifier name lengths
+identifier_name:
+  min_length:
+    warning: 1
+    error: 1
+  max_length:
+    warning: 40
+    error: 50
+
+# Custom rules disabled for now

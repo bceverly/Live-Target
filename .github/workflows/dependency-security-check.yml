@@ -10,18 +10,8 @@ name: Dependency Security Check
 on:
   push:
     branches: [ main, develop ]
-    paths:
-      - 'ios/Package.swift'
-      - 'ios/Package.resolved'
-      - 'ios/Podfile'
-      - 'ios/Podfile.lock'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'ios/Package.swift'
-      - 'ios/Package.resolved'
-      - 'ios/Podfile'
-      - 'ios/Podfile.lock'
   schedule:
     # Run weekly security check on Sundays at 3 AM UTC
     - cron: '0 3 * * 0'

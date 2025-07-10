@@ -16,7 +16,7 @@ struct WatchImpact: Identifiable {
     
     // Lazy loading for battery optimization
     var zoomedImage: UIImage? {
-        return _zoomedImage?.resizedForWatch()
+        _zoomedImage?.resizedForWatch()
     }
     
     init(number: Int, timestamp: Date, zoomedImage: UIImage?) {
