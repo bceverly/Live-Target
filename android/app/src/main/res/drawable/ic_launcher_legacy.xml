@@ -12,10 +12,8 @@
     android:viewportHeight="48">
     
     <!-- Red background circle -->
-    <circle
-        android:cx="24"
-        android:cy="24"
-        android:r="24"
+    <path
+        android:pathData="M24,0 A24,24 0 1,1 24,48 A24,24 0 1,1 24,0 Z"
         android:fillColor="#DC143C"/>
     
     <!-- Target/Bullseye Design -->
@@ -23,53 +21,35 @@
         android:translateY="4">
         
         <!-- Outer white circle -->
-        <circle
-            android:cx="20"
-            android:cy="20"
-            android:r="18"
+        <path
+            android:pathData="M20,2 A18,18 0 1,1 20,38 A18,18 0 1,1 20,2 Z"
             android:fillColor="#FFFFFF"
             android:strokeColor="#000000"
             android:strokeWidth="1"/>
         
         <!-- Second ring - red -->
-        <circle
-            android:cx="20"
-            android:cy="20"
-            android:r="14"
-            android:fillColor="#DC143C"
-            android:strokeColor="#000000"
-            android:strokeWidth="0.5"/>
+        <path
+            android:pathData="M20,6 A14,14 0 1,1 20,34 A14,14 0 1,1 20,6 Z"
+            android:fillColor="#DC143C"/>
         
         <!-- Third ring - white -->
-        <circle
-            android:cx="20"
-            android:cy="20"
-            android:r="10"
-            android:fillColor="#FFFFFF"
-            android:strokeColor="#000000"
-            android:strokeWidth="0.5"/>
+        <path
+            android:pathData="M20,10 A10,10 0 1,1 20,30 A10,10 0 1,1 20,10 Z"
+            android:fillColor="#FFFFFF"/>
         
         <!-- Fourth ring - red -->
-        <circle
-            android:cx="20"
-            android:cy="20"
-            android:r="6"
-            android:fillColor="#DC143C"
-            android:strokeColor="#000000"
-            android:strokeWidth="0.5"/>
+        <path
+            android:pathData="M20,14 A6,6 0 1,1 20,26 A6,6 0 1,1 20,14 Z"
+            android:fillColor="#DC143C"/>
         
         <!-- Center bullseye - white -->
-        <circle
-            android:cx="20"
-            android:cy="20"
-            android:r="3"
+        <path
+            android:pathData="M20,17 A3,3 0 1,1 20,23 A3,3 0 1,1 20,17 Z"
             android:fillColor="#FFFFFF"/>
         
         <!-- Center dot - red -->
-        <circle
-            android:cx="20"
-            android:cy="20"
-            android:r="1.5"
+        <path
+            android:pathData="M20,18.5 A1.5,1.5 0 1,1 20,21.5 A1.5,1.5 0 1,1 20,18.5 Z"
             android:fillColor="#DC143C"/>
     </group>
 </vector>

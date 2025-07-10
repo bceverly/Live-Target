@@ -68,7 +68,7 @@ fun SettingsScreen(
     }
     
     val appVersion = packageInfo?.let { "${it.versionName} (${it.longVersionCode})" } ?: "0.91"
-    val buildDate = "January 9, 2025" // This would be set during build in production
+    val buildDate = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(Date()) // Current build date
     
     Column(
         modifier = Modifier

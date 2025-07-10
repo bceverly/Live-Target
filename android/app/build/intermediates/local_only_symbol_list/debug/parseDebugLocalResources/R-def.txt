@@ -28,6 +28,13 @@ color md_theme_surface
 color md_theme_surface_variant
 color md_theme_tertiary
 color md_theme_tertiary_container
+color splash_background
+color target_red
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+drawable ic_launcher_legacy
+mipmap ic_launcher
+mipmap ic_launcher_round
 string about
 string app_name
 string app_version
@@ -124,5 +131,6 @@ string start
 string stop
 string stopped
 style Theme.LiveTarget
+style Theme.LiveTarget.Splash
 xml backup_rules
 xml data_extraction_rules

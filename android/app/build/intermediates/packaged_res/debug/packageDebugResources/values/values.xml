@@ -28,6 +28,8 @@
     <color name="md_theme_surface_variant">#E7E0EC</color>
     <color name="md_theme_tertiary">#FF9800</color>
     <color name="md_theme_tertiary_container">#FFF3E0</color>
+    <color name="splash_background">#FF000000</color>
+    <color name="target_red">#FFDC143C</color>
     <string name="about">About</string>
     <string name="app_name">Live Target</string>
     <string name="app_version">Version</string>
@@ -123,7 +125,15 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="stopped">Stopped</string>
-    <style name="Theme.LiveTarget" parent="android:Theme.Material.Light">
+    <style name="Theme.LiveTarget" parent="android:Theme.Material.Light.NoActionBar">
         
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+    <style name="Theme.LiveTarget.Splash" parent="Theme.LiveTarget">
+        <item name="android:windowBackground">@color/splash_background</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 </resources>
