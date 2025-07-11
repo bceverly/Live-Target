@@ -248,7 +248,7 @@ extension WatchConnectivityManager: WCSessionDelegate {
             
             // Don't automatically set connection status - wait for explicit connectivity test
             // Keep status as .unknown until testWatchConnectivity() is called
-            if let error = error {
+            if error != nil {
                 self.watchConnectionStatus = .error
             }
             // Remove automatic status setting - let testWatchConnectivity() handle this

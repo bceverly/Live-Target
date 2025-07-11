@@ -77,14 +77,33 @@ jobs:
         
         echo "Setting version to: $VERSION_NUMBER"
         
-        # Use agvtool to update version numbers in the Xcode project
-        agvtool new-marketing-version "$VERSION_NUMBER"
-        
-        # Set build number to current timestamp for uniqueness
-        BUILD_NUMBER=$(date +%Y%m%d%H%M)
-        agvtool new-version -all "$BUILD_NUMBER"
-        
-        echo "Updated to version $VERSION_NUMBER with build $BUILD_NUMBER"
+        # Try to use agvtool, but handle gracefully if not configured
+        if agvtool what-marketing-version 2>/dev/null; then
+          echo "Using agvtool to update version..."
+          agvtool new-marketing-version "$VERSION_NUMBER"
+          
+          # Set build number to current timestamp for uniqueness
+          BUILD_NUMBER=$(date +%Y%m%d%H%M)
+          agvtool new-version -all "$BUILD_NUMBER"
+          
+          echo "Updated to version $VERSION_NUMBER with build $BUILD_NUMBER"
+        else
+          echo "agvtool not configured, using manual Info.plist update..."
+          
+          # Update main app Info.plist
+          if [ -f "Live Target/Info.plist" ]; then
+            /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION_NUMBER" "Live Target/Info.plist" || true
+            /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $(date +%Y%m%d%H%M)" "Live Target/Info.plist" || true
+          fi
+          
+          # Update Watch app Info.plist if it exists
+          if [ -f "Live Target Watch App Watch App/Info.plist" ]; then
+            /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION_NUMBER" "Live Target Watch App Watch App/Info.plist" || true
+            /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $(date +%Y%m%d%H%M)" "Live Target Watch App Watch App/Info.plist" || true
+          fi
+          
+          echo "Updated Info.plist files to version $VERSION_NUMBER"
+        fi
         
     - name: Build Release Archive
       run: |
@@ -128,8 +147,15 @@ jobs:
         # Create release directory
         mkdir -p release
         
-        # Copy archive (if export worked, you'd copy the IPA here)
-        cp -r "ios/Live Target.xcarchive" release/ || true
+        # Copy and compress archive
+        if [ -d "ios/Live Target.xcarchive" ]; then
+          cd ios/
+          zip -r "../release/Live Target.xcarchive.zip" "Live Target.xcarchive"
+          cd ..
+          echo "Archive compressed successfully"
+        else
+          echo "Archive not found, skipping compression"
+        fi
         
         # Create release notes
         cat > release/RELEASE_NOTES.md << EOF
@@ -175,27 +201,28 @@ jobs:
         name: release-${{ needs.validate-release.outputs.version }}
         path: release/
         
-    - name: Create Release
-      uses: actions/create-release@v1
+    - name: Create GitHub Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ needs.validate-release.outputs.version }}
-        release_name: Live Target ${{ needs.validate-release.outputs.version }}
-        body_path: release/RELEASE_NOTES.md
-        draft: true
-        prerelease: false
+      run: |
+        VERSION="${{ needs.validate-release.outputs.version }}"
         
-    - name: Upload Archive to Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: release/Live Target.xcarchive.zip
-        asset_name: LiveTarget-${{ needs.validate-release.outputs.version }}.xcarchive.zip
-        asset_content_type: application/zip
-      continue-on-error: true
+        # Create release with GitHub CLI
+        gh release create "$VERSION" \
+          --repo="$GITHUB_REPOSITORY" \
+          --title="Live Target $VERSION" \
+          --notes-file="release/RELEASE_NOTES.md" \
+          --draft
+        
+        # Upload archive if it exists
+        if [ -f "release/Live Target.xcarchive.zip" ]; then
+          gh release upload "$VERSION" \
+            "release/Live Target.xcarchive.zip" \
+            --repo="$GITHUB_REPOSITORY"
+          echo "Archive uploaded successfully"
+        else
+          echo "Archive not found, skipping upload"
+        fi
 
   notify-release:
     name: Notify Release

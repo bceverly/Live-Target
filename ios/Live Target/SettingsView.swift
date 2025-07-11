@@ -13,6 +13,16 @@ struct SettingsView: View {
     @AppStorage("checkInterval") private var checkInterval: Double = 2.0
     @AppStorage("selectedCaliberName") private var selectedCaliberName: String = ".22 Long Rifle"
     @AppStorage("watchIntegrationEnabled") private var watchIntegrationEnabled: Bool = false
+    
+    // Overlay Settings
+    @AppStorage("overlayEnabled") private var overlayEnabled: Bool = false
+    @AppStorage("overlayPosition") private var overlayPositionRaw: String = OverlayPosition.topLeft.rawValue
+    @AppStorage("bulletWeight") private var bulletWeight: Double = 55.0
+    @AppStorage("ammoType") private var ammoTypeRaw: String = AmmoType.factory.rawValue
+    @AppStorage("factoryAmmoName") private var factoryAmmoName: String = ""
+    @AppStorage("handloadPowder") private var handloadPowder: String = ""
+    @AppStorage("handloadCharge") private var handloadCharge: Double = 0.0
+    
     @StateObject private var watchConnectivity = WatchConnectivityManager.shared
     @Environment(\.dismiss) private var dismiss
     
@@ -20,6 +30,16 @@ struct SettingsView: View {
     
     private var selectedCaliber: Caliber {
         return caliberData.findCaliber(byName: selectedCaliberName) ?? caliberData.calibers.first { $0.name == ".22 Long Rifle" }!
+    }
+    
+    private var overlayPosition: OverlayPosition {
+        get { OverlayPosition(rawValue: overlayPositionRaw) ?? .topLeft }
+        set { overlayPositionRaw = newValue.rawValue }
+    }
+    
+    private var ammoType: AmmoType {
+        get { AmmoType(rawValue: ammoTypeRaw) ?? .factory }
+        set { ammoTypeRaw = newValue.rawValue }
     }
     
     // MARK: - App Information
@@ -127,6 +147,27 @@ struct SettingsView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
+                }
+                
+                Section(header: Text("Saved Image Overlay")) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Toggle("Enable Overlay", isOn: $overlayEnabled)
+                        
+                        if overlayEnabled {
+                            OverlayPositionView(overlayPositionRaw: $overlayPositionRaw)
+                            
+                            BulletWeightView(bulletWeight: $bulletWeight)
+                            
+                            AmmoTypeView(
+                                ammoTypeRaw: $ammoTypeRaw,
+                                factoryAmmoName: $factoryAmmoName,
+                                handloadPowder: $handloadPowder,
+                                handloadCharge: $handloadCharge
+                            )
+                        }
+                    }
+                    .disabled(!overlayEnabled)
+                    .opacity(overlayEnabled ? 1.0 : 0.5)
                 }
                 
                 Section(header: Text("Apple Watch")) {
@@ -264,6 +305,133 @@ extension Color {
         let blue = Float(components[2])
         
         return String(format: "%02lX%02lX%02lX", lroundf(red * 255), lroundf(green * 255), lroundf(blue * 255))
+    }
+}
+
+// MARK: - Helper Views
+
+struct OverlayPositionView: View {
+    @Binding var overlayPositionRaw: String
+    
+    private var overlayPosition: OverlayPosition {
+        OverlayPosition(rawValue: overlayPositionRaw) ?? .topLeft
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Overlay Position")
+            
+            Menu {
+                ForEach(OverlayPosition.allCases) { position in
+                    Button(position.rawValue) {
+                        overlayPositionRaw = position.rawValue
+                    }
+                }
+            } label: {
+                HStack {
+                    Text(overlayPosition.rawValue)
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Image(systemName: "chevron.down")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                }
+                .padding(.vertical, 8)
+                .padding(.horizontal, 12)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+            }
+        }
+    }
+}
+
+struct BulletWeightView: View {
+    @Binding var bulletWeight: Double
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Bullet Weight")
+            HStack {
+                TextField("Weight", value: $bulletWeight, format: .number)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .keyboardType(.decimalPad)
+                Text("grains")
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+}
+
+struct AmmoTypeView: View {
+    @Binding var ammoTypeRaw: String
+    @Binding var factoryAmmoName: String
+    @Binding var handloadPowder: String
+    @Binding var handloadCharge: Double
+    
+    private var ammoType: AmmoType {
+        AmmoType(rawValue: ammoTypeRaw) ?? .factory
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Ammo Type")
+            
+            Picker("Ammo Type", selection: Binding(
+                get: { ammoType },
+                set: { ammoTypeRaw = $0.rawValue }
+            )) {
+                ForEach(AmmoType.allCases) { type in
+                    Text(type.rawValue).tag(type)
+                }
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            
+            // Conditional fields based on ammo type
+            if ammoType == .factory {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Factory Ammo Name")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    TextField("e.g., Federal Premium", text: $factoryAmmoName)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
+            } else {
+                HandloadFieldsView(
+                    handloadPowder: $handloadPowder,
+                    handloadCharge: $handloadCharge
+                )
+            }
+        }
+    }
+}
+
+struct HandloadFieldsView: View {
+    @Binding var handloadPowder: String
+    @Binding var handloadCharge: Double
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Powder")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                TextField("e.g., H4350", text: $handloadPowder)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+            }
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Powder Charge")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                HStack {
+                    TextField("Charge", value: $handloadCharge, format: .number)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .keyboardType(.decimalPad)
+                    Text("grains")
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
     }
 }
 

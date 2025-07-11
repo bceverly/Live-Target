@@ -289,11 +289,11 @@ class ChangeDetector: ObservableObject {
     ///   - image: The base image to save
     ///   - circleColor: Color for impact circles
     ///   - numberColor: Color for impact numbers
-    func saveCurrentImage(_ image: UIImage, circleColor: UIColor, numberColor: UIColor) {
+    func saveCurrentImage(_ image: UIImage, circleColor: UIColor, numberColor: UIColor, overlaySettings: OverlaySettings? = nil) {
         stopDetection() // Stop detection when saving
         
         // Create composite image with circles and numbers overlaid
-        let compositeImage = createCompositeImage(baseImage: image, circleColor: circleColor, numberColor: numberColor)
+        let compositeImage = createCompositeImage(baseImage: image, circleColor: circleColor, numberColor: numberColor, overlaySettings: overlaySettings)
         
         PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
             DispatchQueue.main.async {
@@ -333,7 +333,7 @@ class ChangeDetector: ObservableObject {
     ///   - circleColor: Color for impact circles
     ///   - numberColor: Color for impact numbers
     /// - Returns: Composite image with overlays
-    private func createCompositeImage(baseImage: UIImage, circleColor: UIColor, numberColor: UIColor) -> UIImage {
+    private func createCompositeImage(baseImage: UIImage, circleColor: UIColor, numberColor: UIColor, overlaySettings: OverlaySettings? = nil) -> UIImage {
         // For camera images, we need to rotate 90 degrees clockwise to match screen orientation
         let rotatedImage = baseImage.rotated90DegreesClockwise()
         let imageSize = rotatedImage.size
@@ -377,6 +377,94 @@ class ChangeDetector: ObservableObject {
                     y: centerY - stringSize.height / 2
                 ))
             }
+            
+            // Draw overlay if enabled
+            if let overlaySettings = overlaySettings, overlaySettings.enabled {
+                drawOverlay(context: context, imageSize: imageSize, overlaySettings: overlaySettings)
+            }
+        }
+    }
+    
+    /// Draws the overlay information on the image
+    /// - Parameters:
+    ///   - context: The graphics context
+    ///   - imageSize: Size of the image
+    ///   - overlaySettings: Settings for the overlay
+    private func drawOverlay(context: UIGraphicsImageRendererContext, imageSize: CGSize, overlaySettings: OverlaySettings) {
+        let overlayText = overlaySettings.getOverlayText()
+        
+        // Create text attributes
+        let font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        let textColor = UIColor.white
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .left
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: textColor,
+            .paragraphStyle: paragraphStyle
+        ]
+        
+        let attributedString = NSAttributedString(string: overlayText, attributes: attributes)
+        let textSize = attributedString.boundingRect(with: CGSize(width: imageSize.width, height: imageSize.height), options: .usesLineFragmentOrigin, context: nil).size
+        
+        // Add padding around text
+        let padding: CGFloat = 12
+        let overlayWidth = textSize.width + (padding * 2)
+        let overlayHeight = textSize.height + (padding * 2)
+        
+        // Calculate position based on overlay position setting
+        let overlayRect = calculateOverlayRect(imageSize: imageSize, overlaySize: CGSize(width: overlayWidth, height: overlayHeight), position: overlaySettings.position)
+        
+        // Draw rounded rectangle background with transparency
+        let cgContext = context.cgContext
+        cgContext.saveGState()
+        
+        // Set up rounded rectangle
+        let cornerRadius: CGFloat = 8
+        let path = UIBezierPath(roundedRect: overlayRect, cornerRadius: cornerRadius)
+        
+        // Fill with semi-transparent black
+        cgContext.setFillColor(UIColor.black.withAlphaComponent(0.7).cgColor)
+        cgContext.addPath(path.cgPath)
+        cgContext.fillPath()
+        
+        // Draw text
+        let textRect = CGRect(
+            x: overlayRect.origin.x + padding,
+            y: overlayRect.origin.y + padding,
+            width: textSize.width,
+            height: textSize.height
+        )
+        
+        attributedString.draw(in: textRect)
+        
+        cgContext.restoreGState()
+    }
+    
+    /// Calculates the overlay rectangle position based on the overlay position setting
+    /// - Parameters:
+    ///   - imageSize: Size of the image
+    ///   - overlaySize: Size of the overlay
+    ///   - position: Overlay position setting
+    /// - Returns: CGRect for the overlay position
+    private func calculateOverlayRect(imageSize: CGSize, overlaySize: CGSize, position: OverlayPosition) -> CGRect {
+        let margin: CGFloat = 20
+        
+        switch position {
+        case .topLeft:
+            return CGRect(x: margin, y: margin, width: overlaySize.width, height: overlaySize.height)
+        case .topCenter:
+            return CGRect(x: (imageSize.width - overlaySize.width) / 2, y: margin, width: overlaySize.width, height: overlaySize.height)
+        case .topRight:
+            return CGRect(x: imageSize.width - overlaySize.width - margin, y: margin, width: overlaySize.width, height: overlaySize.height)
+        case .bottomLeft:
+            return CGRect(x: margin, y: imageSize.height - overlaySize.height - margin, width: overlaySize.width, height: overlaySize.height)
+        case .bottomCenter:
+            return CGRect(x: (imageSize.width - overlaySize.width) / 2, y: imageSize.height - overlaySize.height - margin, width: overlaySize.width, height: overlaySize.height)
+        case .bottomRight:
+            return CGRect(x: imageSize.width - overlaySize.width - margin, y: imageSize.height - overlaySize.height - margin, width: overlaySize.width, height: overlaySize.height)
         }
     }
 }

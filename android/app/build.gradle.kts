@@ -13,8 +13,8 @@ android {
         applicationId = "com.bceassociates.livetarget"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.91"
+        versionCode = 3
+        versionName = "0.92"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

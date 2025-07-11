@@ -14,12 +14,17 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.RectF
+import android.graphics.Typeface
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.bceassociates.livetarget.data.AmmoType
 import com.bceassociates.livetarget.data.CaliberData
+import com.bceassociates.livetarget.data.OverlayPosition
+import com.bceassociates.livetarget.data.OverlaySettings
 import com.bceassociates.livetarget.data.model.ChangePoint
 import com.bceassociates.livetarget.data.preferences.SettingsDataStore
 import com.bceassociates.livetarget.detection.ChangeDetector
@@ -46,9 +51,30 @@ data class MainUiState(
     val watchIntegrationEnabled: Boolean = false,
     val watchConnectionStatus: WatchConnectionStatus = WatchConnectionStatus.UNKNOWN,
     val isWatchPaired: Boolean = false,
+    
+    // Overlay Settings
+    val overlayEnabled: Boolean = false,
+    val overlayPosition: String = OverlayPosition.TOP_LEFT.name,
+    val bulletWeight: Double = 55.0,
+    val ammoType: String = AmmoType.FACTORY.name,
+    val factoryAmmoName: String = "",
+    val handloadPowder: String = "",
+    val handloadCharge: Double = 0.0,
 ) {
     val selectedCaliber: com.bceassociates.livetarget.data.Caliber?
         get() = CaliberData.findCaliberByName(selectedCaliberName)
+    
+    val overlaySettings: OverlaySettings
+        get() = OverlaySettings(
+            enabled = overlayEnabled,
+            position = OverlayPosition.valueOf(overlayPosition),
+            bulletWeight = bulletWeight,
+            ammoType = AmmoType.valueOf(ammoType),
+            factoryAmmoName = factoryAmmoName,
+            handloadPowder = handloadPowder,
+            handloadCharge = handloadCharge,
+            selectedCaliberName = selectedCaliberName
+        )
 }
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -106,6 +132,49 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             settingsDataStore.watchIntegrationEnabled.collect { enabled ->
                 _uiState.value = _uiState.value.copy(watchIntegrationEnabled = enabled)
+            }
+        }
+
+        // Observe overlay settings
+        viewModelScope.launch {
+            settingsDataStore.overlayEnabled.collect { enabled ->
+                _uiState.value = _uiState.value.copy(overlayEnabled = enabled)
+            }
+        }
+
+        viewModelScope.launch {
+            settingsDataStore.overlayPosition.collect { position ->
+                _uiState.value = _uiState.value.copy(overlayPosition = position)
+            }
+        }
+
+        viewModelScope.launch {
+            settingsDataStore.bulletWeight.collect { weight ->
+                _uiState.value = _uiState.value.copy(bulletWeight = weight)
+            }
+        }
+
+        viewModelScope.launch {
+            settingsDataStore.ammoType.collect { type ->
+                _uiState.value = _uiState.value.copy(ammoType = type)
+            }
+        }
+
+        viewModelScope.launch {
+            settingsDataStore.factoryAmmoName.collect { name ->
+                _uiState.value = _uiState.value.copy(factoryAmmoName = name)
+            }
+        }
+
+        viewModelScope.launch {
+            settingsDataStore.handloadPowder.collect { powder ->
+                _uiState.value = _uiState.value.copy(handloadPowder = powder)
+            }
+        }
+
+        viewModelScope.launch {
+            settingsDataStore.handloadCharge.collect { charge ->
+                _uiState.value = _uiState.value.copy(handloadCharge = charge)
             }
         }
 
@@ -219,7 +288,93 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             canvas.drawText(impact.number.toString(), centerX, textY, textPaint)
         }
 
+        // Draw overlay if enabled
+        val overlaySettings = _uiState.value.overlaySettings
+        if (overlaySettings.enabled) {
+            drawOverlay(canvas, compositeBitmap, overlaySettings)
+        }
+
         return compositeBitmap
+    }
+
+    private fun drawOverlay(canvas: Canvas, bitmap: Bitmap, overlaySettings: OverlaySettings) {
+        val overlayText = overlaySettings.getOverlayText()
+        
+        // Create text paint
+        val textPaint = Paint().apply {
+            color = Color.WHITE
+            textSize = 48f
+            isAntiAlias = true
+            typeface = Typeface.DEFAULT_BOLD
+        }
+        
+        // Measure text
+        val textBounds = Rect()
+        val lines = overlayText.split('\n')
+        var maxLineWidth = 0f
+        var totalHeight = 0f
+        
+        lines.forEach { line ->
+            textPaint.getTextBounds(line, 0, line.length, textBounds)
+            maxLineWidth = maxOf(maxLineWidth, textBounds.width().toFloat())
+            totalHeight += textBounds.height().toFloat()
+        }
+        
+        // Add padding
+        val padding = 24f
+        val overlayWidth = maxLineWidth + (padding * 2)
+        val overlayHeight = totalHeight + (padding * 2) + (lines.size - 1) * 12f // line spacing
+        
+        // Calculate position based on overlay position setting
+        val overlayRect = calculateOverlayRect(
+            bitmap.width.toFloat(), 
+            bitmap.height.toFloat(), 
+            overlayWidth, 
+            overlayHeight, 
+            overlaySettings.position
+        )
+        
+        // Draw rounded rectangle background
+        val backgroundPaint = Paint().apply {
+            color = Color.parseColor("#B3000000") // 70% transparent black
+            isAntiAlias = true
+        }
+        
+        val cornerRadius = 24f
+        val rectF = RectF(overlayRect.left, overlayRect.top, overlayRect.right, overlayRect.bottom)
+        canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, backgroundPaint)
+        
+        // Draw text lines
+        var currentY = overlayRect.top + padding + textBounds.height()
+        lines.forEach { line ->
+            canvas.drawText(line, overlayRect.left + padding, currentY, textPaint)
+            currentY += textBounds.height() + 12f // line spacing
+        }
+    }
+    
+    private fun calculateOverlayRect(
+        imageWidth: Float, 
+        imageHeight: Float, 
+        overlayWidth: Float, 
+        overlayHeight: Float, 
+        position: OverlayPosition
+    ): RectF {
+        val margin = 60f
+        
+        return when (position) {
+            OverlayPosition.TOP_LEFT -> 
+                RectF(margin, margin, margin + overlayWidth, margin + overlayHeight)
+            OverlayPosition.TOP_CENTER -> 
+                RectF((imageWidth - overlayWidth) / 2, margin, (imageWidth + overlayWidth) / 2, margin + overlayHeight)
+            OverlayPosition.TOP_RIGHT -> 
+                RectF(imageWidth - overlayWidth - margin, margin, imageWidth - margin, margin + overlayHeight)
+            OverlayPosition.BOTTOM_LEFT -> 
+                RectF(margin, imageHeight - overlayHeight - margin, margin + overlayWidth, imageHeight - margin)
+            OverlayPosition.BOTTOM_CENTER -> 
+                RectF((imageWidth - overlayWidth) / 2, imageHeight - overlayHeight - margin, (imageWidth + overlayWidth) / 2, imageHeight - margin)
+            OverlayPosition.BOTTOM_RIGHT -> 
+                RectF(imageWidth - overlayWidth - margin, imageHeight - overlayHeight - margin, imageWidth - margin, imageHeight - margin)
+        }
     }
 
     private suspend fun saveImageToGallery(bitmap: Bitmap) {
@@ -291,6 +446,49 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setWatchIntegrationEnabled(enabled: Boolean) {
         viewModelScope.launch {
             settingsDataStore.setWatchIntegrationEnabled(enabled)
+        }
+    }
+
+    // Overlay Settings Setters
+    fun setOverlayEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.setOverlayEnabled(enabled)
+        }
+    }
+
+    fun setOverlayPosition(position: String) {
+        viewModelScope.launch {
+            settingsDataStore.setOverlayPosition(position)
+        }
+    }
+
+    fun setBulletWeight(weight: Double) {
+        viewModelScope.launch {
+            settingsDataStore.setBulletWeight(weight)
+        }
+    }
+
+    fun setAmmoType(type: String) {
+        viewModelScope.launch {
+            settingsDataStore.setAmmoType(type)
+        }
+    }
+
+    fun setFactoryAmmoName(name: String) {
+        viewModelScope.launch {
+            settingsDataStore.setFactoryAmmoName(name)
+        }
+    }
+
+    fun setHandloadPowder(powder: String) {
+        viewModelScope.launch {
+            settingsDataStore.setHandloadPowder(powder)
+        }
+    }
+
+    fun setHandloadCharge(charge: Double) {
+        viewModelScope.launch {
+            settingsDataStore.setHandloadCharge(charge)
         }
     }
 

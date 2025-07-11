@@ -60,10 +60,32 @@ struct ContentView: View {
     @AppStorage("zoomFactor") private var zoomFactor: Double = 1.0
     @AppStorage("watchIntegrationEnabled") private var watchIntegrationEnabled: Bool = false
     
+    // Overlay Settings
+    @AppStorage("overlayEnabled") private var overlayEnabled: Bool = false
+    @AppStorage("overlayPosition") private var overlayPositionRaw: String = OverlayPosition.topLeft.rawValue
+    @AppStorage("bulletWeight") private var bulletWeight: Double = 55.0
+    @AppStorage("ammoType") private var ammoTypeRaw: String = AmmoType.factory.rawValue
+    @AppStorage("factoryAmmoName") private var factoryAmmoName: String = ""
+    @AppStorage("handloadPowder") private var handloadPowder: String = ""
+    @AppStorage("handloadCharge") private var handloadCharge: Double = 0.0
+    
     private var caliberData = CaliberData.shared
     
     private var selectedCaliber: Caliber {
         return caliberData.findCaliber(byName: selectedCaliberName) ?? caliberData.calibers.first { $0.name == ".22 Long Rifle" }!
+    }
+    
+    private var overlaySettings: OverlaySettings {
+        return OverlaySettings(
+            enabled: overlayEnabled,
+            position: OverlayPosition(rawValue: overlayPositionRaw) ?? .topLeft,
+            bulletWeight: bulletWeight,
+            ammoType: AmmoType(rawValue: ammoTypeRaw) ?? .factory,
+            factoryAmmoName: factoryAmmoName,
+            handloadPowder: handloadPowder,
+            handloadCharge: handloadCharge,
+            selectedCaliberName: selectedCaliberName
+        )
     }
     
     var body: some View {
@@ -158,7 +180,7 @@ struct ContentView: View {
                             if let image = capturedImage {
                                 let circleColor = UIColor(Color(hex: circleColorHex) ?? .red)
                                 let numberColor = UIColor(Color(hex: numberColorHex) ?? .red)
-                                changeDetector.saveCurrentImage(image, circleColor: circleColor, numberColor: numberColor)
+                                changeDetector.saveCurrentImage(image, circleColor: circleColor, numberColor: numberColor, overlaySettings: overlaySettings)
                             }
                         }
                         .foregroundColor(.blue)
@@ -179,7 +201,7 @@ struct ContentView: View {
                             if let image = capturedImage {
                                 let circleColor = UIColor(Color(hex: circleColorHex) ?? .red)
                                 let numberColor = UIColor(Color(hex: numberColorHex) ?? .red)
-                                changeDetector.saveCurrentImage(image, circleColor: circleColor, numberColor: numberColor)
+                                changeDetector.saveCurrentImage(image, circleColor: circleColor, numberColor: numberColor, overlaySettings: overlaySettings)
                             }
                         }
                         .foregroundColor(.blue)

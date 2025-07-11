@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -32,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -48,11 +50,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bceassociates.livetarget.R
+import com.bceassociates.livetarget.data.AmmoType
 import com.bceassociates.livetarget.data.CaliberData
+import com.bceassociates.livetarget.data.OverlayPosition
 import com.bceassociates.livetarget.ui.theme.LiveTargetTheme
 import com.bceassociates.livetarget.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
@@ -291,6 +296,240 @@ fun SettingsScreen(
                                     text = "(${selectedCaliber.pixelSize}×${selectedCaliber.pixelSize} pixels)",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Saved Image Overlay Section
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                ) {
+                    Text(
+                        text = "Saved Image Overlay",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 12.dp),
+                    )
+                    
+                    // Overlay Enable Toggle
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text("Enable Overlay")
+                        Switch(
+                            checked = uiState.overlayEnabled,
+                            onCheckedChange = { viewModel.setOverlayEnabled(it) },
+                        )
+                    }
+                    
+                    // Overlay Position Dropdown
+                    if (uiState.overlayEnabled) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                        ) {
+                            Text(
+                                text = "Overlay Position",
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            
+                            var positionExpanded by remember { mutableStateOf(false) }
+                            val currentPosition = try {
+                                OverlayPosition.valueOf(uiState.overlayPosition)
+                            } catch (e: Exception) {
+                                OverlayPosition.TOP_LEFT
+                            }
+                            
+                            Box {
+                                OutlinedButton(
+                                    onClick = { positionExpanded = true },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = currentPosition.displayName,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Icon(
+                                            Icons.Default.ArrowDropDown,
+                                            contentDescription = "Dropdown"
+                                        )
+                                    }
+                                }
+                                
+                                DropdownMenu(
+                                    expanded = positionExpanded,
+                                    onDismissRequest = { positionExpanded = false }
+                                ) {
+                                    OverlayPosition.values().forEach { position ->
+                                        DropdownMenuItem(
+                                            text = { Text(position.displayName) },
+                                            onClick = {
+                                                viewModel.setOverlayPosition(position.name)
+                                                positionExpanded = false
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Bullet Weight
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                        ) {
+                            Text(
+                                text = "Bullet Weight",
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            
+                            OutlinedTextField(
+                                value = uiState.bulletWeight.toString(),
+                                onValueChange = { newValue ->
+                                    newValue.toDoubleOrNull()?.let { weight ->
+                                        viewModel.setBulletWeight(weight)
+                                    }
+                                },
+                                label = { Text("Weight in grains") },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                        
+                        // Ammo Type
+                        val currentAmmoType = try {
+                            AmmoType.valueOf(uiState.ammoType)
+                        } catch (e: Exception) {
+                            AmmoType.FACTORY
+                        }
+                        
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                        ) {
+                            Text(
+                                text = "Ammo Type",
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            
+                            var ammoTypeExpanded by remember { mutableStateOf(false) }
+                            
+                            Box {
+                                OutlinedButton(
+                                    onClick = { ammoTypeExpanded = true },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = currentAmmoType.displayName,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Icon(
+                                            Icons.Default.ArrowDropDown,
+                                            contentDescription = "Dropdown"
+                                        )
+                                    }
+                                }
+                                
+                                DropdownMenu(
+                                    expanded = ammoTypeExpanded,
+                                    onDismissRequest = { ammoTypeExpanded = false }
+                                ) {
+                                    AmmoType.values().forEach { ammoType ->
+                                        DropdownMenuItem(
+                                            text = { Text(ammoType.displayName) },
+                                            onClick = {
+                                                viewModel.setAmmoType(ammoType.name)
+                                                ammoTypeExpanded = false
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Conditional fields based on ammo type
+                        if (currentAmmoType == AmmoType.FACTORY) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                            ) {
+                                Text(
+                                    text = "Factory Ammo Name",
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                                
+                                OutlinedTextField(
+                                    value = uiState.factoryAmmoName,
+                                    onValueChange = { viewModel.setFactoryAmmoName(it) },
+                                    label = { Text("e.g., Federal Premium") },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        } else {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                            ) {
+                                Text(
+                                    text = "Powder",
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                                
+                                OutlinedTextField(
+                                    value = uiState.handloadPowder,
+                                    onValueChange = { viewModel.setHandloadPowder(it) },
+                                    label = { Text("e.g., H4350") },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                            
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                            ) {
+                                Text(
+                                    text = "Powder Charge",
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                                
+                                OutlinedTextField(
+                                    value = uiState.handloadCharge.toString(),
+                                    onValueChange = { newValue ->
+                                        newValue.toDoubleOrNull()?.let { charge ->
+                                            viewModel.setHandloadCharge(charge)
+                                        }
+                                    },
+                                    label = { Text("Charge in grains") },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                             }
                         }

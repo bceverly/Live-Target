@@ -639,7 +639,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.91;
+				MARKETING_VERSION = 0.92;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -672,7 +672,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.91;
+				MARKETING_VERSION = 0.92;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -690,7 +690,7 @@
 				DEVELOPMENT_TEAM = Z65K66NG9F;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				MARKETING_VERSION = 0.91;
+				MARKETING_VERSION = 0.92;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-TargetTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -709,7 +709,7 @@
 				DEVELOPMENT_TEAM = Z65K66NG9F;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				MARKETING_VERSION = 0.91;
+				MARKETING_VERSION = 0.92;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-TargetTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -726,7 +726,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = Z65K66NG9F;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.91;
+				MARKETING_VERSION = 0.92;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-TargetUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -743,7 +743,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = Z65K66NG9F;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.91;
+				MARKETING_VERSION = 0.92;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-TargetUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -771,7 +771,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.91;
+				MARKETING_VERSION = 0.92;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -801,7 +801,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.91;
+				MARKETING_VERSION = 0.92;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -821,7 +821,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = Z65K66NG9F;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.91;
+				MARKETING_VERSION = 0.92;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target-Watch-App-Watch-AppTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -841,7 +841,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = Z65K66NG9F;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.91;
+				MARKETING_VERSION = 0.92;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target-Watch-App-Watch-AppTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -860,7 +860,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = Z65K66NG9F;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.91;
+				MARKETING_VERSION = 0.92;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target-Watch-App-Watch-AppUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -879,7 +879,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = Z65K66NG9F;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.91;
+				MARKETING_VERSION = 0.92;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bceassociates.Live-Target-Watch-App-Watch-AppUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
