@@ -23,12 +23,10 @@ final class Live_TargetUITestsLaunchTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        // Insert steps here to perform after app launch but before taking a screenshot,
-        // such as logging into a test account or navigating somewhere in the app
-
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "Launch Screen"
-        attachment.lifetime = .keepAlways
-        add(attachment)
+        // Wait for app to stabilize (CI-friendly timeout)
+        Thread.sleep(forTimeInterval: 5.0)
+        
+        // Just verify app launched successfully without screenshot
+        XCTAssertEqual(app.state, .runningForeground, "App should launch successfully")
     }
 }
