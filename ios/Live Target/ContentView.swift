@@ -56,9 +56,15 @@ struct ContentView: View {
     @AppStorage("circleColor") private var circleColorHex: String = "FF0000"
     @AppStorage("numberColor") private var numberColorHex: String = "FF0000"
     @AppStorage("checkInterval") private var checkInterval: Double = 2.0
-    @AppStorage("bulletCaliber") private var bulletCaliber: Int = 22
+    @AppStorage("selectedCaliberName") private var selectedCaliberName: String = ".22 Long Rifle"
     @AppStorage("zoomFactor") private var zoomFactor: Double = 1.0
     @AppStorage("watchIntegrationEnabled") private var watchIntegrationEnabled: Bool = false
+    
+    private var caliberData = CaliberData.shared
+    
+    private var selectedCaliber: Caliber {
+        return caliberData.findCaliber(byName: selectedCaliberName) ?? caliberData.calibers.first { $0.name == ".22 Long Rifle" }!
+    }
     
     var body: some View {
         NavigationView {
@@ -76,8 +82,8 @@ struct ContentView: View {
                         .onChange(of: checkInterval) { _, newInterval in
                             changeDetector.setCheckInterval(newInterval)
                         }
-                        .onChange(of: bulletCaliber) { _, newCaliber in
-                            changeDetector.setMinChangeSize(newCaliber * 2)
+                        .onChange(of: selectedCaliberName) { _, _ in
+                            changeDetector.setMinChangeSize(selectedCaliber.pixelSize)
                         }
                     
                     ForEach(changeDetector.detectedChanges, id: \.id) { change in
@@ -189,7 +195,7 @@ struct ContentView: View {
             }
             .onAppear {
                 changeDetector.setCheckInterval(checkInterval)
-                changeDetector.setMinChangeSize(bulletCaliber * 2)
+                changeDetector.setMinChangeSize(selectedCaliber.pixelSize)
                 
                 // Always test watch connectivity on app launch for icon status
                 watchConnectivity.testWatchConnectivity()

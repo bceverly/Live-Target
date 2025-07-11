@@ -27,7 +27,7 @@ class SettingsDataStore(private val context: Context) {
         private val CIRCLE_COLOR_KEY = stringPreferencesKey("circle_color")
         private val NUMBER_COLOR_KEY = stringPreferencesKey("number_color")
         private val CHECK_INTERVAL_KEY = doublePreferencesKey("check_interval")
-        private val BULLET_CALIBER_KEY = intPreferencesKey("bullet_caliber")
+        private val SELECTED_CALIBER_NAME_KEY = stringPreferencesKey("selected_caliber_name")
         private val ZOOM_FACTOR_KEY = doublePreferencesKey("zoom_factor")
         private val WATCH_INTEGRATION_ENABLED_KEY = booleanPreferencesKey("watch_integration_enabled")
     }
@@ -47,9 +47,9 @@ class SettingsDataStore(private val context: Context) {
             preferences[CHECK_INTERVAL_KEY] ?: 2.0
         }
 
-    val bulletCaliber: Flow<Int> =
+    val selectedCaliberName: Flow<String> =
         context.dataStore.data.map { preferences ->
-            preferences[BULLET_CALIBER_KEY] ?: 22
+            preferences[SELECTED_CALIBER_NAME_KEY] ?: ".22 Long Rifle"
         }
 
     val zoomFactor: Flow<Double> =
@@ -80,9 +80,9 @@ class SettingsDataStore(private val context: Context) {
         }
     }
 
-    suspend fun setBulletCaliber(caliber: Int) {
+    suspend fun setSelectedCaliberName(caliberName: String) {
         context.dataStore.edit { settings ->
-            settings[BULLET_CALIBER_KEY] = caliber
+            settings[SELECTED_CALIBER_NAME_KEY] = caliberName
         }
     }
 

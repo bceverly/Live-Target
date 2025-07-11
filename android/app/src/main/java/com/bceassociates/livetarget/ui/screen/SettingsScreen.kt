@@ -21,13 +21,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -35,6 +39,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bceassociates.livetarget.R
+import com.bceassociates.livetarget.data.CaliberData
 import com.bceassociates.livetarget.ui.theme.LiveTargetTheme
 import com.bceassociates.livetarget.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
@@ -171,33 +179,119 @@ fun SettingsScreen(
                     Column(
                         modifier = Modifier.padding(vertical = 8.dp),
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Text(stringResource(R.string.bullet_caliber))
-                            Text("${uiState.bulletCaliber}")
-                        }
+                        Text(
+                            text = stringResource(R.string.bullet_caliber),
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
                         
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Button(
-                                onClick = { viewModel.setBulletCaliber((uiState.bulletCaliber - 1).coerceAtLeast(17)) },
-                                enabled = uiState.bulletCaliber > 17,
+                        var expanded by remember { mutableStateOf(false) }
+                        val selectedCaliber = uiState.selectedCaliber
+                        
+                        Box {
+                            OutlinedButton(
+                                onClick = { expanded = true },
+                                modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text("-")
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = selectedCaliber?.name ?: ".22 Long Rifle",
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Icon(
+                                        Icons.Default.ArrowDropDown,
+                                        contentDescription = "Dropdown"
+                                    )
+                                }
                             }
                             
-                            Text("(${uiState.bulletCaliber * 2}×${uiState.bulletCaliber * 2} pixels)")
-                            
-                            Button(
-                                onClick = { viewModel.setBulletCaliber((uiState.bulletCaliber + 1).coerceAtMost(70)) },
-                                enabled = uiState.bulletCaliber < 70,
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
                             ) {
-                                Text("+")
+                                Text(
+                                    text = "Common Calibers",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                )
+                                CaliberData.commonCalibers.forEach { caliber ->
+                                    DropdownMenuItem(
+                                        text = { Text(caliber.name) },
+                                        onClick = {
+                                            viewModel.setSelectedCaliberName(caliber.name)
+                                            expanded = false
+                                        }
+                                    )
+                                }
+                                
+                                Text(
+                                    text = "Rimfire",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                )
+                                CaliberData.rimfireCalibers.forEach { caliber ->
+                                    DropdownMenuItem(
+                                        text = { Text(caliber.name) },
+                                        onClick = {
+                                            viewModel.setSelectedCaliberName(caliber.name)
+                                            expanded = false
+                                        }
+                                    )
+                                }
+                                
+                                Text(
+                                    text = "Pistol Calibers",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                )
+                                CaliberData.pistolCalibers.forEach { caliber ->
+                                    DropdownMenuItem(
+                                        text = { Text(caliber.name) },
+                                        onClick = {
+                                            viewModel.setSelectedCaliberName(caliber.name)
+                                            expanded = false
+                                        }
+                                    )
+                                }
+                                
+                                Text(
+                                    text = "Rifle Calibers",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                )
+                                CaliberData.rifleCalibers.forEach { caliber ->
+                                    DropdownMenuItem(
+                                        text = { Text(caliber.name) },
+                                        onClick = {
+                                            viewModel.setSelectedCaliberName(caliber.name)
+                                            expanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                        
+                        // Show caliber details
+                        if (selectedCaliber != null) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "Diameter: ${String.format("%.3f", selectedCaliber.diameterInches)}\"",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = "(${selectedCaliber.pixelSize}×${selectedCaliber.pixelSize} pixels)",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
                         }
                     }

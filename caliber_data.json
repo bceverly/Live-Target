@@ -1,0 +1,292 @@
+{
+  "calibers": [
+    {
+      "name": ".17 HMR",
+      "category": "Rimfire",
+      "diameter_inches": 0.172,
+      "common": true
+    },
+    {
+      "name": ".17 Remington",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.172,
+      "common": false
+    },
+    {
+      "name": ".22 Short",
+      "category": "Rimfire",
+      "diameter_inches": 0.223,
+      "common": true
+    },
+    {
+      "name": ".22 Long Rifle",
+      "category": "Rimfire",
+      "diameter_inches": 0.223,
+      "common": true
+    },
+    {
+      "name": ".22 WMR",
+      "category": "Rimfire",
+      "diameter_inches": 0.224,
+      "common": true
+    },
+    {
+      "name": ".22 Hornet",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.224,
+      "common": false
+    },
+    {
+      "name": ".223 Remington",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.224,
+      "common": true
+    },
+    {
+      "name": "5.56×45mm NATO",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.224,
+      "common": true
+    },
+    {
+      "name": ".243 Winchester",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.243,
+      "common": true
+    },
+    {
+      "name": "6mm Remington",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.243,
+      "common": false
+    },
+    {
+      "name": "6.5 Carcano",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.268,
+      "common": false
+    },
+    {
+      "name": "6.5×55mm Swedish",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.264,
+      "common": false
+    },
+    {
+      "name": "6.5 Creedmoor",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.264,
+      "common": true
+    },
+    {
+      "name": "6.5 Grendel",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.264,
+      "common": false
+    },
+    {
+      "name": ".270 Winchester",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.277,
+      "common": true
+    },
+    {
+      "name": "7mm Remington Magnum",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.284,
+      "common": true
+    },
+    {
+      "name": "7mm-08 Remington",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.284,
+      "common": false
+    },
+    {
+      "name": "7×57mm Mauser",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.284,
+      "common": false
+    },
+    {
+      "name": ".30 Carbine",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.308,
+      "common": false
+    },
+    {
+      "name": ".30-30 Winchester",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.308,
+      "common": true
+    },
+    {
+      "name": ".308 Winchester",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.308,
+      "common": true
+    },
+    {
+      "name": "7.62×51mm NATO",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.308,
+      "common": true
+    },
+    {
+      "name": ".30-06 Springfield",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.308,
+      "common": true
+    },
+    {
+      "name": "7.62×39mm",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.311,
+      "common": true
+    },
+    {
+      "name": "7.62×54mmR",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.311,
+      "common": false
+    },
+    {
+      "name": ".300 Winchester Magnum",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.308,
+      "common": true
+    },
+    {
+      "name": ".300 Blackout",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.308,
+      "common": true
+    },
+    {
+      "name": "8mm Mauser",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.323,
+      "common": false
+    },
+    {
+      "name": ".338 Lapua Magnum",
+      "category": "Centerfire Rifle",
+      "diameter_inches": 0.338,
+      "common": false
+    },
+    {
+      "name": ".25 ACP",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.251,
+      "common": false
+    },
+    {
+      "name": ".32 ACP",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.312,
+      "common": false
+    },
+    {
+      "name": ".380 ACP",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.355,
+      "common": true
+    },
+    {
+      "name": "9mm Luger",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.355,
+      "common": true
+    },
+    {
+      "name": "9×18mm Makarov",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.365,
+      "common": false
+    },
+    {
+      "name": ".38 Special",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.357,
+      "common": true
+    },
+    {
+      "name": ".357 Magnum",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.357,
+      "common": true
+    },
+    {
+      "name": ".40 S&W",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.400,
+      "common": true
+    },
+    {
+      "name": "10mm Auto",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.400,
+      "common": false
+    },
+    {
+      "name": ".44 Special",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.429,
+      "common": false
+    },
+    {
+      "name": ".44 Magnum",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.429,
+      "common": true
+    },
+    {
+      "name": ".45 ACP",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.452,
+      "common": true
+    },
+    {
+      "name": ".45 Colt",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.452,
+      "common": false
+    },
+    {
+      "name": ".50 AE",
+      "category": "Centerfire Pistol",
+      "diameter_inches": 0.500,
+      "common": false
+    },
+    {
+      "name": ".410 Bore",
+      "category": "Shotgun",
+      "diameter_inches": 0.410,
+      "common": false
+    },
+    {
+      "name": "20 Gauge",
+      "category": "Shotgun",
+      "diameter_inches": 0.615,
+      "common": false
+    },
+    {
+      "name": "16 Gauge",
+      "category": "Shotgun",
+      "diameter_inches": 0.670,
+      "common": false
+    },
+    {
+      "name": "12 Gauge",
+      "category": "Shotgun",
+      "diameter_inches": 0.729,
+      "common": false
+    },
+    {
+      "name": "10 Gauge",
+      "category": "Shotgun",
+      "diameter_inches": 0.775,
+      "common": false
+    }
+  ]
+}

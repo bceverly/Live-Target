@@ -11,10 +11,16 @@ struct SettingsView: View {
     @AppStorage("circleColor") private var circleColorHex: String = "FF0000"
     @AppStorage("numberColor") private var numberColorHex: String = "FF0000"
     @AppStorage("checkInterval") private var checkInterval: Double = 2.0
-    @AppStorage("bulletCaliber") private var bulletCaliber: Int = 22
+    @AppStorage("selectedCaliberName") private var selectedCaliberName: String = ".22 Long Rifle"
     @AppStorage("watchIntegrationEnabled") private var watchIntegrationEnabled: Bool = false
     @StateObject private var watchConnectivity = WatchConnectivityManager.shared
     @Environment(\.dismiss) private var dismiss
+    
+    private var caliberData = CaliberData.shared
+    
+    private var selectedCaliber: Caliber {
+        return caliberData.findCaliber(byName: selectedCaliberName) ?? caliberData.calibers.first { $0.name == ".22 Long Rifle" }!
+    }
     
     // MARK: - App Information
     private var appVersion: String {
@@ -61,13 +67,62 @@ struct SettingsView: View {
                         }
                     }
                     
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 8) {
                         Text("Bullet Caliber")
-                        HStack {
-                            Stepper(value: $bulletCaliber, in: 17...70, step: 1) {
-                                Text("\(bulletCaliber)")
+                        
+                        Menu {
+                            Section("Common Calibers") {
+                                ForEach(caliberData.commonCalibers) { caliber in
+                                    Button(caliber.name) {
+                                        selectedCaliberName = caliber.name
+                                    }
+                                }
                             }
-                            Text("(\(bulletCaliber * 2)×\(bulletCaliber * 2) pixels)")
+                            
+                            Section("Rimfire") {
+                                ForEach(caliberData.rimfireCalibers) { caliber in
+                                    Button(caliber.name) {
+                                        selectedCaliberName = caliber.name
+                                    }
+                                }
+                            }
+                            
+                            Section("Pistol Calibers") {
+                                ForEach(caliberData.pistolCalibers) { caliber in
+                                    Button(caliber.name) {
+                                        selectedCaliberName = caliber.name
+                                    }
+                                }
+                            }
+                            
+                            Section("Rifle Calibers") {
+                                ForEach(caliberData.rifleCalibers) { caliber in
+                                    Button(caliber.name) {
+                                        selectedCaliberName = caliber.name
+                                    }
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Text(selectedCaliber.name)
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.down")
+                                    .foregroundColor(.secondary)
+                                    .font(.caption)
+                            }
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 12)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
+                        }
+                        
+                        HStack {
+                            Text("Diameter: \(selectedCaliber.diameterInches, specifier: "%.3f")\"")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Text("(\(selectedCaliber.pixelSize)×\(selectedCaliber.pixelSize) pixels)")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }

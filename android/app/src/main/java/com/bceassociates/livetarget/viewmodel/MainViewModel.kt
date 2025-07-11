@@ -19,6 +19,7 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.bceassociates.livetarget.data.CaliberData
 import com.bceassociates.livetarget.data.model.ChangePoint
 import com.bceassociates.livetarget.data.preferences.SettingsDataStore
 import com.bceassociates.livetarget.detection.ChangeDetector
@@ -40,12 +41,15 @@ data class MainUiState(
     val circleColor: String = "FF0000",
     val numberColor: String = "FF0000",
     val checkInterval: Double = 2.0,
-    val bulletCaliber: Int = 22,
+    val selectedCaliberName: String = ".22 Long Rifle",
     val zoomFactor: Double = 1.0,
     val watchIntegrationEnabled: Boolean = false,
     val watchConnectionStatus: WatchConnectionStatus = WatchConnectionStatus.UNKNOWN,
     val isWatchPaired: Boolean = false,
-)
+) {
+    val selectedCaliber: com.bceassociates.livetarget.data.Caliber?
+        get() = CaliberData.findCaliberByName(selectedCaliberName)
+}
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -84,9 +88,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         viewModelScope.launch {
-            settingsDataStore.bulletCaliber.collect { caliber ->
-                _uiState.value = _uiState.value.copy(bulletCaliber = caliber)
-                changeDetector.setMinChangeSize(caliber * 2)
+            settingsDataStore.selectedCaliberName.collect { caliberName ->
+                _uiState.value = _uiState.value.copy(selectedCaliberName = caliberName)
+                val caliber = CaliberData.findCaliberByName(caliberName)
+                if (caliber != null) {
+                    changeDetector.setMinChangeSize(caliber.pixelSize)
+                }
             }
         }
 
@@ -269,9 +276,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun setBulletCaliber(caliber: Int) {
+    fun setSelectedCaliberName(caliberName: String) {
         viewModelScope.launch {
-            settingsDataStore.setBulletCaliber(caliber)
+            settingsDataStore.setSelectedCaliberName(caliberName)
         }
     }
 

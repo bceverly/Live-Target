@@ -43,11 +43,11 @@ struct SettingsViewTests {
         let defaultCircleColor = "FF0000"
         let defaultNumberColor = "FF0000"
         let defaultCheckInterval = 2.0
-        let defaultBulletCaliber = 22
+        let defaultSelectedCaliber = ".22 Long Rifle"
         
         #expect(defaultCircleColor == "FF0000") // Red
         #expect(defaultNumberColor == "FF0000") // Red
         #expect(defaultCheckInterval == 2.0) // 2 seconds
-        #expect(defaultBulletCaliber == 22) // .22 caliber
+        #expect(defaultSelectedCaliber == ".22 Long Rifle") // .22 Long Rifle
     }
 }
