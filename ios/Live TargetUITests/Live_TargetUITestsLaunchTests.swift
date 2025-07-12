@@ -21,12 +21,16 @@ final class Live_TargetUITestsLaunchTests: XCTestCase {
     @MainActor
     func testLaunch() throws {
         let app = XCUIApplication()
+        
+        // Set launch arguments to disable problematic features
+        app.launchArguments += ["-DisableAnimations", "YES"]
+        app.launchArguments += ["-AppleLanguages", "(en)"]
+        app.launchArguments += ["-AppleLocale", "en_US"]
+        
         app.launch()
 
-        // Wait for app to stabilize (CI-friendly timeout)
-        Thread.sleep(forTimeInterval: 5.0)
-        
-        // Just verify app launched successfully without screenshot
-        XCTAssertEqual(app.state, .runningForeground, "App should launch successfully")
+        // Wait for app to stabilize with expectation
+        let exists = app.wait(for: .runningForeground, timeout: 10.0)
+        XCTAssertTrue(exists, "App should launch successfully within 10 seconds")
     }
 }
