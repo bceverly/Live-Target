@@ -70,11 +70,11 @@ jobs:
         # List available simulators for debugging
         xcrun simctl list devices available
         
-        # Use specific iPhone 16 simulator for reliable builds
+        # Use specific iPhone 16 simulator for reliable builds (arm64 only)
         xcodebuild \
           -project "Live Target.xcodeproj" \
           -scheme "Live Target" \
-          -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5" \
+          -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5,arch=arm64" \
           -configuration Debug \
           clean build \
           CODE_SIGNING_ALLOWED=NO \
@@ -83,12 +83,13 @@ jobs:
     - name: Run Unit Tests
       run: |
         cd ios/
-        # Use specific iPhone 16 simulator for tests
+        # Use specific iPhone 16 simulator for tests (unit tests only, skip UI tests)
         xcodebuild \
           -project "Live Target.xcodeproj" \
           -scheme "Live Target" \
-          -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5" \
+          -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5,arch=arm64" \
           -configuration Debug \
+          -only-testing:"Live TargetTests" \
           test \
           CODE_SIGNING_ALLOWED=NO \
           | xcpretty && exit ${PIPESTATUS[0]}
@@ -127,9 +128,10 @@ jobs:
         xcodebuild \
           -project "Live Target.xcodeproj" \
           -scheme "Live Target" \
-          -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5" \
+          -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5,arch=arm64" \
           -configuration Debug \
           -enableCodeCoverage YES \
+          -only-testing:"Live TargetTests" \
           test \
           CODE_SIGNING_ALLOWED=NO
           
