@@ -18,10 +18,14 @@ struct SettingsView: View {
     @AppStorage("overlayEnabled") private var overlayEnabled: Bool = false
     @AppStorage("overlayPosition") private var overlayPositionRaw: String = OverlayPosition.topLeft.rawValue
     @AppStorage("bulletWeight") private var bulletWeight: Double = 55.0
+    @AppStorage("cartridgeType") private var cartridgeTypeRaw: String = CartridgeType.metallicCartridge.rawValue
     @AppStorage("ammoType") private var ammoTypeRaw: String = AmmoType.factory.rawValue
     @AppStorage("factoryAmmoName") private var factoryAmmoName: String = ""
     @AppStorage("handloadPowder") private var handloadPowder: String = ""
     @AppStorage("handloadCharge") private var handloadCharge: Double = 0.0
+    @AppStorage("blackPowderType") private var blackPowderTypeRaw: String = BlackPowderType.twof.rawValue
+    @AppStorage("projectileType") private var projectileTypeRaw: String = ProjectileType.roundBall.rawValue
+    @AppStorage("blackPowderCharge") private var blackPowderCharge: Double = 0.0
     
     @StateObject private var watchConnectivity = WatchConnectivityManager.shared
     @Environment(\.dismiss) private var dismiss
@@ -37,9 +41,24 @@ struct SettingsView: View {
         set { overlayPositionRaw = newValue.rawValue }
     }
     
+    private var cartridgeType: CartridgeType {
+        get { CartridgeType(rawValue: cartridgeTypeRaw) ?? .metallicCartridge }
+        set { cartridgeTypeRaw = newValue.rawValue }
+    }
+    
     private var ammoType: AmmoType {
         get { AmmoType(rawValue: ammoTypeRaw) ?? .factory }
         set { ammoTypeRaw = newValue.rawValue }
+    }
+    
+    private var blackPowderType: BlackPowderType {
+        get { BlackPowderType(rawValue: blackPowderTypeRaw) ?? .twof }
+        set { blackPowderTypeRaw = newValue.rawValue }
+    }
+    
+    private var projectileType: ProjectileType {
+        get { ProjectileType(rawValue: projectileTypeRaw) ?? .roundBall }
+        set { projectileTypeRaw = newValue.rawValue }
     }
     
     // MARK: - App Information
@@ -158,16 +177,24 @@ struct SettingsView: View {
                             
                             BulletWeightView(bulletWeight: $bulletWeight)
                             
-                            AmmoTypeView(
-                                ammoTypeRaw: $ammoTypeRaw,
-                                factoryAmmoName: $factoryAmmoName,
-                                handloadPowder: $handloadPowder,
-                                handloadCharge: $handloadCharge
-                            )
+                            CartridgeTypeView(cartridgeTypeRaw: $cartridgeTypeRaw)
+                            
+                            if cartridgeType == .blackPowder {
+                                BlackPowderView(
+                                    blackPowderTypeRaw: $blackPowderTypeRaw,
+                                    projectileTypeRaw: $projectileTypeRaw,
+                                    blackPowderCharge: $blackPowderCharge
+                                )
+                            } else {
+                                AmmoTypeView(
+                                    ammoTypeRaw: $ammoTypeRaw,
+                                    factoryAmmoName: $factoryAmmoName,
+                                    handloadPowder: $handloadPowder,
+                                    handloadCharge: $handloadCharge
+                                )
+                            }
                         }
                     }
-                    .disabled(!overlayEnabled)
-                    .opacity(overlayEnabled ? 1.0 : 0.5)
                 }
                 
                 Section(header: Text("Apple Watch")) {
@@ -425,6 +452,112 @@ struct HandloadFieldsView: View {
                     .foregroundColor(.secondary)
                 HStack {
                     TextField("Charge", value: $handloadCharge, format: .number)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .keyboardType(.decimalPad)
+                    Text("grains")
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+    }
+}
+
+struct CartridgeTypeView: View {
+    @Binding var cartridgeTypeRaw: String
+    
+    private var cartridgeType: CartridgeType {
+        CartridgeType(rawValue: cartridgeTypeRaw) ?? .metallicCartridge
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Cartridge Type")
+            
+            Picker("Cartridge Type", selection: Binding(
+                get: { cartridgeType },
+                set: { cartridgeTypeRaw = $0.rawValue }
+            )) {
+                ForEach(CartridgeType.allCases) { type in
+                    Text(type.rawValue).tag(type)
+                }
+            }
+            .pickerStyle(SegmentedPickerStyle())
+        }
+    }
+}
+
+struct BlackPowderView: View {
+    @Binding var blackPowderTypeRaw: String
+    @Binding var projectileTypeRaw: String
+    @Binding var blackPowderCharge: Double
+    
+    private var blackPowderType: BlackPowderType {
+        BlackPowderType(rawValue: blackPowderTypeRaw) ?? .twof
+    }
+    
+    private var projectileType: ProjectileType {
+        ProjectileType(rawValue: projectileTypeRaw) ?? .roundBall
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            // Black Powder Type
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Black Powder Type")
+                
+                Menu {
+                    ForEach(BlackPowderType.allCases) { type in
+                        Button(type.rawValue) {
+                            blackPowderTypeRaw = type.rawValue
+                        }
+                    }
+                } label: {
+                    HStack {
+                        Text(blackPowderType.rawValue)
+                            .foregroundColor(.primary)
+                        Spacer()
+                        Image(systemName: "chevron.down")
+                            .foregroundColor(.secondary)
+                            .font(.caption)
+                    }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 12)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+                }
+            }
+            
+            // Projectile Type
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Projectile Type")
+                
+                Menu {
+                    ForEach(ProjectileType.allCases) { type in
+                        Button(type.rawValue) {
+                            projectileTypeRaw = type.rawValue
+                        }
+                    }
+                } label: {
+                    HStack {
+                        Text(projectileType.rawValue)
+                            .foregroundColor(.primary)
+                        Spacer()
+                        Image(systemName: "chevron.down")
+                            .foregroundColor(.secondary)
+                            .font(.caption)
+                    }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 12)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+                }
+            }
+            
+            // Black Powder Charge
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Powder Charge")
+                HStack {
+                    TextField("Charge", value: $blackPowderCharge, format: .number)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .keyboardType(.decimalPad)
                     Text("grains")

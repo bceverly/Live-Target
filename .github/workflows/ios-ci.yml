@@ -22,7 +22,7 @@ on:
 env:
   XCODE_VERSION: '16.4'
   IOS_SIMULATOR: 'iPhone 16'
-  IOS_VERSION: '18.5'
+  IOS_VERSION: 'latest'
 
 jobs:
   build-and-test:
@@ -67,10 +67,14 @@ jobs:
     - name: Build for Simulator
       run: |
         cd ios/
+        # List available simulators for debugging
+        xcrun simctl list devices available
+        
+        # Use generic iOS destination to avoid simulator-specific issues
         xcodebuild \
           -project "Live Target.xcodeproj" \
           -scheme "Live Target" \
-          -destination "platform=iOS Simulator,name=${{ env.IOS_SIMULATOR }},OS=${{ env.IOS_VERSION }}" \
+          -destination "platform=iOS Simulator,name=Any iOS Simulator Device" \
           -configuration Debug \
           clean build \
           CODE_SIGNING_ALLOWED=NO \
@@ -79,10 +83,11 @@ jobs:
     - name: Run Unit Tests
       run: |
         cd ios/
+        # Use generic iOS destination for tests
         xcodebuild \
           -project "Live Target.xcodeproj" \
           -scheme "Live Target" \
-          -destination "platform=iOS Simulator,name=${{ env.IOS_SIMULATOR }},OS=${{ env.IOS_VERSION }}" \
+          -destination "platform=iOS Simulator,name=Any iOS Simulator Device" \
           -configuration Debug \
           test \
           CODE_SIGNING_ALLOWED=NO \

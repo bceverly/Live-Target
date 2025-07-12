@@ -22,9 +22,12 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.bceassociates.livetarget.data.AmmoType
+import com.bceassociates.livetarget.data.BlackPowderType
 import com.bceassociates.livetarget.data.CaliberData
+import com.bceassociates.livetarget.data.CartridgeType
 import com.bceassociates.livetarget.data.OverlayPosition
 import com.bceassociates.livetarget.data.OverlaySettings
+import com.bceassociates.livetarget.data.ProjectileType
 import com.bceassociates.livetarget.data.model.ChangePoint
 import com.bceassociates.livetarget.data.preferences.SettingsDataStore
 import com.bceassociates.livetarget.detection.ChangeDetector
@@ -56,10 +59,14 @@ data class MainUiState(
     val overlayEnabled: Boolean = false,
     val overlayPosition: String = OverlayPosition.TOP_LEFT.name,
     val bulletWeight: Double = 55.0,
+    val cartridgeType: String = CartridgeType.METALLIC_CARTRIDGE.name,
     val ammoType: String = AmmoType.FACTORY.name,
     val factoryAmmoName: String = "",
     val handloadPowder: String = "",
     val handloadCharge: Double = 0.0,
+    val blackPowderType: String = BlackPowderType.TWOF.name,
+    val projectileType: String = ProjectileType.ROUND_BALL.name,
+    val blackPowderCharge: Double = 0.0,
 ) {
     val selectedCaliber: com.bceassociates.livetarget.data.Caliber?
         get() = CaliberData.findCaliberByName(selectedCaliberName)
@@ -69,10 +76,14 @@ data class MainUiState(
             enabled = overlayEnabled,
             position = OverlayPosition.valueOf(overlayPosition),
             bulletWeight = bulletWeight,
+            cartridgeType = CartridgeType.valueOf(cartridgeType),
             ammoType = AmmoType.valueOf(ammoType),
             factoryAmmoName = factoryAmmoName,
             handloadPowder = handloadPowder,
             handloadCharge = handloadCharge,
+            blackPowderType = BlackPowderType.valueOf(blackPowderType),
+            projectileType = ProjectileType.valueOf(projectileType),
+            blackPowderCharge = blackPowderCharge,
             selectedCaliberName = selectedCaliberName
         )
 }
@@ -175,6 +186,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             settingsDataStore.handloadCharge.collect { charge ->
                 _uiState.value = _uiState.value.copy(handloadCharge = charge)
+            }
+        }
+
+        viewModelScope.launch {
+            settingsDataStore.cartridgeType.collect { type ->
+                _uiState.value = _uiState.value.copy(cartridgeType = type)
+            }
+        }
+
+        viewModelScope.launch {
+            settingsDataStore.blackPowderType.collect { type ->
+                _uiState.value = _uiState.value.copy(blackPowderType = type)
+            }
+        }
+
+        viewModelScope.launch {
+            settingsDataStore.projectileType.collect { type ->
+                _uiState.value = _uiState.value.copy(projectileType = type)
+            }
+        }
+
+        viewModelScope.launch {
+            settingsDataStore.blackPowderCharge.collect { charge ->
+                _uiState.value = _uiState.value.copy(blackPowderCharge = charge)
             }
         }
 
@@ -489,6 +524,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setHandloadCharge(charge: Double) {
         viewModelScope.launch {
             settingsDataStore.setHandloadCharge(charge)
+        }
+    }
+
+    fun setCartridgeType(type: String) {
+        viewModelScope.launch {
+            settingsDataStore.setCartridgeType(type)
+        }
+    }
+
+    fun setBlackPowderType(type: String) {
+        viewModelScope.launch {
+            settingsDataStore.setBlackPowderType(type)
+        }
+    }
+
+    fun setProjectileType(type: String) {
+        viewModelScope.launch {
+            settingsDataStore.setProjectileType(type)
+        }
+    }
+
+    fun setBlackPowderCharge(charge: Double) {
+        viewModelScope.launch {
+            settingsDataStore.setBlackPowderCharge(charge)
         }
     }
 

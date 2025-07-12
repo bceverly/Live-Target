@@ -13,31 +13,61 @@ enum class OverlayPosition(val displayName: String) {
     BOTTOM_RIGHT("Bottom Right")
 }
 
+enum class CartridgeType(val displayName: String) {
+    BLACK_POWDER("Black Powder"),
+    METALLIC_CARTRIDGE("Metallic Cartridge")
+}
+
 enum class AmmoType(val displayName: String) {
     FACTORY("Factory Load"),
     HANDLOAD("Handload")
+}
+
+enum class BlackPowderType(val displayName: String) {
+    ONEF("1F"),
+    TWOF("2F"),
+    THREEF("3F"),
+    FOURF("4F")
+}
+
+enum class ProjectileType(val displayName: String) {
+    ROUND_BALL("Round Ball"),
+    CONICAL("Conical"),
+    SABOTTED_BULLET("Sabotted Bullet"),
+    POWERBELT_BULLET("PowerBelt Bullet")
 }
 
 data class OverlaySettings(
     val enabled: Boolean,
     val position: OverlayPosition,
     val bulletWeight: Double, // in grains
+    val cartridgeType: CartridgeType,
     val ammoType: AmmoType,
     val factoryAmmoName: String,
     val handloadPowder: String,
     val handloadCharge: Double, // in grains
+    val blackPowderType: BlackPowderType,
+    val projectileType: ProjectileType,
+    val blackPowderCharge: Double, // in grains
     val selectedCaliberName: String
 ) {
     fun getAmmoDescription(): String {
-        return when (ammoType) {
-            AmmoType.FACTORY -> {
-                if (factoryAmmoName.isBlank()) "Factory Load" else factoryAmmoName
+        return when (cartridgeType) {
+            CartridgeType.BLACK_POWDER -> {
+                "${blackPowderType.displayName} ${String.format("%.1f", blackPowderCharge)}gr"
             }
-            AmmoType.HANDLOAD -> {
-                if (handloadPowder.isBlank()) {
-                    "Handload"
-                } else {
-                    "$handloadPowder ${String.format("%.1f", handloadCharge)}gr"
+            CartridgeType.METALLIC_CARTRIDGE -> {
+                when (ammoType) {
+                    AmmoType.FACTORY -> {
+                        if (factoryAmmoName.isBlank()) "Factory Load" else factoryAmmoName
+                    }
+                    AmmoType.HANDLOAD -> {
+                        if (handloadPowder.isBlank()) {
+                            "Handload"
+                        } else {
+                            "$handloadPowder ${String.format("%.1f", handloadCharge)}gr"
+                        }
+                    }
                 }
             }
         }
@@ -49,6 +79,13 @@ data class OverlaySettings(
         val weight = String.format("%.0f", bulletWeight)
         val ammo = getAmmoDescription()
         
-        return "$date\n$selectedCaliberName ${weight}gr\n$ammo"
+        return when (cartridgeType) {
+            CartridgeType.BLACK_POWDER -> {
+                "$date\n$selectedCaliberName ${weight}gr ${projectileType.displayName}\n$ammo"
+            }
+            CartridgeType.METALLIC_CARTRIDGE -> {
+                "$date\n$selectedCaliberName ${weight}gr\n$ammo"
+            }
+        }
     }
 }

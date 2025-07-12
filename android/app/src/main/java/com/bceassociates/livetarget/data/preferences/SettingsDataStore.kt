@@ -17,7 +17,10 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.bceassociates.livetarget.data.AmmoType
+import com.bceassociates.livetarget.data.BlackPowderType
+import com.bceassociates.livetarget.data.CartridgeType
 import com.bceassociates.livetarget.data.OverlayPosition
+import com.bceassociates.livetarget.data.ProjectileType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -37,10 +40,14 @@ class SettingsDataStore(private val context: Context) {
         private val OVERLAY_ENABLED_KEY = booleanPreferencesKey("overlay_enabled")
         private val OVERLAY_POSITION_KEY = stringPreferencesKey("overlay_position")
         private val BULLET_WEIGHT_KEY = doublePreferencesKey("bullet_weight")
+        private val CARTRIDGE_TYPE_KEY = stringPreferencesKey("cartridge_type")
         private val AMMO_TYPE_KEY = stringPreferencesKey("ammo_type")
         private val FACTORY_AMMO_NAME_KEY = stringPreferencesKey("factory_ammo_name")
         private val HANDLOAD_POWDER_KEY = stringPreferencesKey("handload_powder")
         private val HANDLOAD_CHARGE_KEY = doublePreferencesKey("handload_charge")
+        private val BLACK_POWDER_TYPE_KEY = stringPreferencesKey("black_powder_type")
+        private val PROJECTILE_TYPE_KEY = stringPreferencesKey("projectile_type")
+        private val BLACK_POWDER_CHARGE_KEY = doublePreferencesKey("black_powder_charge")
     }
 
     val circleColor: Flow<String> =
@@ -107,6 +114,26 @@ class SettingsDataStore(private val context: Context) {
     val handloadCharge: Flow<Double> =
         context.dataStore.data.map { preferences ->
             preferences[HANDLOAD_CHARGE_KEY] ?: 0.0
+        }
+    
+    val cartridgeType: Flow<String> =
+        context.dataStore.data.map { preferences ->
+            preferences[CARTRIDGE_TYPE_KEY] ?: CartridgeType.METALLIC_CARTRIDGE.name
+        }
+    
+    val blackPowderType: Flow<String> =
+        context.dataStore.data.map { preferences ->
+            preferences[BLACK_POWDER_TYPE_KEY] ?: BlackPowderType.TWOF.name
+        }
+    
+    val projectileType: Flow<String> =
+        context.dataStore.data.map { preferences ->
+            preferences[PROJECTILE_TYPE_KEY] ?: ProjectileType.ROUND_BALL.name
+        }
+    
+    val blackPowderCharge: Flow<Double> =
+        context.dataStore.data.map { preferences ->
+            preferences[BLACK_POWDER_CHARGE_KEY] ?: 0.0
         }
 
     suspend fun setCircleColor(color: String) {
@@ -185,6 +212,30 @@ class SettingsDataStore(private val context: Context) {
     suspend fun setHandloadCharge(charge: Double) {
         context.dataStore.edit { settings ->
             settings[HANDLOAD_CHARGE_KEY] = charge
+        }
+    }
+    
+    suspend fun setCartridgeType(type: String) {
+        context.dataStore.edit { settings ->
+            settings[CARTRIDGE_TYPE_KEY] = type
+        }
+    }
+    
+    suspend fun setBlackPowderType(type: String) {
+        context.dataStore.edit { settings ->
+            settings[BLACK_POWDER_TYPE_KEY] = type
+        }
+    }
+    
+    suspend fun setProjectileType(type: String) {
+        context.dataStore.edit { settings ->
+            settings[PROJECTILE_TYPE_KEY] = type
+        }
+    }
+    
+    suspend fun setBlackPowderCharge(charge: Double) {
+        context.dataStore.edit { settings ->
+            settings[BLACK_POWDER_CHARGE_KEY] = charge
         }
     }
 }

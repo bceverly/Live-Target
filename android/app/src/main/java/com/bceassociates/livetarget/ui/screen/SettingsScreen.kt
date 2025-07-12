@@ -56,13 +56,33 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bceassociates.livetarget.R
 import com.bceassociates.livetarget.data.AmmoType
+import com.bceassociates.livetarget.data.BlackPowderType
 import com.bceassociates.livetarget.data.CaliberData
+import com.bceassociates.livetarget.data.CartridgeType
 import com.bceassociates.livetarget.data.OverlayPosition
+import com.bceassociates.livetarget.data.ProjectileType
 import com.bceassociates.livetarget.ui.theme.LiveTargetTheme
 import com.bceassociates.livetarget.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+@Composable
+fun ColorPreview(
+    color: Color,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .size(24.dp)
+            .padding(2.dp),
+    ) {
+        Card(
+            modifier = Modifier.fillMaxSize(),
+            colors = CardDefaults.cardColors(containerColor = color),
+        ) {}
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -415,12 +435,209 @@ fun SettingsScreen(
                             )
                         }
                         
-                        // Ammo Type
-                        val currentAmmoType = try {
-                            AmmoType.valueOf(uiState.ammoType)
+                        // Cartridge Type
+                        val currentCartridgeType = try {
+                            CartridgeType.valueOf(uiState.cartridgeType)
                         } catch (e: Exception) {
-                            AmmoType.FACTORY
+                            CartridgeType.METALLIC_CARTRIDGE
                         }
+                        
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                        ) {
+                            Text(
+                                text = "Cartridge Type",
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            
+                            var cartridgeTypeExpanded by remember { mutableStateOf(false) }
+                            
+                            Box {
+                                OutlinedButton(
+                                    onClick = { cartridgeTypeExpanded = true },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = currentCartridgeType.displayName,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Icon(
+                                            Icons.Default.ArrowDropDown,
+                                            contentDescription = "Dropdown"
+                                        )
+                                    }
+                                }
+                                
+                                DropdownMenu(
+                                    expanded = cartridgeTypeExpanded,
+                                    onDismissRequest = { cartridgeTypeExpanded = false }
+                                ) {
+                                    CartridgeType.values().forEach { cartridgeType ->
+                                        DropdownMenuItem(
+                                            text = { Text(cartridgeType.displayName) },
+                                            onClick = {
+                                                viewModel.setCartridgeType(cartridgeType.name)
+                                                cartridgeTypeExpanded = false
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Conditional fields based on cartridge type
+                        if (currentCartridgeType == CartridgeType.BLACK_POWDER) {
+                            // Black Powder Type
+                            val currentBlackPowderType = try {
+                                BlackPowderType.valueOf(uiState.blackPowderType)
+                            } catch (e: Exception) {
+                                BlackPowderType.TWOF
+                            }
+                            
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                            ) {
+                                Text(
+                                    text = "Black Powder Type",
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                                
+                                var blackPowderTypeExpanded by remember { mutableStateOf(false) }
+                                
+                                Box {
+                                    OutlinedButton(
+                                        onClick = { blackPowderTypeExpanded = true },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = currentBlackPowderType.displayName,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                            Icon(
+                                                Icons.Default.ArrowDropDown,
+                                                contentDescription = "Dropdown"
+                                            )
+                                        }
+                                    }
+                                    
+                                    DropdownMenu(
+                                        expanded = blackPowderTypeExpanded,
+                                        onDismissRequest = { blackPowderTypeExpanded = false }
+                                    ) {
+                                        BlackPowderType.values().forEach { blackPowderType ->
+                                            DropdownMenuItem(
+                                                text = { Text(blackPowderType.displayName) },
+                                                onClick = {
+                                                    viewModel.setBlackPowderType(blackPowderType.name)
+                                                    blackPowderTypeExpanded = false
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // Projectile Type
+                            val currentProjectileType = try {
+                                ProjectileType.valueOf(uiState.projectileType)
+                            } catch (e: Exception) {
+                                ProjectileType.ROUND_BALL
+                            }
+                            
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                            ) {
+                                Text(
+                                    text = "Projectile Type",
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                                
+                                var projectileTypeExpanded by remember { mutableStateOf(false) }
+                                
+                                Box {
+                                    OutlinedButton(
+                                        onClick = { projectileTypeExpanded = true },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = currentProjectileType.displayName,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                            Icon(
+                                                Icons.Default.ArrowDropDown,
+                                                contentDescription = "Dropdown"
+                                            )
+                                        }
+                                    }
+                                    
+                                    DropdownMenu(
+                                        expanded = projectileTypeExpanded,
+                                        onDismissRequest = { projectileTypeExpanded = false }
+                                    ) {
+                                        ProjectileType.values().forEach { projectileType ->
+                                            DropdownMenuItem(
+                                                text = { Text(projectileType.displayName) },
+                                                onClick = {
+                                                    viewModel.setProjectileType(projectileType.name)
+                                                    projectileTypeExpanded = false
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // Black Powder Charge
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                            ) {
+                                Text(
+                                    text = "Powder Charge",
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                                
+                                OutlinedTextField(
+                                    value = uiState.blackPowderCharge.toString(),
+                                    onValueChange = { newValue ->
+                                        newValue.toDoubleOrNull()?.let { charge ->
+                                            viewModel.setBlackPowderCharge(charge)
+                                        }
+                                    },
+                                    label = { Text("Charge in grains") },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        } else {
+                            // Metallic Cartridge - Ammo Type
+                            val currentAmmoType = try {
+                                AmmoType.valueOf(uiState.ammoType)
+                            } catch (e: Exception) {
+                                AmmoType.FACTORY
+                            }
                         
                         Column(
                             modifier = Modifier
@@ -532,6 +749,7 @@ fun SettingsScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }
+                        }
                         }
                     }
                 }
@@ -714,23 +932,6 @@ fun SettingsScreen(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun ColorPreview(
-    color: Color,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .size(24.dp)
-            .padding(2.dp),
-    ) {
-        Card(
-            modifier = Modifier.fillMaxSize(),
-            colors = CardDefaults.cardColors(containerColor = color),
-        ) {}
     }
 }
 

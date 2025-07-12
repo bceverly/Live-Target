@@ -8,9 +8,13 @@
 package com.bceassociates.livetarget.ui.component
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
+import android.graphics.Rect
+import android.graphics.YuvImage
 import android.media.Image
 import android.util.Log
+import java.io.ByteArrayOutputStream
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraSelector
@@ -163,33 +167,52 @@ private fun imageProxyToBitmap(imageProxy: ImageProxy): Bitmap? {
 
 private fun convertYuv420ToBitmap(image: Image, width: Int, height: Int): Bitmap {
     val planes = image.planes
-    val yBuffer = planes[0].buffer
-    val uBuffer = planes[1].buffer
-    val vBuffer = planes[2].buffer
+    val yPlane = planes[0]
+    val uPlane = planes[1]
+    val vPlane = planes[2]
+
+    val yBuffer = yPlane.buffer
+    val uBuffer = uPlane.buffer
+    val vBuffer = vPlane.buffer
 
     val ySize = yBuffer.remaining()
     val uSize = uBuffer.remaining()
     val vSize = vBuffer.remaining()
 
+    val yByteArray = ByteArray(ySize)
+    val uByteArray = ByteArray(uSize)
+    val vByteArray = ByteArray(vSize)
+
+    yBuffer.get(yByteArray)
+    uBuffer.get(uByteArray)
+    vBuffer.get(vByteArray)
+
+    // Convert to NV21 format for YuvImage
     val nv21 = ByteArray(ySize + uSize + vSize)
+    System.arraycopy(yByteArray, 0, nv21, 0, ySize)
 
-    yBuffer.get(nv21, 0, ySize)
-    val uvBuffer = ByteArray(uSize + vSize)
-    vBuffer.get(uvBuffer, 0, vSize)
-    uBuffer.get(uvBuffer, vSize, uSize)
-
-    val uvPixelStride = planes[1].pixelStride
+    // Interleave U and V bytes for NV21 format
+    val uvPixelStride = uPlane.pixelStride
     if (uvPixelStride == 1) {
-        System.arraycopy(uvBuffer, 0, nv21, ySize, uSize + vSize)
+        // Contiguous U and V planes
+        System.arraycopy(vByteArray, 0, nv21, ySize, vSize)
+        System.arraycopy(uByteArray, 0, nv21, ySize + vSize, uSize)
     } else {
-        // Handle interleaved UV data
+        // Interleaved U and V planes
         var pos = ySize
-        for (i in 0 until (uSize + vSize) step uvPixelStride) {
-            nv21[pos++] = uvBuffer[i]
+        for (i in 0 until uSize) {
+            nv21[pos] = vByteArray[i * uvPixelStride]
+            nv21[pos + 1] = uByteArray[i * uvPixelStride]
+            pos += 2
         }
     }
 
-    return convertNv21ToBitmap(nv21, width, height)
+    // Use YuvImage for reliable conversion
+    val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
+    val outputStream = ByteArrayOutputStream()
+    yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, outputStream)
+    val jpegArray = outputStream.toByteArray()
+    return BitmapFactory.decodeByteArray(jpegArray, 0, jpegArray.size)
 }
 
 private fun convertNv21ToBitmap(image: Image, width: Int, height: Int): Bitmap {
@@ -209,17 +232,19 @@ private fun convertNv21ToBitmap(nv21: ByteArray, width: Int, height: Int): Bitma
 
     for (i in 0 until height) {
         for (j in 0 until width) {
-            val y = nv21[i * width + j].toInt() and 0xFF
-            val uvIndex = width * height + (i / 2) * width + (j and 0xFFFE.inv())
-            val u = nv21[uvIndex].toInt() and 0xFF
-            val v = nv21[uvIndex + 1].toInt() and 0xFF
+            val yIndex = i * width + j
+            val uvIndex = width * height + (i / 2) * width + (j and 0xFFFE)
+            
+            val y = nv21[yIndex].toInt() and 0xFF
+            val v = nv21[uvIndex].toInt() and 0xFF
+            val u = nv21[uvIndex + 1].toInt() and 0xFF
 
-            // YUV to RGB conversion
-            val r = (y + 1.402 * (v - 128)).toInt().coerceIn(0, 255)
-            val g = (y - 0.344 * (u - 128) - 0.714 * (v - 128)).toInt().coerceIn(0, 255)
-            val b = (y + 1.772 * (u - 128)).toInt().coerceIn(0, 255)
+            // YUV to RGB conversion with proper centering
+            val r = (y + 1.402f * (v - 128)).toInt().coerceIn(0, 255)
+            val g = (y - 0.344f * (u - 128) - 0.714f * (v - 128)).toInt().coerceIn(0, 255)
+            val b = (y + 1.772f * (u - 128)).toInt().coerceIn(0, 255)
 
-            pixels[i * width + j] = (0xFF shl 24) or (r shl 16) or (g shl 8) or b
+            pixels[yIndex] = (0xFF shl 24) or (r shl 16) or (g shl 8) or b
         }
     }
 

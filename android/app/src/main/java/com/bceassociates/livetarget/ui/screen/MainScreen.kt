@@ -246,7 +246,13 @@ fun MainScreen(
             }
             
             Button(
-                onClick = { viewModel.saveImage() },
+                onClick = { 
+                    viewModel.saveImage()
+                    // Stop detection after saving
+                    if (uiState.isDetecting) {
+                        viewModel.stopDetection()
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.tertiary,
                 ),

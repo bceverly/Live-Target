@@ -64,10 +64,14 @@ struct ContentView: View {
     @AppStorage("overlayEnabled") private var overlayEnabled: Bool = false
     @AppStorage("overlayPosition") private var overlayPositionRaw: String = OverlayPosition.topLeft.rawValue
     @AppStorage("bulletWeight") private var bulletWeight: Double = 55.0
+    @AppStorage("cartridgeType") private var cartridgeTypeRaw: String = CartridgeType.metallicCartridge.rawValue
     @AppStorage("ammoType") private var ammoTypeRaw: String = AmmoType.factory.rawValue
     @AppStorage("factoryAmmoName") private var factoryAmmoName: String = ""
     @AppStorage("handloadPowder") private var handloadPowder: String = ""
     @AppStorage("handloadCharge") private var handloadCharge: Double = 0.0
+    @AppStorage("blackPowderType") private var blackPowderTypeRaw: String = BlackPowderType.twof.rawValue
+    @AppStorage("projectileType") private var projectileTypeRaw: String = ProjectileType.roundBall.rawValue
+    @AppStorage("blackPowderCharge") private var blackPowderCharge: Double = 0.0
     
     private var caliberData = CaliberData.shared
     
@@ -80,10 +84,14 @@ struct ContentView: View {
             enabled: overlayEnabled,
             position: OverlayPosition(rawValue: overlayPositionRaw) ?? .topLeft,
             bulletWeight: bulletWeight,
+            cartridgeType: CartridgeType(rawValue: cartridgeTypeRaw) ?? .metallicCartridge,
             ammoType: AmmoType(rawValue: ammoTypeRaw) ?? .factory,
             factoryAmmoName: factoryAmmoName,
             handloadPowder: handloadPowder,
             handloadCharge: handloadCharge,
+            blackPowderType: BlackPowderType(rawValue: blackPowderTypeRaw) ?? .twof,
+            projectileType: ProjectileType(rawValue: projectileTypeRaw) ?? .roundBall,
+            blackPowderCharge: blackPowderCharge,
             selectedCaliberName: selectedCaliberName
         )
     }
