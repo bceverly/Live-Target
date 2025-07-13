@@ -60,11 +60,37 @@ fun SplashScreen(
                 ) {
                     drawTarget(this)
                     
-                    // Bullet holes with numbers
-                    drawBulletHole(this, Offset(size.width * 0.5f, size.height * 0.45f), "1")
-                    drawBulletHole(this, Offset(size.width * 0.58f, size.height * 0.5f), "2")
-                    drawBulletHole(this, Offset(size.width * 0.42f, size.height * 0.5f), "3")
+                    // Bullet holes - positioned at 11 o'clock near outer edge like iOS
+                    drawBulletHole(this, Offset(size.width * 0.42f, size.height * 0.25f), "1")   // 11 o'clock, outer ring
+                    drawBulletHole(this, Offset(size.width * 0.47f, size.height * 0.22f), "2")   // 11 o'clock, slightly right
+                    drawBulletHole(this, Offset(size.width * 0.37f, size.height * 0.28f), "3")   // 11 o'clock, slightly left
                 }
+                
+                // Numbers positioned at 11 o'clock near outer edge
+                Text(
+                    text = "1",
+                    color = Color(0xFFDC143C),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .offset(x = (-14).dp, y = (-87).dp)  // 11 o'clock position
+                )
+                Text(
+                    text = "2",
+                    color = Color(0xFFDC143C),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .offset(x = 16.dp, y = (-95).dp)     // 11 o'clock, slightly right
+                )
+                Text(
+                    text = "3",
+                    color = Color(0xFFDC143C),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .offset(x = (-44).dp, y = (-79).dp)  // 11 o'clock, slightly left
+                )
             }
             
             Spacer(modifier = Modifier.height(40.dp))
@@ -96,33 +122,29 @@ private fun drawTarget(drawScope: DrawScope) {
         val center = Offset(size.width / 2, size.height / 2)
         val maxRadius = size.minDimension / 2 * 0.9f
         
-        // Draw target rings from outside to inside
-        val rings = listOf(
-            maxRadius to Color.White,
-            maxRadius * 0.8f to Color(0xFFDC143C), // Red
-            maxRadius * 0.6f to Color.White,
-            maxRadius * 0.4f to Color(0xFFDC143C), // Red
-            maxRadius * 0.2f to Color.White
-        )
-        
-        rings.forEach { (radius, color) ->
+        // Draw target rings from outside to inside - alternating black and white like iOS
+        for (ring in 0 until 6) {
+            val radius = maxRadius * (1.0f - ring * 0.15f)
+            val color = if (ring % 2 == 0) Color.White else Color.Black
+            
             drawCircle(
                 color = color,
                 radius = radius,
                 center = center
             )
-            drawCircle(
-                color = Color.Black,
-                radius = radius,
-                center = center,
-                style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
-            )
         }
         
-        // Center bullseye
+        // Red bullseye like iOS
         drawCircle(
             color = Color(0xFFDC143C),
-            radius = maxRadius * 0.1f,
+            radius = maxRadius * 0.15f,
+            center = center
+        )
+        
+        // White center in bullseye like iOS
+        drawCircle(
+            color = Color.White,
+            radius = maxRadius * 0.075f,
             center = center
         )
     }
@@ -130,19 +152,19 @@ private fun drawTarget(drawScope: DrawScope) {
 
 private fun drawBulletHole(drawScope: DrawScope, position: Offset, number: String) {
     with(drawScope) {
+        // Red circle around bullet hole (larger like iOS)
+        drawCircle(
+            color = Color(0xFFDC143C),
+            radius = 30.dp.toPx(),
+            center = position,
+            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 3.dp.toPx())
+        )
+        
         // Black bullet hole
         drawCircle(
             color = Color.Black,
             radius = 8.dp.toPx(),
             center = position
-        )
-        
-        // Red circle around bullet hole
-        drawCircle(
-            color = Color(0xFFDC143C),
-            radius = 16.dp.toPx(),
-            center = position,
-            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 3.dp.toPx())
         )
     }
 }
