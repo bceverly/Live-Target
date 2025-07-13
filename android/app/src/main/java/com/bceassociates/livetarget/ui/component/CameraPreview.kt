@@ -82,7 +82,7 @@ fun CameraPreview(
 
                     // Image analysis use case for change detection
                     val imageAnalyzer = ImageAnalysis.Builder()
-                        .setTargetResolution(android.util.Size(640, 480))
+                        .setTargetResolution(android.util.Size(1280, 720)) // Higher resolution for better detection
                         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build()
                         .also { analyzer ->
@@ -131,7 +131,10 @@ private fun processImage(imageProxy: ImageProxy, onImageCaptured: (Bitmap) -> Un
         // Convert ImageProxy to Bitmap
         val bitmap = imageProxyToBitmap(imageProxy)
         if (bitmap != null) {
+            Log.d("CameraPreview", "Processed image: ${bitmap.width}x${bitmap.height}, format: ${imageProxy.format}")
             onImageCaptured(bitmap)
+        } else {
+            Log.w("CameraPreview", "Failed to convert imageProxy to bitmap")
         }
     } catch (e: Exception) {
         Log.e("CameraPreview", "Error processing image", e)
@@ -200,10 +203,14 @@ private fun convertYuv420ToBitmap(image: Image, width: Int, height: Int): Bitmap
     } else {
         // Interleaved U and V planes
         var pos = ySize
-        for (i in 0 until uSize) {
-            nv21[pos] = vByteArray[i * uvPixelStride]
-            nv21[pos + 1] = uByteArray[i * uvPixelStride]
-            pos += 2
+        val uvPixelCount = minOf(uSize / uvPixelStride, vSize / uvPixelStride)
+        for (i in 0 until uvPixelCount) {
+            val uvIndex = i * uvPixelStride
+            if (uvIndex < vByteArray.size && uvIndex < uByteArray.size && pos + 1 < nv21.size) {
+                nv21[pos] = vByteArray[uvIndex]
+                nv21[pos + 1] = uByteArray[uvIndex]
+                pos += 2
+            }
         }
     }
 

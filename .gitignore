@@ -81,10 +81,20 @@ android/.externalNativeBuild/
 android/.cxx/
 android/app/.cxx/
 
-# Android build artifacts
+# Android build artifacts - comprehensive patterns
 android/app/build/
 android/*/build/
 android/*/*/build/
+android/**/.kotlin/
+android/**/.gradle/
+android/**/build/
+android/**/intermediates/
+android/**/outputs/
+android/**/tmp/
+android/**/generated/
+android/**/*.dex
+android/**/*.ap_
+android/**/*.class
 
 # Android signing files
 android/*.jks

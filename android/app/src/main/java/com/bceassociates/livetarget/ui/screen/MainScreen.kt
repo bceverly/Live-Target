@@ -9,6 +9,7 @@ package com.bceassociates.livetarget.ui.screen
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
@@ -77,13 +78,37 @@ fun MainScreen(
         )
     }
     
+    var hasStoragePermission by remember {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                ) == PackageManager.PERMISSION_GRANTED
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                ) == PackageManager.PERMISSION_GRANTED
+            } else {
+                true // Pre-M doesn't need runtime permissions
+            }
+        )
+    }
+    
     var showSettings by remember { mutableStateOf(false) }
     var showHelp by remember { mutableStateOf(false) }
     
-    val launcher = rememberLauncherForActivityResult(
+    val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
         hasCameraPermission = isGranted
+    }
+    
+    val storageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { isGranted: Boolean ->
+        hasStoragePermission = isGranted
     }
     
     val uiState by viewModel.uiState.collectAsState()
@@ -192,7 +217,7 @@ fun MainScreen(
                         modifier = Modifier.padding(bottom = 16.dp),
                     )
                     Button(
-                        onClick = { launcher.launch(Manifest.permission.CAMERA) },
+                        onClick = { cameraLauncher.launch(Manifest.permission.CAMERA) },
                     ) {
                         Text(stringResource(R.string.grant_permission))
                     }
@@ -201,20 +226,23 @@ fun MainScreen(
         }
         
         // Bottom Controls
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
-            Button(
-                onClick = { viewModel.clearChanges() },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                ),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                Text(stringResource(R.string.clear))
-            }
+                Button(
+                    onClick = { viewModel.clearChanges() },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                    ),
+                ) {
+                    Text(stringResource(R.string.clear))
+                }
             
             Button(
                 onClick = {
@@ -247,10 +275,20 @@ fun MainScreen(
             
             Button(
                 onClick = { 
-                    viewModel.saveImage()
-                    // Stop detection after saving
-                    if (uiState.isDetecting) {
-                        viewModel.stopDetection()
+                    if (hasStoragePermission) {
+                        viewModel.saveImage()
+                        // Stop detection after saving
+                        if (uiState.isDetecting) {
+                            viewModel.stopDetection()
+                        }
+                    } else {
+                        // Request storage permission
+                        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            Manifest.permission.READ_MEDIA_IMAGES
+                        } else {
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        }
+                        storageLauncher.launch(permission)
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -259,6 +297,8 @@ fun MainScreen(
             ) {
                 Text(stringResource(R.string.save))
             }
+            }
+            
         }
     }
     

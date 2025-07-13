@@ -26,7 +26,7 @@ import kotlin.math.min
 class ChangeDetector {
     companion object {
         private const val TAG = "ChangeDetector"
-        private const val DEFAULT_THRESHOLD = 50
+        private const val DEFAULT_THRESHOLD = 8 // Lower threshold for better sensitivity
         private const val BYTES_PER_PIXEL = 4
     }
 
@@ -39,8 +39,8 @@ class ChangeDetector {
     private var previousBitmap: Bitmap? = null
     private val changeCounter = AtomicInteger(0)
     private var lastCheckTime = System.currentTimeMillis()
-    private var checkInterval: Long = 2000L // 2 seconds in milliseconds
-    private var minChangeSize: Int = 44 // Default: 22 caliber * 2
+    private var checkInterval: Long = 1000L // 1 second for more stable detection
+    private var minChangeSize: Int = 3 // Smaller for better detection
 
     /**
      * Sets the interval between change detection checks
@@ -82,20 +82,24 @@ class ChangeDetector {
      */
     fun detectChanges(newBitmap: Bitmap) {
         val currentTime = System.currentTimeMillis()
+        Log.d(TAG, "detectChanges called - isDetecting: ${_isDetecting.value}, bitmap: ${newBitmap.width}x${newBitmap.height}")
 
         // If detection is stopped, just update the previous image but don't detect
         if (!_isDetecting.value) {
+            Log.d(TAG, "Detection is stopped, updating previous bitmap only")
             previousBitmap = newBitmap.copy(newBitmap.config ?: Bitmap.Config.ARGB_8888, false)
             return
         }
 
         // Check if enough time has passed since last check
         if (currentTime - lastCheckTime < checkInterval) {
+            Log.d(TAG, "Too soon for next check: ${currentTime - lastCheckTime}ms < ${checkInterval}ms")
             return
         }
 
         val prevBitmap = previousBitmap
         if (prevBitmap == null) {
+            Log.d(TAG, "No previous bitmap, setting baseline")
             previousBitmap = newBitmap.copy(newBitmap.config ?: Bitmap.Config.ARGB_8888, false)
             lastCheckTime = currentTime
             return
@@ -103,6 +107,9 @@ class ChangeDetector {
 
         // Find differences between images
         val changes = findDifferences(prevBitmap, newBitmap)
+        
+        Log.d(TAG, "Detection check - found ${changes.size} changes, threshold: $DEFAULT_THRESHOLD, minSize: $minChangeSize")
+        Log.d(TAG, "Image comparison: prev=${prevBitmap.width}x${prevBitmap.height}, new=${newBitmap.width}x${newBitmap.height}")
 
         if (changes.isNotEmpty()) {
             val newChangePoint = ChangePoint(
@@ -133,6 +140,7 @@ class ChangeDetector {
         changeCounter.set(0)
         Log.d(TAG, "Changes cleared")
     }
+    
 
     /**
      * Finds differences between two bitmaps and returns change points
@@ -201,7 +209,8 @@ class ChangeDetector {
                 if (differenceMap[y][x] && !visited[y][x]) {
                     val boundingBox = floodFill(differenceMap, visited, x, y, width, height)
 
-                    if (boundingBox.width >= minChangeSize && boundingBox.height >= minChangeSize) {
+                    // More lenient change size requirements - either width OR height needs to meet minimum
+                    if (boundingBox.width >= minChangeSize || boundingBox.height >= minChangeSize) {
                         val centerX = (boundingBox.minX + boundingBox.width / 2f) / width
                         val centerY = (boundingBox.minY + boundingBox.height / 2f) / height
                         changes.add(Point(centerX, centerY))

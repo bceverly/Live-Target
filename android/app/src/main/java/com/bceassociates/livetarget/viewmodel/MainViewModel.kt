@@ -19,6 +19,7 @@ import android.graphics.Typeface
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.bceassociates.livetarget.data.AmmoType
@@ -243,19 +244,23 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun startDetection() {
         Log.d(TAG, "Starting detection")
         changeDetector.startDetection()
+        Log.d(TAG, "Detection started - isDetecting: ${changeDetector.isDetecting.value}")
     }
 
     fun stopDetection() {
         Log.d(TAG, "Stopping detection")
         changeDetector.stopDetection()
+        Log.d(TAG, "Detection stopped - isDetecting: ${changeDetector.isDetecting.value}")
     }
 
     fun clearChanges() {
         Log.d(TAG, "Clearing changes")
         changeDetector.clearChanges()
     }
+    
 
     fun processImage(bitmap: Bitmap) {
+        Log.d(TAG, "processImage called with bitmap: ${bitmap.width}x${bitmap.height}")
         currentBitmap = bitmap.copy(bitmap.config ?: Bitmap.Config.ARGB_8888, false)
         changeDetector.detectChanges(bitmap)
         
@@ -268,15 +273,33 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun saveImage() {
         viewModelScope.launch {
             try {
+                Log.d(TAG, "saveImage called")
                 val bitmap = currentBitmap
                 if (bitmap == null) {
                     Log.w(TAG, "No current bitmap to save")
+                    val context = getApplication<Application>()
+                    android.os.Handler(android.os.Looper.getMainLooper()).post {
+                        Toast.makeText(context, "No image to save - take a photo first", Toast.LENGTH_SHORT).show()
+                    }
                     return@launch
                 }
 
                 val compositeBitmap = createCompositeImage(bitmap)
-                saveImageToGallery(compositeBitmap)
-                Log.d(TAG, "Image saved successfully")
+                val success = saveImageToGallery(compositeBitmap)
+                if (success) {
+                    Log.d(TAG, "Image saved successfully")
+                    // Show success message on main thread
+                    val context = getApplication<Application>()
+                    android.os.Handler(android.os.Looper.getMainLooper()).post {
+                        Toast.makeText(context, "Image saved to gallery", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Log.e(TAG, "Failed to save image")
+                    val context = getApplication<Application>()
+                    android.os.Handler(android.os.Looper.getMainLooper()).post {
+                        Toast.makeText(context, "Failed to save image", Toast.LENGTH_SHORT).show()
+                    }
+                }
             } catch (e: Exception) {
                 Log.e(TAG, "Error saving image", e)
             }
@@ -284,15 +307,33 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun createCompositeImage(originalBitmap: Bitmap): Bitmap {
-        val compositeBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true)
+        // Rotate the bitmap 90 degrees clockwise to fix the orientation
+        val matrix = android.graphics.Matrix()
+        matrix.postRotate(90f)
+        val rotatedBitmap = Bitmap.createBitmap(
+            originalBitmap, 0, 0, 
+            originalBitmap.width, originalBitmap.height, 
+            matrix, true
+        )
+        
+        val compositeBitmap = rotatedBitmap.copy(Bitmap.Config.ARGB_8888, true)
         val canvas = Canvas(compositeBitmap)
         val changes = _uiState.value.detectedChanges
 
-        // Draw impact markers
-        changes.forEach { impact ->
+
+        // Draw impact markers - adjust coordinates for 90-degree rotation
+        changes.forEachIndexed { index, impact ->
+            // Hit detection was performed on the original (unrotated) bitmap
+            // After rotating the bitmap 90° clockwise, we need to transform coordinates
+            // Original coordinates are in the unrotated bitmap space
             val centerX = impact.location.x * compositeBitmap.width
             val centerY = impact.location.y * compositeBitmap.height
-            val radius = 30f
+            
+            // Scale radius and stroke based on image size (assume ~1000px is base size)
+            val scaleFactor = minOf(compositeBitmap.width, compositeBitmap.height) / 1000f
+            val radius = 30f * scaleFactor
+            val strokeWidth = 6f * scaleFactor
+            
 
             // Parse colors
             val circleColor = Color.parseColor("#${_uiState.value.circleColor}")
@@ -302,7 +343,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val circlePaint = Paint().apply {
                 color = circleColor
                 style = Paint.Style.STROKE
-                strokeWidth = 6f
+                this.strokeWidth = strokeWidth
                 isAntiAlias = true
             }
             canvas.drawCircle(centerX, centerY, radius, circlePaint)
@@ -310,7 +351,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             // Draw impact number
             val textPaint = Paint().apply {
                 color = numberColor
-                textSize = 48f
+                textSize = 48f * scaleFactor
                 textAlign = Paint.Align.CENTER
                 isAntiAlias = true
                 isFakeBoldText = true
@@ -412,40 +453,73 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private suspend fun saveImageToGallery(bitmap: Bitmap) {
+    private suspend fun saveImageToGallery(bitmap: Bitmap): Boolean {
         val context = getApplication<Application>()
+        
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                saveImageToGalleryModern(bitmap, context)
+            } else {
+                saveImageToGalleryLegacy(bitmap, context)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error saving image", e)
+            false
+        }
+    }
+    
+    private fun saveImageToGalleryModern(bitmap: Bitmap, context: Application): Boolean {
         val contentResolver = context.contentResolver
-
         val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
         val filename = "LiveTarget_${dateFormat.format(Date())}.jpg"
 
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/LiveTarget")
-                put(MediaStore.MediaColumns.IS_PENDING, 1)
-            }
+            put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/LiveTarget")
+            put(MediaStore.MediaColumns.IS_PENDING, 1)
         }
+        
+        Log.d(TAG, "Saving image (modern) with filename: $filename")
 
         val imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        Log.d(TAG, "MediaStore insert result: $imageUri")
 
         imageUri?.let { uri ->
             val outputStream: OutputStream? = contentResolver.openOutputStream(uri)
             outputStream?.use { stream ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+                val success = bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+                Log.d(TAG, "Bitmap compress success: $success")
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                contentValues.clear()
-                contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
-                contentResolver.update(uri, contentValues, null, null)
-            }
+            contentValues.clear()
+            contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
+            contentResolver.update(uri, contentValues, null, null)
 
-            Log.d(TAG, "Image saved to gallery: $uri")
+            Log.d(TAG, "Image saved to gallery (modern): $uri")
+            return true
         } ?: run {
             Log.e(TAG, "Failed to create MediaStore entry")
+            return false
         }
+    }
+    
+    private fun saveImageToGalleryLegacy(bitmap: Bitmap, context: Application): Boolean {
+        val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+        val filename = "LiveTarget_${dateFormat.format(Date())}.jpg"
+        
+        Log.d(TAG, "Saving image (legacy) with filename: $filename")
+        
+        // Use MediaStore.Images.Media.insertImage for older Android versions
+        val savedImageURL = MediaStore.Images.Media.insertImage(
+            context.contentResolver,
+            bitmap,
+            filename,
+            "Live Target shot analysis"
+        )
+        
+        Log.d(TAG, "Legacy save result: $savedImageURL")
+        return savedImageURL != null
     }
 
     fun setCircleColor(color: String) {
