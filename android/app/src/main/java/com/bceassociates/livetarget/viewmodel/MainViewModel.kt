@@ -87,6 +87,24 @@ data class MainUiState(
             blackPowderCharge = blackPowderCharge,
             selectedCaliberName = selectedCaliberName
         )
+    
+    val calculatedGridSize: String
+        get() {
+            val caliber = CaliberData.findCaliberByName(selectedCaliberName)
+            return if (caliber != null) {
+                // Calculate based on typical camera resolution and current zoom
+                val fieldOfViewInches = 36.0
+                val imageWidth = 1920 // Typical camera resolution width  
+                val imageHeight = 1080 // Typical camera resolution height
+                val pixelsPerInch = minOf(imageWidth, imageHeight) / fieldOfViewInches
+                val holeMultiplier = 1.2 // Bullet holes are typically 20% larger than bullet diameter
+                val holeDiameterPixels = (caliber.diameterInches * holeMultiplier * pixelsPerInch * zoomFactor).toInt()
+                val gridSquareSize = (holeDiameterPixels * 3).coerceAtLeast(10).coerceAtMost(100)
+                "${gridSquareSize}×${gridSquareSize} pixels"
+            } else {
+                "Unknown"
+            }
+        }
 }
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -130,7 +148,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 _uiState.value = _uiState.value.copy(selectedCaliberName = caliberName)
                 val caliber = CaliberData.findCaliberByName(caliberName)
                 if (caliber != null) {
+                    // Update both old and new detection systems
                     changeDetector.setMinChangeSize(caliber.pixelSize)
+                    updateDetectorParameters()
                 }
             }
         }
@@ -138,6 +158,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             settingsDataStore.zoomFactor.collect { factor ->
                 _uiState.value = _uiState.value.copy(zoomFactor = factor)
+                updateDetectorParameters()
             }
         }
 
@@ -238,6 +259,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             changeDetector.detectedChanges.collect { changes ->
                 _uiState.value = _uiState.value.copy(detectedChanges = changes)
             }
+        }
+    }
+    
+    /**
+     * Updates the change detector with current caliber and zoom parameters
+     */
+    private fun updateDetectorParameters() {
+        val currentState = _uiState.value
+        val caliber = CaliberData.findCaliberByName(currentState.selectedCaliberName)
+        if (caliber != null) {
+            changeDetector.setCaliberParameters(
+                diameterInches = caliber.diameterInches,
+                zoomFactor = currentState.zoomFactor
+            )
         }
     }
 

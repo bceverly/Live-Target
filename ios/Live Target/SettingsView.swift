@@ -36,6 +36,19 @@ struct SettingsView: View {
         return caliberData.findCaliber(byName: selectedCaliberName) ?? caliberData.calibers.first { $0.name == ".22 Long Rifle" }!
     }
     
+    private var calculatedGridSize: String {
+        // Calculate based on typical camera resolution and current zoom
+        let fieldOfViewInches = 36.0
+        let imageWidth = 1920.0 // Typical camera resolution width  
+        let imageHeight = 1080.0 // Typical camera resolution height
+        let pixelsPerInch = min(imageWidth, imageHeight) / fieldOfViewInches
+        let holeMultiplier = 1.2 // Bullet holes are typically 20% larger than bullet diameter
+        let zoomFactor = 1.0 // Default zoom factor for iOS
+        let holeDiameterPixels = Int(selectedCaliber.diameterInches * holeMultiplier * pixelsPerInch * zoomFactor)
+        let gridSquareSize = max(10, min(100, holeDiameterPixels * 3))
+        return "\(gridSquareSize)×\(gridSquareSize) pixels"
+    }
+    
     private var overlayPosition: OverlayPosition {
         get { OverlayPosition(rawValue: overlayPositionRaw) ?? .topLeft }
         set { overlayPositionRaw = newValue.rawValue }
@@ -165,6 +178,10 @@ struct SettingsView: View {
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
+                        
+                        Text("Detection Grid: \(calculatedGridSize)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
                 

@@ -41,6 +41,11 @@ class ChangeDetector {
     private var lastCheckTime = System.currentTimeMillis()
     private var checkInterval: Long = 1000L // 1 second for more stable detection
     private var minChangeSize: Int = 3 // Smaller for better detection
+    
+    // Grid-based detection parameters
+    private var gridSquareSize: Int = 20 // Will be calculated based on caliber
+    private var currentCaliberDiameter: Double = 0.223 // Default .22 LR
+    private var currentZoomFactor: Double = 1.0
 
     /**
      * Sets the interval between change detection checks
@@ -56,6 +61,52 @@ class ChangeDetector {
      */
     fun setMinChangeSize(size: Int) {
         minChangeSize = size.coerceAtLeast(1)
+    }
+    
+    /**
+     * Sets the caliber parameters for calculating bullet hole size
+     * @param diameterInches Bullet diameter in inches
+     * @param zoomFactor Current zoom factor
+     */
+    fun setCaliberParameters(diameterInches: Double, zoomFactor: Double) {
+        currentCaliberDiameter = diameterInches
+        currentZoomFactor = zoomFactor
+        updateGridSize()
+    }
+    
+    /**
+     * Calculates the expected pixel size of a bullet hole based on physics
+     */
+    private fun calculateBulletHolePixelSize(imageWidth: Int, imageHeight: Int): Int {
+        // Assumptions for calculation:
+        // - Typical camera: 12MP (4000x3000) with ~60° field of view
+        // - Typical target distance: 25 yards (900 inches)
+        // - Screen/preview dimensions will scale proportionally
+        
+        // Calculate pixels per inch based on image resolution and estimated field of view
+        // Assume field of view covers approximately 36 inches at 25 yards (typical indoor range)
+        val fieldOfViewInches = 36.0
+        val pixelsPerInch = minOf(imageWidth, imageHeight) / fieldOfViewInches
+        
+        // Calculate bullet hole diameter in pixels (bullet diameter + some paper tear)
+        val holeMultiplier = 1.2 // Bullet holes are typically 20% larger than bullet diameter
+        val holeDiameterPixels = (currentCaliberDiameter * holeMultiplier * pixelsPerInch * currentZoomFactor).toInt()
+        
+        Log.d(TAG, "Calculated bullet hole size: ${currentCaliberDiameter}\" -> ${holeDiameterPixels}px (zoom: ${currentZoomFactor}x)")
+        
+        return holeDiameterPixels.coerceAtLeast(5) // Minimum 5 pixels
+    }
+    
+    /**
+     * Updates the grid square size based on current caliber and zoom
+     */
+    private fun updateGridSize() {
+        // Grid squares should be 3x the expected bullet hole size for over-engineering
+        val imageWidth = 1920 // Typical camera resolution width
+        val imageHeight = 1080 // Typical camera resolution height
+        val bulletHoleSize = calculateBulletHolePixelSize(imageWidth, imageHeight)
+        gridSquareSize = (bulletHoleSize * 3).coerceAtLeast(10).coerceAtMost(100)
+        Log.d(TAG, "Updated grid square size to: ${gridSquareSize}px")
     }
 
     /**
@@ -143,11 +194,14 @@ class ChangeDetector {
     
 
     /**
-     * Finds differences between two bitmaps and returns change points
+     * Finds differences between two bitmaps using grid-based approach
      */
     private fun findDifferences(bitmap1: Bitmap, bitmap2: Bitmap): List<Point> {
         val width = min(bitmap1.width, bitmap2.width)
         val height = min(bitmap1.height, bitmap2.height)
+        
+        // Update grid size based on actual image dimensions
+        updateGridSizeForImage(width, height)
 
         val pixels1 = IntArray(width * height)
         val pixels2 = IntArray(width * height)
@@ -155,130 +209,94 @@ class ChangeDetector {
         bitmap1.getPixels(pixels1, 0, width, 0, 0, width, height)
         bitmap2.getPixels(pixels2, 0, width, 0, 0, width, height)
 
-        val differenceMap = createDifferenceMap(pixels1, pixels2, width, height)
-        return findSignificantChanges(differenceMap, width, height)
+        return findGridBasedChanges(pixels1, pixels2, width, height)
     }
-
+    
     /**
-     * Creates a difference map between two pixel arrays
+     * Updates grid size based on actual image dimensions
      */
-    private fun createDifferenceMap(
-        pixels1: IntArray,
-        pixels2: IntArray,
-        width: Int,
-        height: Int,
-    ): Array<BooleanArray> {
-        val differenceMap = Array(height) { BooleanArray(width) }
-
-        for (y in 0 until height) {
-            for (x in 0 until width) {
-                val index = y * width + x
-                val pixel1 = pixels1[index]
-                val pixel2 = pixels2[index]
-
-                val red1 = (pixel1 shr 16) and 0xFF
-                val green1 = (pixel1 shr 8) and 0xFF
-                val blue1 = pixel1 and 0xFF
-
-                val red2 = (pixel2 shr 16) and 0xFF
-                val green2 = (pixel2 shr 8) and 0xFF
-                val blue2 = pixel2 and 0xFF
-
-                val diff = abs(red1 - red2) + abs(green1 - green2) + abs(blue1 - blue2)
-
-                differenceMap[y][x] = diff > DEFAULT_THRESHOLD
-            }
-        }
-
-        return differenceMap
+    private fun updateGridSizeForImage(imageWidth: Int, imageHeight: Int) {
+        val bulletHoleSize = calculateBulletHolePixelSize(imageWidth, imageHeight)
+        gridSquareSize = (bulletHoleSize * 3).coerceAtLeast(10).coerceAtMost(min(imageWidth, imageHeight) / 4)
+        Log.d(TAG, "Grid size for ${imageWidth}x${imageHeight}: ${gridSquareSize}px (bullet hole: ${bulletHoleSize}px)")
     }
-
+    
     /**
-     * Finds significant changes in the difference map using flood fill
+     * Grid-based change detection with high sensitivity
      */
-    private fun findSignificantChanges(
-        differenceMap: Array<BooleanArray>,
-        width: Int,
-        height: Int,
-    ): List<Point> {
-        val changes = mutableListOf<Point>()
-        val visited = Array(height) { BooleanArray(width) }
-
-        for (y in 0 until height) {
-            for (x in 0 until width) {
-                if (differenceMap[y][x] && !visited[y][x]) {
-                    val boundingBox = floodFill(differenceMap, visited, x, y, width, height)
-
-                    // More lenient change size requirements - either width OR height needs to meet minimum
-                    if (boundingBox.width >= minChangeSize || boundingBox.height >= minChangeSize) {
-                        val centerX = (boundingBox.minX + boundingBox.width / 2f) / width
-                        val centerY = (boundingBox.minY + boundingBox.height / 2f) / height
-                        changes.add(Point(centerX, centerY))
+    private fun findGridBasedChanges(pixels1: IntArray, pixels2: IntArray, width: Int, height: Int): List<Point> {
+        val candidateChanges = mutableListOf<Pair<Point, Int>>() // Point with difference score
+        val significantThreshold = 50 // Higher threshold to avoid noise
+        
+        // Divide image into grid squares
+        val gridWidth = width / gridSquareSize
+        val gridHeight = height / gridSquareSize
+        
+        Log.d(TAG, "Grid analysis: ${gridWidth}x${gridHeight} squares of ${gridSquareSize}px each")
+        Log.d(TAG, "Image size: ${width}x${height}, threshold: $significantThreshold")
+        
+        for (gridY in 0 until gridHeight) {
+            for (gridX in 0 until gridWidth) {
+                val startX = gridX * gridSquareSize
+                val startY = gridY * gridSquareSize
+                val endX = min(startX + gridSquareSize, width)
+                val endY = min(startY + gridSquareSize, height)
+                
+                // Calculate average color difference in this grid square
+                var totalDifference = 0
+                var pixelCount = 0
+                
+                for (y in startY until endY) {
+                    for (x in startX until endX) {
+                        val index = y * width + x
+                        if (index < pixels1.size && index < pixels2.size) {
+                            val pixel1 = pixels1[index]
+                            val pixel2 = pixels2[index]
+                            
+                            val r1 = (pixel1 shr 16) and 0xFF
+                            val g1 = (pixel1 shr 8) and 0xFF
+                            val b1 = pixel1 and 0xFF
+                            
+                            val r2 = (pixel2 shr 16) and 0xFF
+                            val g2 = (pixel2 shr 8) and 0xFF
+                            val b2 = pixel2 and 0xFF
+                            
+                            val diff = kotlin.math.abs(r1 - r2) + kotlin.math.abs(g1 - g2) + kotlin.math.abs(b1 - b2)
+                            totalDifference += diff
+                            pixelCount++
+                        }
+                    }
+                }
+                
+                if (pixelCount > 0) {
+                    val averageDifference = totalDifference / pixelCount
+                    
+                    // If this grid square shows significant change, add it as candidate
+                    if (averageDifference > significantThreshold) {
+                        val centerX = (startX + endX) / 2
+                        val centerY = (startY + endY) / 2
+                        val normalizedX = centerX.toFloat() / width
+                        val normalizedY = centerY.toFloat() / height
+                        
+                        candidateChanges.add(Pair(Point(normalizedX, normalizedY), averageDifference))
+                        
+                        Log.d(TAG, "Significant change in grid (${gridX}, ${gridY}) at pixel (${centerX}, ${centerY}) - avg diff: $averageDifference")
                     }
                 }
             }
         }
-
-        return changes
-    }
-
-    /**
-     * Represents a bounding box region
-     */
-    private data class BoundingBox(
-        val minX: Int,
-        val minY: Int,
-        val maxX: Int,
-        val maxY: Int,
-    ) {
-        val width: Int get() = maxX - minX + 1
-        val height: Int get() = maxY - minY + 1
-    }
-
-    /**
-     * Performs flood fill to find connected regions of changes
-     */
-    private fun floodFill(
-        differenceMap: Array<BooleanArray>,
-        visited: Array<BooleanArray>,
-        startX: Int,
-        startY: Int,
-        width: Int,
-        height: Int,
-    ): BoundingBox {
-        val stack = mutableListOf(Pair(startX, startY))
-        var minX = startX
-        var maxX = startX
-        var minY = startY
-        var maxY = startY
-
-        while (stack.isNotEmpty()) {
-            val (x, y) = stack.removeAt(stack.size - 1)
-
-            // Check bounds and visited status
-            if (x !in 0 until width || y !in 0 until height || visited[y][x] || !differenceMap[y][x]) {
-                continue
-            }
-
-            visited[y][x] = true
-
-            // Update bounding box
-            minX = min(minX, x)
-            maxX = max(maxX, x)
-            minY = min(minY, y)
-            maxY = max(maxY, y)
-
-            // Add adjacent pixels to stack
-            stack.addAll(
-                listOf(
-                    Pair(x + 1, y),
-                    Pair(x - 1, y),
-                    Pair(x, y + 1),
-                    Pair(x, y - 1),
-                ),
-            )
+        
+        // Sort by difference score and return only the most significant change
+        val sortedChanges = candidateChanges.sortedByDescending { it.second }
+        val finalChanges = if (sortedChanges.isNotEmpty()) {
+            Log.d(TAG, "Most significant change has difference: ${sortedChanges.first().second}")
+            listOf(sortedChanges.first().first) // Return only the most significant change
+        } else {
+            emptyList()
         }
-
-        return BoundingBox(minX, minY, maxX, maxY)
+        
+        Log.d(TAG, "Grid analysis complete: ${candidateChanges.size} candidates found, returning ${finalChanges.size} changes")
+        return finalChanges
     }
+
 }

@@ -318,6 +318,14 @@ fun SettingsScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
+                            
+                            // Show calculated grid size
+                            Text(
+                                text = "Detection Grid: ${uiState.calculatedGridSize}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
                         }
                     }
                 }

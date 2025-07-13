@@ -60,20 +60,20 @@ fun SplashScreen(
                 ) {
                     drawTarget(this)
                     
-                    // Bullet holes - positioned at 11 o'clock near outer edge like iOS
-                    drawBulletHole(this, Offset(size.width * 0.42f, size.height * 0.25f), "1")   // 11 o'clock, outer ring
-                    drawBulletHole(this, Offset(size.width * 0.47f, size.height * 0.22f), "2")   // 11 o'clock, slightly right
-                    drawBulletHole(this, Offset(size.width * 0.37f, size.height * 0.28f), "3")   // 11 o'clock, slightly left
+                    // Bullet holes - spread out more horizontally and vertically
+                    drawBulletHole(this, Offset(size.width * 0.35f, size.height * 0.20f), "1")   // 11 o'clock, far left
+                    drawBulletHole(this, Offset(size.width * 0.55f, size.height * 0.18f), "2")   // 11 o'clock, far right
+                    drawBulletHole(this, Offset(size.width * 0.45f, size.height * 0.35f), "3")   // Lower center area
                 }
                 
-                // Numbers positioned at 11 o'clock near outer edge
+                // Numbers positioned to match spread out bullet holes
                 Text(
                     text = "1",
                     color = Color(0xFFDC143C),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .offset(x = (-14).dp, y = (-87).dp)  // 11 o'clock position
+                        .offset(x = (-54).dp, y = (-100).dp)  // Far left position
                 )
                 Text(
                     text = "2",
@@ -81,7 +81,7 @@ fun SplashScreen(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .offset(x = 16.dp, y = (-95).dp)     // 11 o'clock, slightly right
+                        .offset(x = 66.dp, y = (-108).dp)     // Far right position
                 )
                 Text(
                     text = "3",
@@ -89,7 +89,7 @@ fun SplashScreen(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .offset(x = (-44).dp, y = (-79).dp)  // 11 o'clock, slightly left
+                        .offset(x = (-6).dp, y = (-45).dp)    // Lower center position
                 )
             }
             
@@ -160,9 +160,9 @@ private fun drawBulletHole(drawScope: DrawScope, position: Offset, number: Strin
             style = androidx.compose.ui.graphics.drawscope.Stroke(width = 3.dp.toPx())
         )
         
-        // Black bullet hole
+        // Red bullet hole
         drawCircle(
-            color = Color.Black,
+            color = Color(0xFFDC143C),
             radius = 8.dp.toPx(),
             center = position
         )

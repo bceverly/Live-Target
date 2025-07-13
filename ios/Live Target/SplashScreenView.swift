@@ -90,7 +90,7 @@ struct BulletHoleView: View {
             
             // Bullet hole
             Circle()
-                .fill(Color.black)
+                .fill(Color.red)
                 .frame(width: 8, height: 8)
             
             // Number
