@@ -21,8 +21,8 @@ on:
 
 env:
   XCODE_VERSION: '16.4'
-  IOS_SIMULATOR: 'iPhone 16'
-  IOS_VERSION: '18.5'
+  IOS_SIMULATOR: 'iPhone 15'
+  IOS_VERSION: '17.5'
 
 jobs:
   build-and-test:
@@ -75,10 +75,9 @@ jobs:
         xcodebuild \
           -project "Live Target.xcodeproj" \
           -scheme "Live Target" \
-          -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5,arch=arm64" \
+          -destination "platform=iOS Simulator,name=iPhone 15,OS=17.5" \
           -configuration Debug \
-          EXCLUDED_ARCHS="arm64 x86_64" \
-          ONLY_ACTIVE_ARCH=YES \
+          -arch arm64 \
           clean build \
           CODE_SIGNING_ALLOWED=NO \
           -skipUnavailableActions \
@@ -87,11 +86,11 @@ jobs:
     - name: Run Unit Tests
       run: |
         cd ios/
-        # Use specific iPhone 16 simulator for tests (unit tests only, skip UI tests)
+        # Use specific iPhone 15 simulator for tests (unit tests only, skip UI tests)
         xcodebuild \
           -project "Live Target.xcodeproj" \
           -scheme "Live Target" \
-          -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5,arch=arm64" \
+          -destination "platform=iOS Simulator,name=iPhone 15,OS=17.5" \
           -configuration Debug \
           -only-testing:"Live TargetTests" \
           test \
@@ -132,7 +131,7 @@ jobs:
         xcodebuild \
           -project "Live Target.xcodeproj" \
           -scheme "Live Target" \
-          -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5,arch=arm64" \
+          -destination "platform=iOS Simulator,name=iPhone 15,OS=17.5" \
           -configuration Debug \
           -enableCodeCoverage YES \
           -only-testing:"Live TargetTests" \
