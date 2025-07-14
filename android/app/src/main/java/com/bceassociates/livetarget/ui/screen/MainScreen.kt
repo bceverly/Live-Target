@@ -164,24 +164,6 @@ fun MainScreen(
                         )
                     }
                     
-                    // Temporary debug info for zoom capabilities
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(16.dp)
-                            .background(
-                                Color.Black.copy(alpha = 0.7f),
-                                RoundedCornerShape(8.dp)
-                            )
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            text = "Debug: Zoom ${uiState.minZoom}x-${uiState.maxZoom}x",
-                            color = Color.White,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
                     
                     // Status indicator
                     Box(
