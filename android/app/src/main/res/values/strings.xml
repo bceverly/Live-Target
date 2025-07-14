@@ -76,7 +76,7 @@
     
     <string name="help_zoom_controls_title">Zoom Controls</string>
     <string name="help_zoom_controls">Zoom Controls: Use + and - buttons to adjust camera zoom</string>
-    <string name="help_zoom_range">Zoom range: 1x to 10x magnification with hardware zoom support</string>
+    <string name="help_zoom_range">Zoom range: 1x to 20x magnification with hardware zoom support</string>
     <string name="help_zoom_detail">Higher zoom provides more detail but smaller field of view</string>
     
     <string name="help_tips_title">Tips for Best Results</string>

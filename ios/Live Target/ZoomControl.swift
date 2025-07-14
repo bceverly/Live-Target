@@ -13,7 +13,7 @@ struct ZoomControl: View {
     @State private var showingZoomSlider = false
     
     /// Predefined zoom levels for quick access
-    private let zoomLevels: [CGFloat] = [1.0, 1.5, 2.0, 3.0, 5.0, 7.0, 10.0]
+    private let zoomLevels: [CGFloat] = [1.0, 2.0, 3.0, 5.0, 10.0, 15.0, 20.0]
     
     var body: some View {
         VStack(spacing: 0) {
@@ -101,10 +101,10 @@ struct ZoomSlider: View {
                     .font(.caption)
                     .foregroundColor(.white)
                 
-                Slider(value: $zoomFactor, in: 1.0...10.0, step: 0.1)
+                Slider(value: $zoomFactor, in: 1.0...20.0, step: 0.1)
                     .accentColor(.yellow)
                 
-                Text("10×")
+                Text("20×")
                     .font(.caption)
                     .foregroundColor(.white)
             }

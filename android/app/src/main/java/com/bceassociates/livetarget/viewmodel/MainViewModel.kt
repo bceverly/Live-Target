@@ -52,6 +52,8 @@ data class MainUiState(
     val checkInterval: Double = 2.0,
     val selectedCaliberName: String = ".22 Long Rifle",
     val zoomFactor: Double = 1.0,
+    val maxZoom: Float = 20.0f,
+    val minZoom: Float = 1.0f,
     val watchIntegrationEnabled: Boolean = false,
     val watchConnectionStatus: WatchConnectionStatus = WatchConnectionStatus.UNKNOWN,
     val isWatchPaired: Boolean = false,
@@ -92,10 +94,11 @@ data class MainUiState(
         get() {
             val caliber = CaliberData.findCaliberByName(selectedCaliberName)
             return if (caliber != null) {
-                // Get actual camera resolution from current bitmap or use typical values as fallback
-                val (imageWidth, imageHeight) = getCurrentCameraResolution()
+                // Use typical camera resolution as fallback since we don't have access to currentBitmap here
+                val imageWidth = 1280 // Default camera resolution width from CameraPreview
+                val imageHeight = 720 // Default camera resolution height from CameraPreview
                 
-                // Calculate based on actual camera resolution and current zoom
+                // Calculate based on camera resolution and current zoom
                 val fieldOfViewInches = 36.0
                 val pixelsPerInch = minOf(imageWidth, imageHeight) / fieldOfViewInches
                 val holeMultiplier = 1.2 // Bullet holes are typically 20% larger than bullet diameter
@@ -106,13 +109,6 @@ data class MainUiState(
                 "Unknown"
             }
         }
-    
-    private fun getCurrentCameraResolution(): Pair<Int, Int> {
-        // Use current bitmap dimensions if available, otherwise fall back to typical values
-        return currentBitmap?.let { bitmap ->
-            Pair(bitmap.width, bitmap.height)
-        } ?: Pair(1280, 720) // Default camera resolution set in CameraPreview
-    }
 }
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -590,6 +586,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun setZoomFactor(factor: Double) {
+        Log.d(TAG, "setZoomFactor called with: ${factor}x (current: ${_uiState.value.zoomFactor}x)")
         viewModelScope.launch {
             settingsDataStore.setZoomFactor(factor)
         }
@@ -678,5 +675,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val numberColor = Color.parseColor("#${_uiState.value.numberColor}")
             watchConnectivityManager.sendImpactToWatch(impact, image, circleColor, numberColor)
         }
+    }
+
+    fun updateZoomCapabilities(minZoom: Float, maxZoom: Float) {
+        Log.d(TAG, "Updating zoom capabilities: ${minZoom}x to ${maxZoom}x")
+        _uiState.value = _uiState.value.copy(minZoom = minZoom, maxZoom = maxZoom)
+        Log.d(TAG, "Zoom capabilities updated in UI state: min=${_uiState.value.minZoom}, max=${_uiState.value.maxZoom}")
     }
 }

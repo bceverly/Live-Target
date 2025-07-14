@@ -7,6 +7,7 @@
 
 package com.bceassociates.livetarget.ui.component
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -58,11 +59,34 @@ fun ZoomControl(
     zoomFactor: Float,
     onZoomChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
+    maxZoom: Float = 20.0f,
+    minZoom: Float = 1.0f,
 ) {
     var showingZoomSlider by remember { mutableStateOf(false) }
     
-    // Predefined zoom levels for quick access
-    val zoomLevels = listOf(1.0f, 1.5f, 2.0f, 3.0f, 5.0f, 7.0f, 10.0f)
+    // Predefined zoom levels for quick access, filtered by hardware capabilities
+    val baseZoomLevels = listOf(1.0f, 2.0f, 3.0f, 5.0f, 7.0f, 10.0f, 15.0f, 20.0f)
+    
+    // Add the actual hardware maxZoom if it's not in our predefined list and is reasonable
+    // Also add intermediate levels (4x, 6x, 8x, 9x) if they fall within hardware range
+    val extraLevels = mutableListOf<Float>()
+    if (maxZoom >= 4.0f && !baseZoomLevels.contains(4.0f)) extraLevels.add(4.0f)
+    if (maxZoom >= 6.0f && !baseZoomLevels.contains(6.0f)) extraLevels.add(6.0f) 
+    if (maxZoom >= 8.0f && !baseZoomLevels.contains(8.0f)) extraLevels.add(8.0f)
+    if (maxZoom >= 9.0f && !baseZoomLevels.contains(9.0f)) extraLevels.add(9.0f)
+    
+    // Add the exact hardware maxZoom if it's not already included and is reasonable
+    if (maxZoom > 1.0f && maxZoom <= 20.0f && !baseZoomLevels.contains(maxZoom) && !extraLevels.contains(maxZoom)) {
+        extraLevels.add(maxZoom)
+    }
+    
+    val allZoomLevels = (baseZoomLevels + extraLevels).sorted()
+    val zoomLevels = allZoomLevels.filter { it <= maxZoom && it >= minZoom }
+    
+    // Log zoom level filtering for debugging
+    Log.d("ZoomControl", "Hardware zoom range: ${minZoom}x to ${maxZoom}x")
+    Log.d("ZoomControl", "Available zoom levels: ${zoomLevels.joinToString(", ") { "${it}x" }}")
+    Log.d("ZoomControl", "Current zoom factor: ${zoomFactor}x")
     
     Column(
         modifier = modifier,
@@ -71,7 +95,13 @@ fun ZoomControl(
         if (showingZoomSlider) {
             ZoomSlider(
                 zoomFactor = zoomFactor,
-                onZoomChange = onZoomChange,
+                onZoomChange = { newZoom ->
+                    val clampedZoom = newZoom.coerceIn(minZoom, maxZoom)
+                    Log.d("ZoomControl", "ZoomSlider changed: requested=${newZoom}x, clamped=${clampedZoom}x, range=${minZoom}x-${maxZoom}x")
+                    onZoomChange(clampedZoom)
+                },
+                maxZoom = maxZoom,
+                minZoom = minZoom,
             )
         }
         
@@ -84,7 +114,11 @@ fun ZoomControl(
                 ZoomButton(
                     level = level,
                     currentZoom = zoomFactor,
-                    onZoomChange = onZoomChange,
+                    onZoomChange = { clampedLevel ->
+                        val finalLevel = clampedLevel.coerceIn(minZoom, maxZoom)
+                        Log.d("ZoomControl", "ZoomButton clicked: requested=${clampedLevel}x, clamped=${finalLevel}x, range=${minZoom}x-${maxZoom}x")
+                        onZoomChange(finalLevel)
+                    },
                 )
             }
             
@@ -154,6 +188,8 @@ private fun ZoomSlider(
     zoomFactor: Float,
     onZoomChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
+    maxZoom: Float = 20.0f,
+    minZoom: Float = 1.0f,
 ) {
     Card(
         modifier = modifier
@@ -174,7 +210,7 @@ private fun ZoomSlider(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "1×",
+                    text = "${minZoom.toInt()}×",
                     color = Color.White,
                     fontSize = 12.sp,
                 )
@@ -182,8 +218,8 @@ private fun ZoomSlider(
                 Slider(
                     value = zoomFactor,
                     onValueChange = onZoomChange,
-                    valueRange = 1.0f..10.0f,
-                    steps = 90, // 0.1 step increments
+                    valueRange = minZoom..maxZoom,
+                    steps = ((maxZoom - minZoom) * 10).toInt(), // 0.1 step increments
                     modifier = Modifier.weight(1f).padding(horizontal = 16.dp),
                     colors = SliderDefaults.colors(
                         thumbColor = Color.Yellow,
@@ -193,7 +229,7 @@ private fun ZoomSlider(
                 )
                 
                 Text(
-                    text = "10×",
+                    text = "${maxZoom.toInt()}×",
                     color = Color.White,
                     fontSize = 12.sp,
                 )

@@ -10,6 +10,7 @@ package com.bceassociates.livetarget.ui.screen
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
@@ -145,6 +146,9 @@ fun MainScreen(
                             viewModel.processImage(bitmap)
                         },
                         zoomFactor = uiState.zoomFactor.toFloat(),
+                        onZoomCapabilitiesChanged = { minZoom, maxZoom ->
+                            viewModel.updateZoomCapabilities(minZoom, maxZoom)
+                        },
                         modifier = Modifier.fillMaxSize(),
                     )
                     
@@ -197,9 +201,14 @@ fun MainScreen(
                         ZoomControl(
                             zoomFactor = uiState.zoomFactor.toFloat(),
                             onZoomChange = { newZoom ->
+                                Log.d("MainScreen", "ZoomControl onZoomChange: ${newZoom}x")
                                 viewModel.setZoomFactor(newZoom.toDouble())
                             },
-                        )
+                            maxZoom = uiState.maxZoom,
+                            minZoom = uiState.minZoom,
+                        ).also {
+                            Log.d("MainScreen", "Creating ZoomControl with: zoom=${uiState.zoomFactor}x, range=${uiState.minZoom}x-${uiState.maxZoom}x")
+                        }
                     }
                 }
             } else {

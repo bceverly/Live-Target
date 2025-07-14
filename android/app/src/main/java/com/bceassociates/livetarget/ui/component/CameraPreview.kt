@@ -43,6 +43,7 @@ import java.util.concurrent.Executors
 fun CameraPreview(
     onImageCaptured: (Bitmap) -> Unit,
     zoomFactor: Float = 1.0f,
+    onZoomCapabilitiesChanged: ((Float, Float) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -53,7 +54,13 @@ fun CameraPreview(
     
     // Apply zoom when zoomFactor changes
     LaunchedEffect(zoomFactor, camera) {
-        camera?.cameraControl?.setZoomRatio(zoomFactor)
+        camera?.let { cam ->
+            val zoomState = cam.cameraInfo.zoomState.value
+            val maxZoom = zoomState?.maxZoomRatio ?: 20.0f
+            val minZoom = zoomState?.minZoomRatio ?: 1.0f
+            val clampedZoom = zoomFactor.coerceIn(minZoom, maxZoom)
+            cam.cameraControl.setZoomRatio(clampedZoom)
+        }
     }
 
     DisposableEffect(Unit) {
@@ -109,8 +116,33 @@ fun CameraPreview(
                         // Store camera reference for zoom control
                         camera = boundCamera
                         
+                        // Get camera zoom capabilities - use observe to ensure we get the latest values
+                        boundCamera.cameraInfo.zoomState.observe(lifecycleOwner) { zoomState ->
+                            val maxZoom = zoomState?.maxZoomRatio ?: 20.0f
+                            val minZoom = zoomState?.minZoomRatio ?: 1.0f
+                            Log.d("CameraPreview", "Camera zoom capabilities updated: ${minZoom}x to ${maxZoom}x")
+                            
+                            // Notify parent about zoom capabilities
+                            onZoomCapabilitiesChanged?.invoke(minZoom, maxZoom)
+                        }
+                        
+                        // Get initial zoom capabilities synchronously for immediate use
+                        val initialZoomState = boundCamera.cameraInfo.zoomState.value
+                        val initialMaxZoom = initialZoomState?.maxZoomRatio ?: 20.0f
+                        val initialMinZoom = initialZoomState?.minZoomRatio ?: 1.0f
+                        
+                        Log.d("CameraPreview", "Initial camera zoom capabilities: ${initialMinZoom}x to ${initialMaxZoom}x")
+                        
+                        // Notify parent about initial zoom capabilities
+                        onZoomCapabilitiesChanged?.invoke(initialMinZoom, initialMaxZoom)
+                        
+                        // Clamp zoom factor to camera capabilities
+                        val clampedZoom = zoomFactor.coerceIn(initialMinZoom, initialMaxZoom)
+                        
                         // Set initial zoom
-                        boundCamera.cameraControl.setZoomRatio(zoomFactor)
+                        boundCamera.cameraControl.setZoomRatio(clampedZoom)
+                        
+                        Log.d("CameraPreview", "Set initial zoom to: ${clampedZoom}x (requested: ${zoomFactor}x)")
 
                         Log.d("CameraPreview", "Camera bound successfully")
                     } catch (exc: Exception) {
