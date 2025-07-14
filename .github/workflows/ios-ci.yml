@@ -77,7 +77,6 @@ jobs:
           -scheme "Live Target" \
           -destination "platform=iOS Simulator,name=iPhone 15,OS=17.5" \
           -configuration Debug \
-          -arch arm64 \
           clean build \
           CODE_SIGNING_ALLOWED=NO \
           -skipUnavailableActions \
