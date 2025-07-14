@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct SettingsView: View {
     @AppStorage("circleColor") private var circleColorHex: String = "FF0000"
     @AppStorage("numberColor") private var numberColorHex: String = "FF0000"
     @AppStorage("checkInterval") private var checkInterval: Double = 2.0
     @AppStorage("selectedCaliberName") private var selectedCaliberName: String = ".22 Long Rifle"
+    @AppStorage("zoomFactor") private var zoomFactor: Double = 1.0
     @AppStorage("watchIntegrationEnabled") private var watchIntegrationEnabled: Bool = false
     
     // Overlay Settings
@@ -37,16 +39,27 @@ struct SettingsView: View {
     }
     
     private var calculatedGridSize: String {
-        // Calculate based on typical camera resolution and current zoom
+        // Get actual camera resolution if available, otherwise use typical values
+        let (imageWidth, imageHeight) = getCameraResolution()
+        
+        // Calculate based on actual camera resolution and current zoom
         let fieldOfViewInches = 36.0
-        let imageWidth = 1920.0 // Typical camera resolution width  
-        let imageHeight = 1080.0 // Typical camera resolution height
         let pixelsPerInch = min(imageWidth, imageHeight) / fieldOfViewInches
         let holeMultiplier = 1.2 // Bullet holes are typically 20% larger than bullet diameter
-        let zoomFactor = 1.0 // Default zoom factor for iOS
         let holeDiameterPixels = Int(selectedCaliber.diameterInches * holeMultiplier * pixelsPerInch * zoomFactor)
         let gridSquareSize = max(10, min(100, holeDiameterPixels * 3))
         return "\(gridSquareSize)×\(gridSquareSize) pixels"
+    }
+    
+    private func getCameraResolution() -> (Double, Double) {
+        // Try to get the actual camera resolution
+        guard let captureDevice = AVCaptureDevice.default(for: .video) else {
+            // Fallback to typical values if camera not available
+            return (1920.0, 1080.0)
+        }
+        
+        let dimensions = CMVideoFormatDescriptionGetDimensions(captureDevice.activeFormat.formatDescription)
+        return (Double(dimensions.width), Double(dimensions.height))
     }
     
     private var overlayPosition: OverlayPosition {

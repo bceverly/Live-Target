@@ -92,10 +92,11 @@ data class MainUiState(
         get() {
             val caliber = CaliberData.findCaliberByName(selectedCaliberName)
             return if (caliber != null) {
-                // Calculate based on typical camera resolution and current zoom
+                // Get actual camera resolution from current bitmap or use typical values as fallback
+                val (imageWidth, imageHeight) = getCurrentCameraResolution()
+                
+                // Calculate based on actual camera resolution and current zoom
                 val fieldOfViewInches = 36.0
-                val imageWidth = 1920 // Typical camera resolution width  
-                val imageHeight = 1080 // Typical camera resolution height
                 val pixelsPerInch = minOf(imageWidth, imageHeight) / fieldOfViewInches
                 val holeMultiplier = 1.2 // Bullet holes are typically 20% larger than bullet diameter
                 val holeDiameterPixels = (caliber.diameterInches * holeMultiplier * pixelsPerInch * zoomFactor).toInt()
@@ -105,6 +106,13 @@ data class MainUiState(
                 "Unknown"
             }
         }
+    
+    private fun getCurrentCameraResolution(): Pair<Int, Int> {
+        // Use current bitmap dimensions if available, otherwise fall back to typical values
+        return currentBitmap?.let { bitmap ->
+            Pair(bitmap.width, bitmap.height)
+        } ?: Pair(1280, 720) // Default camera resolution set in CameraPreview
+    }
 }
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {

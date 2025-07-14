@@ -70,10 +70,10 @@ jobs:
         # List available simulators for debugging
         xcrun simctl list devices available
         
-        # Use specific iPhone 16 simulator for reliable builds (arm64 only)
+        # Build only the main iOS target, skip Watch App to avoid WatchOS SDK issues
         xcodebuild \
           -project "Live Target.xcodeproj" \
-          -scheme "Live Target" \
+          -target "Live Target" \
           -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5,arch=arm64" \
           -configuration Debug \
           clean build \
@@ -86,7 +86,7 @@ jobs:
         # Use specific iPhone 16 simulator for tests (unit tests only, skip UI tests)
         xcodebuild \
           -project "Live Target.xcodeproj" \
-          -scheme "Live Target" \
+          -target "Live Target" \
           -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5,arch=arm64" \
           -configuration Debug \
           -only-testing:"Live TargetTests" \
@@ -127,7 +127,7 @@ jobs:
         cd ios/
         xcodebuild \
           -project "Live Target.xcodeproj" \
-          -scheme "Live Target" \
+          -target "Live Target" \
           -destination "platform=iOS Simulator,name=iPhone 16,OS=18.5,arch=arm64" \
           -configuration Debug \
           -enableCodeCoverage YES \
