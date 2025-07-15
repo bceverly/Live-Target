@@ -26,16 +26,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        
+
         // Enable full screen with edge-to-edge content
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        
+
         setContent {
             LiveTargetTheme {
                 Scaffold(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .systemBarsPadding()
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .systemBarsPadding(),
                 ) { innerPadding ->
                     MainScreen(
                         modifier = Modifier.padding(innerPadding),

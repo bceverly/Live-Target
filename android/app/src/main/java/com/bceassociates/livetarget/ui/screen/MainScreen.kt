@@ -14,7 +14,6 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +21,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
@@ -36,8 +34,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -56,7 +52,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bceassociates.livetarget.R
@@ -70,7 +65,7 @@ import com.bceassociates.livetarget.viewmodel.MainViewModel
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel = viewModel()
+    viewModel: MainViewModel = viewModel(),
 ) {
     val context = LocalContext.current
     var hasCameraPermission by remember {
@@ -81,7 +76,7 @@ fun MainScreen(
             ) == PackageManager.PERMISSION_GRANTED,
         )
     }
-    
+
     var hasStoragePermission by remember {
         mutableStateOf(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -96,27 +91,29 @@ fun MainScreen(
                 ) == PackageManager.PERMISSION_GRANTED
             } else {
                 true // Pre-M doesn't need runtime permissions
-            }
+            },
         )
     }
-    
+
     var showSettings by remember { mutableStateOf(false) }
     var showHelp by remember { mutableStateOf(false) }
-    
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-    ) { isGranted: Boolean ->
-        hasCameraPermission = isGranted
-    }
-    
-    val storageLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-    ) { isGranted: Boolean ->
-        hasStoragePermission = isGranted
-    }
-    
+
+    val cameraLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+        ) { isGranted: Boolean ->
+            hasCameraPermission = isGranted
+        }
+
+    val storageLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+        ) { isGranted: Boolean ->
+            hasStoragePermission = isGranted
+        }
+
     val uiState by viewModel.uiState.collectAsState()
-    
+
     Column(modifier = modifier.fillMaxSize()) {
         // Top App Bar
         TopAppBar(
@@ -134,12 +131,13 @@ fun MainScreen(
                 }
             },
         )
-        
+
         // Main Content
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
         ) {
             if (hasCameraPermission) {
                 // Camera Preview with Impact Overlays
@@ -154,7 +152,7 @@ fun MainScreen(
                         },
                         modifier = Modifier.fillMaxSize(),
                     )
-                    
+
                     // Impact overlays
                     Canvas(modifier = Modifier.fillMaxSize()) {
                         drawImpacts(
@@ -163,44 +161,50 @@ fun MainScreen(
                             numberColor = Color(android.graphics.Color.parseColor("#${uiState.numberColor}")),
                         )
                     }
-                    
-                    
+
                     // Status indicator
                     Box(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(16.dp)
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(16.dp),
                     ) {
                         Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = if (uiState.isDetecting) {
-                                    MaterialTheme.colorScheme.errorContainer
-                                } else {
-                                    MaterialTheme.colorScheme.secondaryContainer
-                                },
-                            ),
+                            colors =
+                                CardDefaults.cardColors(
+                                    containerColor =
+                                        if (uiState.isDetecting) {
+                                            MaterialTheme.colorScheme.errorContainer
+                                        } else {
+                                            MaterialTheme.colorScheme.secondaryContainer
+                                        },
+                                ),
                         ) {
                             Text(
-                                text = if (uiState.isDetecting) {
-                                    stringResource(R.string.detecting)
-                                } else {
-                                    stringResource(R.string.stopped)
-                                },
+                                text =
+                                    if (uiState.isDetecting) {
+                                        stringResource(R.string.detecting)
+                                    } else {
+                                        stringResource(R.string.stopped)
+                                    },
                                 modifier = Modifier.padding(8.dp),
-                                color = if (uiState.isDetecting) {
-                                    MaterialTheme.colorScheme.onErrorContainer
-                                } else {
-                                    MaterialTheme.colorScheme.onSecondaryContainer
-                                },
+                                color =
+                                    if (uiState.isDetecting) {
+                                        MaterialTheme.colorScheme.onErrorContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.onSecondaryContainer
+                                    },
                             )
                         }
                     }
-                    
+
                     // Zoom Control positioned at the bottom
                     Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = 100.dp), // Space for bottom controls
+                        modifier =
+                            Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = 100.dp),
+                        // Space for bottom controls
                     ) {
                         ZoomControl(
                             zoomFactor = uiState.zoomFactor.toFloat(),
@@ -211,16 +215,20 @@ fun MainScreen(
                             maxZoom = uiState.maxZoom,
                             minZoom = uiState.minZoom,
                         ).also {
-                            Log.d("MainScreen", "Creating ZoomControl with: zoom=${uiState.zoomFactor}x, range=${uiState.minZoom}x-${uiState.maxZoom}x")
+                            Log.d(
+                                "MainScreen",
+                                "Creating ZoomControl with: zoom=${uiState.zoomFactor}x, range=${uiState.minZoom}x-${uiState.maxZoom}x",
+                            )
                         }
                     }
                 }
             } else {
                 // Camera permission request
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
@@ -237,12 +245,13 @@ fun MainScreen(
                 }
             }
         }
-        
+
         // Bottom Controls
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -250,71 +259,75 @@ fun MainScreen(
             ) {
                 Button(
                     onClick = { viewModel.clearChanges() },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                    ),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                        ),
                 ) {
                     Text(stringResource(R.string.clear))
                 }
-            
-            Button(
-                onClick = {
-                    if (uiState.isDetecting) {
-                        viewModel.stopDetection()
-                    } else {
-                        // Test watch connectivity when starting if integration is enabled
-                        if (uiState.watchIntegrationEnabled) {
-                            viewModel.testWatchConnectivity()
-                        }
-                        viewModel.startDetection()
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (uiState.isDetecting) {
-                        MaterialTheme.colorScheme.error
-                    } else {
-                        MaterialTheme.colorScheme.primary
-                    },
-                ),
-            ) {
-                Text(
-                    if (uiState.isDetecting) {
-                        stringResource(R.string.stop)
-                    } else {
-                        stringResource(R.string.start)
-                    },
-                )
-            }
-            
-            Button(
-                onClick = { 
-                    if (hasStoragePermission) {
-                        viewModel.saveImage()
-                        // Stop detection after saving
+
+                Button(
+                    onClick = {
                         if (uiState.isDetecting) {
                             viewModel.stopDetection()
-                        }
-                    } else {
-                        // Request storage permission
-                        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            Manifest.permission.READ_MEDIA_IMAGES
                         } else {
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            // Test watch connectivity when starting if integration is enabled
+                            if (uiState.watchIntegrationEnabled) {
+                                viewModel.testWatchConnectivity()
+                            }
+                            viewModel.startDetection()
                         }
-                        storageLauncher.launch(permission)
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiary,
-                ),
-            ) {
-                Text(stringResource(R.string.save))
+                    },
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor =
+                                if (uiState.isDetecting) {
+                                    MaterialTheme.colorScheme.error
+                                } else {
+                                    MaterialTheme.colorScheme.primary
+                                },
+                        ),
+                ) {
+                    Text(
+                        if (uiState.isDetecting) {
+                            stringResource(R.string.stop)
+                        } else {
+                            stringResource(R.string.start)
+                        },
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        if (hasStoragePermission) {
+                            viewModel.saveImage()
+                            // Stop detection after saving
+                            if (uiState.isDetecting) {
+                                viewModel.stopDetection()
+                            }
+                        } else {
+                            // Request storage permission
+                            val permission =
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    Manifest.permission.READ_MEDIA_IMAGES
+                                } else {
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                }
+                            storageLauncher.launch(permission)
+                        }
+                    },
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.tertiary,
+                        ),
+                ) {
+                    Text(stringResource(R.string.save))
+                }
             }
-            }
-            
         }
     }
-    
+
     // Settings Screen
     if (showSettings) {
         SettingsScreen(
@@ -322,7 +335,7 @@ fun MainScreen(
             viewModel = viewModel,
         )
     }
-    
+
     // Help Screen
     if (showHelp) {
         HelpScreen(
@@ -340,7 +353,7 @@ private fun DrawScope.drawImpacts(
         val centerX = impact.location.x * size.width
         val centerY = impact.location.y * size.height
         val radius = 30.dp.toPx()
-        
+
         // Draw circle
         drawCircle(
             color = circleColor,
@@ -348,21 +361,23 @@ private fun DrawScope.drawImpacts(
             center = androidx.compose.ui.geometry.Offset(centerX, centerY),
             style = Stroke(width = 3.dp.toPx()),
         )
-        
+
         // Draw impact number
         drawIntoCanvas { canvas ->
-            val paint = android.graphics.Paint().apply {
-                color = numberColor.toArgb()
-                textSize = 24.dp.toPx()
-                textAlign = android.graphics.Paint.Align.CENTER
-                isAntiAlias = true
-                isFakeBoldText = true
-            }
-            
+            val paint =
+                android.graphics.Paint().apply {
+                    color = numberColor.toArgb()
+                    textSize = 24.dp.toPx()
+                    textAlign = android.graphics.Paint.Align.CENTER
+                    isAntiAlias = true
+                    isFakeBoldText = true
+                }
+
             canvas.nativeCanvas.drawText(
                 impact.number.toString(),
                 centerX,
-                centerY + paint.textSize / 3f, // Offset to center vertically
+                // Offset to center vertically
+                centerY + paint.textSize / 3f,
                 paint,
             )
         }

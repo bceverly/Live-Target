@@ -13,7 +13,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.bceassociates.livetarget.data.AmmoType
@@ -25,7 +24,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class SettingsDataStore(private val context: Context) {
-
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
 
@@ -35,7 +33,7 @@ class SettingsDataStore(private val context: Context) {
         private val SELECTED_CALIBER_NAME_KEY = stringPreferencesKey("selected_caliber_name")
         private val ZOOM_FACTOR_KEY = doublePreferencesKey("zoom_factor")
         private val WATCH_INTEGRATION_ENABLED_KEY = booleanPreferencesKey("watch_integration_enabled")
-        
+
         // Overlay Settings
         private val OVERLAY_ENABLED_KEY = booleanPreferencesKey("overlay_enabled")
         private val OVERLAY_POSITION_KEY = stringPreferencesKey("overlay_position")
@@ -79,58 +77,58 @@ class SettingsDataStore(private val context: Context) {
         context.dataStore.data.map { preferences ->
             preferences[WATCH_INTEGRATION_ENABLED_KEY] ?: false
         }
-    
+
     // Overlay Settings Flows
     val overlayEnabled: Flow<Boolean> =
         context.dataStore.data.map { preferences ->
             preferences[OVERLAY_ENABLED_KEY] ?: false
         }
-    
+
     val overlayPosition: Flow<String> =
         context.dataStore.data.map { preferences ->
             preferences[OVERLAY_POSITION_KEY] ?: OverlayPosition.TOP_LEFT.name
         }
-    
+
     val bulletWeight: Flow<Double> =
         context.dataStore.data.map { preferences ->
             preferences[BULLET_WEIGHT_KEY] ?: 55.0
         }
-    
+
     val ammoType: Flow<String> =
         context.dataStore.data.map { preferences ->
             preferences[AMMO_TYPE_KEY] ?: AmmoType.FACTORY.name
         }
-    
+
     val factoryAmmoName: Flow<String> =
         context.dataStore.data.map { preferences ->
             preferences[FACTORY_AMMO_NAME_KEY] ?: ""
         }
-    
+
     val handloadPowder: Flow<String> =
         context.dataStore.data.map { preferences ->
             preferences[HANDLOAD_POWDER_KEY] ?: ""
         }
-    
+
     val handloadCharge: Flow<Double> =
         context.dataStore.data.map { preferences ->
             preferences[HANDLOAD_CHARGE_KEY] ?: 0.0
         }
-    
+
     val cartridgeType: Flow<String> =
         context.dataStore.data.map { preferences ->
             preferences[CARTRIDGE_TYPE_KEY] ?: CartridgeType.METALLIC_CARTRIDGE.name
         }
-    
+
     val blackPowderType: Flow<String> =
         context.dataStore.data.map { preferences ->
             preferences[BLACK_POWDER_TYPE_KEY] ?: BlackPowderType.TWOF.name
         }
-    
+
     val projectileType: Flow<String> =
         context.dataStore.data.map { preferences ->
             preferences[PROJECTILE_TYPE_KEY] ?: ProjectileType.ROUND_BALL.name
         }
-    
+
     val blackPowderCharge: Flow<Double> =
         context.dataStore.data.map { preferences ->
             preferences[BLACK_POWDER_CHARGE_KEY] ?: 0.0
@@ -171,68 +169,68 @@ class SettingsDataStore(private val context: Context) {
             settings[WATCH_INTEGRATION_ENABLED_KEY] = enabled
         }
     }
-    
+
     // Overlay Settings Setters
     suspend fun setOverlayEnabled(enabled: Boolean) {
         context.dataStore.edit { settings ->
             settings[OVERLAY_ENABLED_KEY] = enabled
         }
     }
-    
+
     suspend fun setOverlayPosition(position: String) {
         context.dataStore.edit { settings ->
             settings[OVERLAY_POSITION_KEY] = position
         }
     }
-    
+
     suspend fun setBulletWeight(weight: Double) {
         context.dataStore.edit { settings ->
             settings[BULLET_WEIGHT_KEY] = weight
         }
     }
-    
+
     suspend fun setAmmoType(type: String) {
         context.dataStore.edit { settings ->
             settings[AMMO_TYPE_KEY] = type
         }
     }
-    
+
     suspend fun setFactoryAmmoName(name: String) {
         context.dataStore.edit { settings ->
             settings[FACTORY_AMMO_NAME_KEY] = name
         }
     }
-    
+
     suspend fun setHandloadPowder(powder: String) {
         context.dataStore.edit { settings ->
             settings[HANDLOAD_POWDER_KEY] = powder
         }
     }
-    
+
     suspend fun setHandloadCharge(charge: Double) {
         context.dataStore.edit { settings ->
             settings[HANDLOAD_CHARGE_KEY] = charge
         }
     }
-    
+
     suspend fun setCartridgeType(type: String) {
         context.dataStore.edit { settings ->
             settings[CARTRIDGE_TYPE_KEY] = type
         }
     }
-    
+
     suspend fun setBlackPowderType(type: String) {
         context.dataStore.edit { settings ->
             settings[BLACK_POWDER_TYPE_KEY] = type
         }
     }
-    
+
     suspend fun setProjectileType(type: String) {
         context.dataStore.edit { settings ->
             settings[PROJECTILE_TYPE_KEY] = type
         }
     }
-    
+
     suspend fun setBlackPowderCharge(charge: Double) {
         context.dataStore.edit { settings ->
             settings[BLACK_POWDER_CHARGE_KEY] = charge

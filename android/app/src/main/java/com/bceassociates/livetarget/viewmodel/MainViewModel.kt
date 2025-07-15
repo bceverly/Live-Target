@@ -32,8 +32,8 @@ import com.bceassociates.livetarget.data.ProjectileType
 import com.bceassociates.livetarget.data.model.ChangePoint
 import com.bceassociates.livetarget.data.preferences.SettingsDataStore
 import com.bceassociates.livetarget.detection.ChangeDetector
-import com.bceassociates.livetarget.watch.WatchConnectivityManager
 import com.bceassociates.livetarget.watch.WatchConnectionStatus
+import com.bceassociates.livetarget.watch.WatchConnectivityManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,7 +57,6 @@ data class MainUiState(
     val watchIntegrationEnabled: Boolean = false,
     val watchConnectionStatus: WatchConnectionStatus = WatchConnectionStatus.UNKNOWN,
     val isWatchPaired: Boolean = false,
-    
     // Overlay Settings
     val overlayEnabled: Boolean = false,
     val overlayPosition: String = OverlayPosition.TOP_LEFT.name,
@@ -73,23 +72,24 @@ data class MainUiState(
 ) {
     val selectedCaliber: com.bceassociates.livetarget.data.Caliber?
         get() = CaliberData.findCaliberByName(selectedCaliberName)
-    
+
     val overlaySettings: OverlaySettings
-        get() = OverlaySettings(
-            enabled = overlayEnabled,
-            position = OverlayPosition.valueOf(overlayPosition),
-            bulletWeight = bulletWeight,
-            cartridgeType = CartridgeType.valueOf(cartridgeType),
-            ammoType = AmmoType.valueOf(ammoType),
-            factoryAmmoName = factoryAmmoName,
-            handloadPowder = handloadPowder,
-            handloadCharge = handloadCharge,
-            blackPowderType = BlackPowderType.valueOf(blackPowderType),
-            projectileType = ProjectileType.valueOf(projectileType),
-            blackPowderCharge = blackPowderCharge,
-            selectedCaliberName = selectedCaliberName
-        )
-    
+        get() =
+            OverlaySettings(
+                enabled = overlayEnabled,
+                position = OverlayPosition.valueOf(overlayPosition),
+                bulletWeight = bulletWeight,
+                cartridgeType = CartridgeType.valueOf(cartridgeType),
+                ammoType = AmmoType.valueOf(ammoType),
+                factoryAmmoName = factoryAmmoName,
+                handloadPowder = handloadPowder,
+                handloadCharge = handloadCharge,
+                blackPowderType = BlackPowderType.valueOf(blackPowderType),
+                projectileType = ProjectileType.valueOf(projectileType),
+                blackPowderCharge = blackPowderCharge,
+                selectedCaliberName = selectedCaliberName,
+            )
+
     val calculatedGridSize: String
         get() {
             val caliber = CaliberData.findCaliberByName(selectedCaliberName)
@@ -97,14 +97,14 @@ data class MainUiState(
                 // Use typical camera resolution as fallback since we don't have access to currentBitmap here
                 val imageWidth = 1280 // Default camera resolution width from CameraPreview
                 val imageHeight = 720 // Default camera resolution height from CameraPreview
-                
+
                 // Calculate based on camera resolution and current zoom
                 val fieldOfViewInches = 36.0
                 val pixelsPerInch = minOf(imageWidth, imageHeight) / fieldOfViewInches
                 val holeMultiplier = 1.2 // Bullet holes are typically 20% larger than bullet diameter
                 val holeDiameterPixels = (caliber.diameterInches * holeMultiplier * pixelsPerInch * zoomFactor).toInt()
                 val gridSquareSize = (holeDiameterPixels * 3).coerceAtLeast(10).coerceAtMost(100)
-                "${gridSquareSize}×${gridSquareSize} pixels"
+                "$gridSquareSize×$gridSquareSize pixels"
             } else {
                 "Unknown"
             }
@@ -112,7 +112,6 @@ data class MainUiState(
 }
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-
     companion object {
         private const val TAG = "MainViewModel"
     }
@@ -265,7 +264,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-    
+
     /**
      * Updates the change detector with current caliber and zoom parameters
      */
@@ -275,7 +274,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (caliber != null) {
             changeDetector.setCaliberParameters(
                 diameterInches = caliber.diameterInches,
-                zoomFactor = currentState.zoomFactor
+                zoomFactor = currentState.zoomFactor,
             )
         }
     }
@@ -296,13 +295,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         Log.d(TAG, "Clearing changes")
         changeDetector.clearChanges()
     }
-    
 
     fun processImage(bitmap: Bitmap) {
         Log.d(TAG, "processImage called with bitmap: ${bitmap.width}x${bitmap.height}")
         currentBitmap = bitmap.copy(bitmap.config ?: Bitmap.Config.ARGB_8888, false)
         changeDetector.detectChanges(bitmap)
-        
+
         // Send to watch if enabled
         if (_uiState.value.watchIntegrationEnabled) {
             // This will be handled by the ChangeDetector when it detects changes
@@ -349,16 +347,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         // Rotate the bitmap 90 degrees clockwise to fix the orientation
         val matrix = android.graphics.Matrix()
         matrix.postRotate(90f)
-        val rotatedBitmap = Bitmap.createBitmap(
-            originalBitmap, 0, 0, 
-            originalBitmap.width, originalBitmap.height, 
-            matrix, true
-        )
-        
+        val rotatedBitmap =
+            Bitmap.createBitmap(
+                originalBitmap,
+                0,
+                0,
+                originalBitmap.width,
+                originalBitmap.height,
+                matrix,
+                true,
+            )
+
         val compositeBitmap = rotatedBitmap.copy(Bitmap.Config.ARGB_8888, true)
         val canvas = Canvas(compositeBitmap)
         val changes = _uiState.value.detectedChanges
-
 
         // Draw impact markers - adjust coordinates for 90-degree rotation
         changes.forEachIndexed { index, impact ->
@@ -367,34 +369,35 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             // Original coordinates are in the unrotated bitmap space
             val centerX = impact.location.x * compositeBitmap.width
             val centerY = impact.location.y * compositeBitmap.height
-            
+
             // Scale radius and stroke based on image size (assume ~1000px is base size)
             val scaleFactor = minOf(compositeBitmap.width, compositeBitmap.height) / 1000f
             val radius = 30f * scaleFactor
             val strokeWidth = 6f * scaleFactor
-            
 
             // Parse colors
             val circleColor = Color.parseColor("#${_uiState.value.circleColor}")
             val numberColor = Color.parseColor("#${_uiState.value.numberColor}")
 
             // Draw circle
-            val circlePaint = Paint().apply {
-                color = circleColor
-                style = Paint.Style.STROKE
-                this.strokeWidth = strokeWidth
-                isAntiAlias = true
-            }
+            val circlePaint =
+                Paint().apply {
+                    color = circleColor
+                    style = Paint.Style.STROKE
+                    this.strokeWidth = strokeWidth
+                    isAntiAlias = true
+                }
             canvas.drawCircle(centerX, centerY, radius, circlePaint)
 
             // Draw impact number
-            val textPaint = Paint().apply {
-                color = numberColor
-                textSize = 48f * scaleFactor
-                textAlign = Paint.Align.CENTER
-                isAntiAlias = true
-                isFakeBoldText = true
-            }
+            val textPaint =
+                Paint().apply {
+                    color = numberColor
+                    textSize = 48f * scaleFactor
+                    textAlign = Paint.Align.CENTER
+                    isAntiAlias = true
+                    isFakeBoldText = true
+                }
 
             val textBounds = Rect()
             textPaint.getTextBounds(impact.number.toString(), 0, impact.number.toString().length, textBounds)
@@ -412,53 +415,60 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return compositeBitmap
     }
 
-    private fun drawOverlay(canvas: Canvas, bitmap: Bitmap, overlaySettings: OverlaySettings) {
+    private fun drawOverlay(
+        canvas: Canvas,
+        bitmap: Bitmap,
+        overlaySettings: OverlaySettings,
+    ) {
         val overlayText = overlaySettings.getOverlayText()
-        
+
         // Create text paint
-        val textPaint = Paint().apply {
-            color = Color.WHITE
-            textSize = 48f
-            isAntiAlias = true
-            typeface = Typeface.DEFAULT_BOLD
-        }
-        
+        val textPaint =
+            Paint().apply {
+                color = Color.WHITE
+                textSize = 48f
+                isAntiAlias = true
+                typeface = Typeface.DEFAULT_BOLD
+            }
+
         // Measure text
         val textBounds = Rect()
         val lines = overlayText.split('\n')
         var maxLineWidth = 0f
         var totalHeight = 0f
-        
+
         lines.forEach { line ->
             textPaint.getTextBounds(line, 0, line.length, textBounds)
             maxLineWidth = maxOf(maxLineWidth, textBounds.width().toFloat())
             totalHeight += textBounds.height().toFloat()
         }
-        
+
         // Add padding
         val padding = 24f
         val overlayWidth = maxLineWidth + (padding * 2)
         val overlayHeight = totalHeight + (padding * 2) + (lines.size - 1) * 12f // line spacing
-        
+
         // Calculate position based on overlay position setting
-        val overlayRect = calculateOverlayRect(
-            bitmap.width.toFloat(), 
-            bitmap.height.toFloat(), 
-            overlayWidth, 
-            overlayHeight, 
-            overlaySettings.position
-        )
-        
+        val overlayRect =
+            calculateOverlayRect(
+                bitmap.width.toFloat(),
+                bitmap.height.toFloat(),
+                overlayWidth,
+                overlayHeight,
+                overlaySettings.position,
+            )
+
         // Draw rounded rectangle background
-        val backgroundPaint = Paint().apply {
-            color = Color.parseColor("#B3000000") // 70% transparent black
-            isAntiAlias = true
-        }
-        
+        val backgroundPaint =
+            Paint().apply {
+                color = Color.parseColor("#B3000000") // 70% transparent black
+                isAntiAlias = true
+            }
+
         val cornerRadius = 24f
         val rectF = RectF(overlayRect.left, overlayRect.top, overlayRect.right, overlayRect.bottom)
         canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, backgroundPaint)
-        
+
         // Draw text lines
         var currentY = overlayRect.top + padding + textBounds.height()
         lines.forEach { line ->
@@ -466,35 +476,40 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             currentY += textBounds.height() + 12f // line spacing
         }
     }
-    
+
     private fun calculateOverlayRect(
-        imageWidth: Float, 
-        imageHeight: Float, 
-        overlayWidth: Float, 
-        overlayHeight: Float, 
-        position: OverlayPosition
+        imageWidth: Float,
+        imageHeight: Float,
+        overlayWidth: Float,
+        overlayHeight: Float,
+        position: OverlayPosition,
     ): RectF {
         val margin = 60f
-        
+
         return when (position) {
-            OverlayPosition.TOP_LEFT -> 
+            OverlayPosition.TOP_LEFT ->
                 RectF(margin, margin, margin + overlayWidth, margin + overlayHeight)
-            OverlayPosition.TOP_CENTER -> 
+            OverlayPosition.TOP_CENTER ->
                 RectF((imageWidth - overlayWidth) / 2, margin, (imageWidth + overlayWidth) / 2, margin + overlayHeight)
-            OverlayPosition.TOP_RIGHT -> 
+            OverlayPosition.TOP_RIGHT ->
                 RectF(imageWidth - overlayWidth - margin, margin, imageWidth - margin, margin + overlayHeight)
-            OverlayPosition.BOTTOM_LEFT -> 
+            OverlayPosition.BOTTOM_LEFT ->
                 RectF(margin, imageHeight - overlayHeight - margin, margin + overlayWidth, imageHeight - margin)
-            OverlayPosition.BOTTOM_CENTER -> 
-                RectF((imageWidth - overlayWidth) / 2, imageHeight - overlayHeight - margin, (imageWidth + overlayWidth) / 2, imageHeight - margin)
-            OverlayPosition.BOTTOM_RIGHT -> 
+            OverlayPosition.BOTTOM_CENTER ->
+                RectF(
+                    (imageWidth - overlayWidth) / 2,
+                    imageHeight - overlayHeight - margin,
+                    (imageWidth + overlayWidth) / 2,
+                    imageHeight - margin,
+                )
+            OverlayPosition.BOTTOM_RIGHT ->
                 RectF(imageWidth - overlayWidth - margin, imageHeight - overlayHeight - margin, imageWidth - margin, imageHeight - margin)
         }
     }
 
     private suspend fun saveImageToGallery(bitmap: Bitmap): Boolean {
         val context = getApplication<Application>()
-        
+
         return try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 saveImageToGalleryModern(bitmap, context)
@@ -506,19 +521,23 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             false
         }
     }
-    
-    private fun saveImageToGalleryModern(bitmap: Bitmap, context: Application): Boolean {
+
+    private fun saveImageToGalleryModern(
+        bitmap: Bitmap,
+        context: Application,
+    ): Boolean {
         val contentResolver = context.contentResolver
         val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
         val filename = "LiveTarget_${dateFormat.format(Date())}.jpg"
 
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/LiveTarget")
-            put(MediaStore.MediaColumns.IS_PENDING, 1)
-        }
-        
+        val contentValues =
+            ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/LiveTarget")
+                put(MediaStore.MediaColumns.IS_PENDING, 1)
+            }
+
         Log.d(TAG, "Saving image (modern) with filename: $filename")
 
         val imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
@@ -542,21 +561,25 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             return false
         }
     }
-    
-    private fun saveImageToGalleryLegacy(bitmap: Bitmap, context: Application): Boolean {
+
+    private fun saveImageToGalleryLegacy(
+        bitmap: Bitmap,
+        context: Application,
+    ): Boolean {
         val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
         val filename = "LiveTarget_${dateFormat.format(Date())}.jpg"
-        
+
         Log.d(TAG, "Saving image (legacy) with filename: $filename")
-        
+
         // Use MediaStore.Images.Media.insertImage for older Android versions
-        val savedImageURL = MediaStore.Images.Media.insertImage(
-            context.contentResolver,
-            bitmap,
-            filename,
-            "Live Target shot analysis"
-        )
-        
+        val savedImageURL =
+            MediaStore.Images.Media.insertImage(
+                context.contentResolver,
+                bitmap,
+                filename,
+                "Live Target shot analysis",
+            )
+
         Log.d(TAG, "Legacy save result: $savedImageURL")
         return savedImageURL != null
     }
@@ -669,7 +692,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         watchConnectivityManager.testWatchConnectivity()
     }
 
-    fun sendImpactToWatch(impact: ChangePoint, image: Bitmap) {
+    fun sendImpactToWatch(
+        impact: ChangePoint,
+        image: Bitmap,
+    ) {
         if (_uiState.value.watchIntegrationEnabled) {
             val circleColor = Color.parseColor("#${_uiState.value.circleColor}")
             val numberColor = Color.parseColor("#${_uiState.value.numberColor}")
@@ -677,7 +703,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateZoomCapabilities(minZoom: Float, maxZoom: Float) {
+    fun updateZoomCapabilities(
+        minZoom: Float,
+        maxZoom: Float,
+    ) {
         Log.d(TAG, "Updating zoom capabilities: ${minZoom}x to ${maxZoom}x")
         _uiState.value = _uiState.value.copy(minZoom = minZoom, maxZoom = maxZoom)
         Log.d(TAG, "Zoom capabilities updated in UI state: min=${_uiState.value.minZoom}, max=${_uiState.value.maxZoom}")

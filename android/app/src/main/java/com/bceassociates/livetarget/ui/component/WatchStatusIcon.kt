@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,7 +43,7 @@ fun WatchStatusIcon(
             tint = getIconColor(status, integrationEnabled),
             modifier = Modifier.size(16.dp),
         )
-        
+
         // Error overlay (circle with diagonal line) - only if integration is enabled
         if (integrationEnabled && (status == WatchConnectionStatus.DISCONNECTED || status == WatchConnectionStatus.ERROR)) {
             // Using a simple red circle with slash overlay
@@ -61,12 +60,15 @@ fun WatchStatusIcon(
 /**
  * Determines the icon color based on connection status and integration setting
  */
-private fun getIconColor(status: WatchConnectionStatus, integrationEnabled: Boolean): Color {
+private fun getIconColor(
+    status: WatchConnectionStatus,
+    integrationEnabled: Boolean,
+): Color {
     // If integration is disabled, always show grey
     if (!integrationEnabled) {
         return Color.Gray
     }
-    
+
     return when (status) {
         WatchConnectionStatus.CONNECTED -> Color.Green
         WatchConnectionStatus.DISCONNECTED, WatchConnectionStatus.ERROR -> Color.Red

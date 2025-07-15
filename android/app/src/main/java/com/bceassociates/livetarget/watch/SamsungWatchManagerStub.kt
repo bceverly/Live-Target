@@ -20,51 +20,53 @@ import kotlinx.coroutines.launch
  * This allows the project to build and run without the actual Samsung Accessory SDK
  */
 class SamsungWatchManagerStub(context: Context) : WatchConnectivityManager(context) {
-    
     companion object {
         private const val TAG = "SamsungWatchManagerStub"
     }
-    
+
     private val scope = CoroutineScope(Dispatchers.IO)
-    
+
     override fun initialize() {
         Log.d(TAG, "Initializing Samsung watch connectivity (stub implementation)")
         updateConnectionStatus(WatchConnectionStatus.UNKNOWN)
     }
-    
+
     override fun testWatchConnectivity() {
         scope.launch {
             Log.d(TAG, "Testing Samsung watch connectivity (stub implementation)")
-            
+
             // Simulate a connection test that always fails in stub mode
             updateConnectionStatus(WatchConnectionStatus.DISCONNECTED)
-            
+
             Log.d(TAG, "Watch connectivity test completed (stub)")
         }
     }
-    
+
     override fun sendImpactToWatch(
         impact: ChangePoint,
         originalImage: Bitmap,
         circleColor: Int,
-        numberColor: Int
+        numberColor: Int,
     ) {
         scope.launch {
             Log.d(TAG, "Sending impact to watch (stub implementation)")
             Log.d(TAG, "Impact #${impact.number} at location (${impact.location.x}, ${impact.location.y})")
-            
+
             // In stub mode, we just log the impact but don't actually send it
             Log.d(TAG, "Impact would be sent to Samsung Galaxy Watch if SDK was available")
         }
     }
-    
+
     // Stub implementations for callback methods
     fun onPeerAgentFound(peerAgent: Any) {
         Log.d(TAG, "Peer agent found (stub)")
         updateConnectionStatus(WatchConnectionStatus.CONNECTED)
     }
-    
-    fun onServiceConnectionResponse(socket: Any, result: Int) {
+
+    fun onServiceConnectionResponse(
+        socket: Any,
+        result: Int,
+    ) {
         Log.d(TAG, "Service connection response: $result (stub)")
         if (result == 0) {
             updateConnectionStatus(WatchConnectionStatus.CONNECTED)
@@ -72,16 +74,19 @@ class SamsungWatchManagerStub(context: Context) : WatchConnectivityManager(conte
             updateConnectionStatus(WatchConnectionStatus.ERROR)
         }
     }
-    
+
     fun onServiceConnectionLost(reason: Int) {
         Log.d(TAG, "Service connection lost: $reason (stub)")
         updateConnectionStatus(WatchConnectionStatus.DISCONNECTED)
     }
-    
-    fun onMessageReceived(channelId: Int, data: ByteArray) {
+
+    fun onMessageReceived(
+        channelId: Int,
+        data: ByteArray,
+    ) {
         Log.d(TAG, "Message received on channel $channelId, size: ${data.size} (stub)")
     }
-    
+
     override fun cleanup() {
         Log.d(TAG, "Cleaning up Samsung watch connectivity (stub implementation)")
     }

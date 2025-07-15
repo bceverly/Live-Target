@@ -22,7 +22,7 @@ import com.bceassociates.livetarget.ui.theme.LiveTargetTheme
 class SplashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         // Make the splash screen truly full screen
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
@@ -30,7 +30,7 @@ class SplashActivity : ComponentActivity() {
             controller.hide(WindowInsetsCompat.Type.systemBars())
             controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
-        
+
         setContent {
             LiveTargetTheme {
                 SplashScreen(
@@ -39,7 +39,7 @@ class SplashActivity : ComponentActivity() {
                         // Navigate to main activity
                         startActivity(Intent(this@SplashActivity, MainActivity::class.java))
                         finish()
-                    }
+                    },
                 )
             }
         }

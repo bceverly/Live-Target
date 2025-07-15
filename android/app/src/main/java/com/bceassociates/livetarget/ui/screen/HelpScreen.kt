@@ -9,7 +9,6 @@ package com.bceassociates.livetarget.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,7 +29,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,11 +47,12 @@ fun HelpScreen(
 ) {
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false,
-            dismissOnBackPress = true,
-            dismissOnClickOutside = false,
-        ),
+        properties =
+            DialogProperties(
+                usePlatformDefaultWidth = false,
+                dismissOnBackPress = true,
+                dismissOnClickOutside = false,
+            ),
     ) {
         Surface(
             modifier = modifier.fillMaxSize(),
@@ -68,11 +67,12 @@ fun HelpScreen(
                         }
                     },
                 )
-                
+
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
                     item {
@@ -83,20 +83,20 @@ fun HelpScreen(
                                     text = stringResource(R.string.help_what_is_description),
                                     style = MaterialTheme.typography.bodyMedium,
                                 )
-                                
+
                                 Text(
                                     text = stringResource(R.string.help_feature_parity),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.padding(top = 8.dp),
                                 )
-                                
+
                                 Text(
                                     text = stringResource(R.string.help_what_is_use_cases),
                                     style = MaterialTheme.typography.bodyMedium,
                                     modifier = Modifier.padding(top = 12.dp),
                                 )
-                                
+
                                 Column(
                                     modifier = Modifier.padding(start = 16.dp, top = 8.dp),
                                 ) {
@@ -108,19 +108,20 @@ fun HelpScreen(
                             },
                         )
                     }
-                    
+
                     item {
                         HelpSection(
                             title = stringResource(R.string.help_how_to_use_title),
                             content = {
-                                val steps = listOf(
-                                    stringResource(R.string.help_step_1),
-                                    stringResource(R.string.help_step_2),
-                                    stringResource(R.string.help_step_3),
-                                    stringResource(R.string.help_step_4),
-                                    stringResource(R.string.help_step_5),
-                                )
-                                
+                                val steps =
+                                    listOf(
+                                        stringResource(R.string.help_step_1),
+                                        stringResource(R.string.help_step_2),
+                                        stringResource(R.string.help_step_3),
+                                        stringResource(R.string.help_step_4),
+                                        stringResource(R.string.help_step_5),
+                                    )
+
                                 steps.forEachIndexed { index, step ->
                                     Row(
                                         modifier = Modifier.padding(vertical = 4.dp),
@@ -141,149 +142,161 @@ fun HelpScreen(
                             },
                         )
                     }
-                    
+
                     item {
                         HelpSection(
                             title = stringResource(R.string.help_settings_title),
                             content = {
                                 SettingGroup(
                                     title = stringResource(R.string.help_colors_title),
-                                    items = listOf(
-                                        stringResource(R.string.help_circle_color),
-                                        stringResource(R.string.help_number_color),
-                                    ),
+                                    items =
+                                        listOf(
+                                            stringResource(R.string.help_circle_color),
+                                            stringResource(R.string.help_number_color),
+                                        ),
                                 )
-                                
+
                                 SettingGroup(
                                     title = stringResource(R.string.help_detection_title),
-                                    items = listOf(
-                                        stringResource(R.string.help_check_frequency),
-                                        stringResource(R.string.help_bullet_caliber),
-                                        stringResource(R.string.help_caliber_note),
-                                    ),
+                                    items =
+                                        listOf(
+                                            stringResource(R.string.help_check_frequency),
+                                            stringResource(R.string.help_bullet_caliber),
+                                            stringResource(R.string.help_caliber_note),
+                                        ),
                                     modifier = Modifier.padding(top = 16.dp),
                                 )
-                                
+
                                 SettingGroup(
                                     title = stringResource(R.string.help_watch_title),
-                                    items = listOf(
-                                        stringResource(R.string.help_watch_integration),
-                                        stringResource(R.string.help_watch_status),
-                                        stringResource(R.string.help_watch_notifications),
-                                    ),
+                                    items =
+                                        listOf(
+                                            stringResource(R.string.help_watch_integration),
+                                            stringResource(R.string.help_watch_status),
+                                            stringResource(R.string.help_watch_notifications),
+                                        ),
                                     modifier = Modifier.padding(top = 16.dp),
                                 )
                             },
                         )
                     }
-                    
+
                     item {
                         HelpSection(
                             title = stringResource(R.string.help_controls_title),
                             content = {
                                 SettingGroup(
                                     title = stringResource(R.string.help_main_controls_title),
-                                    items = listOf(
-                                        stringResource(R.string.help_start_stop),
-                                        stringResource(R.string.help_clear),
-                                        stringResource(R.string.help_save),
-                                        stringResource(R.string.help_settings_button),
-                                    ),
+                                    items =
+                                        listOf(
+                                            stringResource(R.string.help_start_stop),
+                                            stringResource(R.string.help_clear),
+                                            stringResource(R.string.help_save),
+                                            stringResource(R.string.help_settings_button),
+                                        ),
                                 )
-                                
+
                                 SettingGroup(
                                     title = stringResource(R.string.help_watch_status_icons),
-                                    items = listOf(
-                                        stringResource(R.string.help_watch_green),
-                                        stringResource(R.string.help_watch_red),
-                                        stringResource(R.string.help_watch_gray),
-                                    ),
+                                    items =
+                                        listOf(
+                                            stringResource(R.string.help_watch_green),
+                                            stringResource(R.string.help_watch_red),
+                                            stringResource(R.string.help_watch_gray),
+                                        ),
                                     modifier = Modifier.padding(top = 16.dp),
                                 )
-                                
+
                                 SettingGroup(
                                     title = stringResource(R.string.help_zoom_controls_title),
-                                    items = listOf(
-                                        stringResource(R.string.help_zoom_controls),
-                                        stringResource(R.string.help_zoom_range),
-                                        stringResource(R.string.help_zoom_detail),
-                                    ),
+                                    items =
+                                        listOf(
+                                            stringResource(R.string.help_zoom_controls),
+                                            stringResource(R.string.help_zoom_range),
+                                            stringResource(R.string.help_zoom_detail),
+                                        ),
                                     modifier = Modifier.padding(top = 16.dp),
                                 )
                             },
                         )
                     }
-                    
+
                     item {
                         HelpSection(
                             title = stringResource(R.string.help_tips_title),
                             content = {
                                 SettingGroup(
                                     title = stringResource(R.string.help_camera_positioning),
-                                    items = listOf(
-                                        stringResource(R.string.help_mount_device),
-                                        stringResource(R.string.help_target_fills_view),
-                                        stringResource(R.string.help_avoid_backlighting),
-                                        stringResource(R.string.help_perpendicular_position),
-                                    ),
+                                    items =
+                                        listOf(
+                                            stringResource(R.string.help_mount_device),
+                                            stringResource(R.string.help_target_fills_view),
+                                            stringResource(R.string.help_avoid_backlighting),
+                                            stringResource(R.string.help_perpendicular_position),
+                                        ),
                                 )
-                                
+
                                 SettingGroup(
                                     title = stringResource(R.string.help_optimal_settings),
-                                    items = listOf(
-                                        stringResource(R.string.help_start_2_second),
-                                        stringResource(R.string.help_set_caliber),
-                                        stringResource(R.string.help_contrasting_colors),
-                                        stringResource(R.string.help_lower_frequency),
-                                    ),
+                                    items =
+                                        listOf(
+                                            stringResource(R.string.help_start_2_second),
+                                            stringResource(R.string.help_set_caliber),
+                                            stringResource(R.string.help_contrasting_colors),
+                                            stringResource(R.string.help_lower_frequency),
+                                        ),
                                     modifier = Modifier.padding(top = 16.dp),
                                 )
-                                
+
                                 SettingGroup(
                                     title = stringResource(R.string.help_environment),
-                                    items = listOf(
-                                        stringResource(R.string.help_consistent_lighting),
-                                        stringResource(R.string.help_minimize_movement),
-                                        stringResource(R.string.help_start_before_first),
-                                        stringResource(R.string.help_clean_background),
-                                    ),
+                                    items =
+                                        listOf(
+                                            stringResource(R.string.help_consistent_lighting),
+                                            stringResource(R.string.help_minimize_movement),
+                                            stringResource(R.string.help_start_before_first),
+                                            stringResource(R.string.help_clean_background),
+                                        ),
                                     modifier = Modifier.padding(top = 16.dp),
                                 )
                             },
                         )
                     }
-                    
+
                     item {
                         HelpSection(
                             title = stringResource(R.string.help_troubleshooting_title),
                             content = {
                                 SettingGroup(
                                     title = stringResource(R.string.help_detection_issues),
-                                    items = listOf(
-                                        stringResource(R.string.help_false_detections),
-                                        stringResource(R.string.help_missed_impacts),
-                                        stringResource(R.string.help_multiple_detections),
-                                    ),
+                                    items =
+                                        listOf(
+                                            stringResource(R.string.help_false_detections),
+                                            stringResource(R.string.help_missed_impacts),
+                                            stringResource(R.string.help_multiple_detections),
+                                        ),
                                 )
-                                
+
                                 SettingGroup(
                                     title = stringResource(R.string.help_performance_issues),
-                                    items = listOf(
-                                        stringResource(R.string.help_close_camera_apps),
-                                        stringResource(R.string.help_restart_app),
-                                        stringResource(R.string.help_increase_frequency),
-                                    ),
+                                    items =
+                                        listOf(
+                                            stringResource(R.string.help_close_camera_apps),
+                                            stringResource(R.string.help_restart_app),
+                                            stringResource(R.string.help_increase_frequency),
+                                        ),
                                     modifier = Modifier.padding(top = 16.dp),
                                 )
-                                
+
                                 SettingGroup(
                                     title = stringResource(R.string.help_watch_issues),
-                                    items = listOf(
-                                        stringResource(R.string.help_watch_pair_check),
-                                        stringResource(R.string.help_watch_enable_integration),
-                                        stringResource(R.string.help_watch_connection_verify),
-                                        stringResource(R.string.help_watch_test_start),
-                                    ),
+                                    items =
+                                        listOf(
+                                            stringResource(R.string.help_watch_pair_check),
+                                            stringResource(R.string.help_watch_enable_integration),
+                                            stringResource(R.string.help_watch_connection_verify),
+                                            stringResource(R.string.help_watch_test_start),
+                                        ),
                                     modifier = Modifier.padding(top = 16.dp),
                                 )
                             },
@@ -303,9 +316,10 @@ private fun HelpSection(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            ),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
@@ -318,12 +332,12 @@ private fun HelpSection(
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            
+
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 12.dp),
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
             )
-            
+
             content()
         }
     }
@@ -342,7 +356,7 @@ private fun SettingGroup(
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.primary,
         )
-        
+
         Column(
             modifier = Modifier.padding(start = 8.dp, top = 8.dp),
         ) {

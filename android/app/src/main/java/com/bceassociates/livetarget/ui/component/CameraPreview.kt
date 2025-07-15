@@ -14,9 +14,7 @@ import android.graphics.Rect
 import android.graphics.YuvImage
 import android.media.Image
 import android.util.Log
-import java.io.ByteArrayOutputStream
 import androidx.camera.core.Camera
-import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -36,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import java.io.ByteArrayOutputStream
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -51,7 +50,7 @@ fun CameraPreview(
 
     val cameraExecutor: ExecutorService = remember { Executors.newSingleThreadExecutor() }
     var camera by remember { mutableStateOf<Camera?>(null) }
-    
+
     // Apply zoom when zoomFactor changes
     LaunchedEffect(zoomFactor, camera) {
         camera?.let { cam ->
@@ -71,9 +70,10 @@ fun CameraPreview(
 
     AndroidView(
         factory = { ctx ->
-            val previewView = PreviewView(ctx).apply {
-                scaleType = PreviewView.ScaleType.FILL_CENTER
-            }
+            val previewView =
+                PreviewView(ctx).apply {
+                    scaleType = PreviewView.ScaleType.FILL_CENTER
+                }
 
             val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
             cameraProviderFuture.addListener(
@@ -81,22 +81,24 @@ fun CameraPreview(
                     val cameraProvider = cameraProviderFuture.get()
 
                     // Preview use case
-                    val preview = Preview.Builder()
-                        .build()
-                        .also {
-                            it.setSurfaceProvider(previewView.surfaceProvider)
-                        }
+                    val preview =
+                        Preview.Builder()
+                            .build()
+                            .also {
+                                it.setSurfaceProvider(previewView.surfaceProvider)
+                            }
 
                     // Image analysis use case for change detection
-                    val imageAnalyzer = ImageAnalysis.Builder()
-                        .setTargetResolution(android.util.Size(1280, 720)) // Higher resolution for better detection
-                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                        .build()
-                        .also { analyzer ->
-                            analyzer.setAnalyzer(cameraExecutor) { imageProxy ->
-                                processImage(imageProxy, onImageCaptured)
+                    val imageAnalyzer =
+                        ImageAnalysis.Builder()
+                            .setTargetResolution(android.util.Size(1280, 720)) // Higher resolution for better detection
+                            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                            .build()
+                            .also { analyzer ->
+                                analyzer.setAnalyzer(cameraExecutor) { imageProxy ->
+                                    processImage(imageProxy, onImageCaptured)
+                                }
                             }
-                        }
 
                     // Camera selector
                     val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -106,42 +108,43 @@ fun CameraPreview(
                         cameraProvider.unbindAll()
 
                         // Bind use cases to camera
-                        val boundCamera = cameraProvider.bindToLifecycle(
-                            lifecycleOwner,
-                            cameraSelector,
-                            preview,
-                            imageAnalyzer,
-                        )
-                        
+                        val boundCamera =
+                            cameraProvider.bindToLifecycle(
+                                lifecycleOwner,
+                                cameraSelector,
+                                preview,
+                                imageAnalyzer,
+                            )
+
                         // Store camera reference for zoom control
                         camera = boundCamera
-                        
+
                         // Get camera zoom capabilities - use observe to ensure we get the latest values
                         boundCamera.cameraInfo.zoomState.observe(lifecycleOwner) { zoomState ->
                             val maxZoom = zoomState?.maxZoomRatio ?: 20.0f
                             val minZoom = zoomState?.minZoomRatio ?: 1.0f
                             Log.d("CameraPreview", "Camera zoom capabilities updated: ${minZoom}x to ${maxZoom}x")
-                            
+
                             // Notify parent about zoom capabilities
                             onZoomCapabilitiesChanged?.invoke(minZoom, maxZoom)
                         }
-                        
+
                         // Get initial zoom capabilities synchronously for immediate use
                         val initialZoomState = boundCamera.cameraInfo.zoomState.value
                         val initialMaxZoom = initialZoomState?.maxZoomRatio ?: 20.0f
                         val initialMinZoom = initialZoomState?.minZoomRatio ?: 1.0f
-                        
+
                         Log.d("CameraPreview", "Initial camera zoom capabilities: ${initialMinZoom}x to ${initialMaxZoom}x")
-                        
+
                         // Notify parent about initial zoom capabilities
                         onZoomCapabilitiesChanged?.invoke(initialMinZoom, initialMaxZoom)
-                        
+
                         // Clamp zoom factor to camera capabilities
                         val clampedZoom = zoomFactor.coerceIn(initialMinZoom, initialMaxZoom)
-                        
+
                         // Set initial zoom
                         boundCamera.cameraControl.setZoomRatio(clampedZoom)
-                        
+
                         Log.d("CameraPreview", "Set initial zoom to: ${clampedZoom}x (requested: ${zoomFactor}x)")
 
                         Log.d("CameraPreview", "Camera bound successfully")
@@ -158,7 +161,10 @@ fun CameraPreview(
     )
 }
 
-private fun processImage(imageProxy: ImageProxy, onImageCaptured: (Bitmap) -> Unit) {
+private fun processImage(
+    imageProxy: ImageProxy,
+    onImageCaptured: (Bitmap) -> Unit,
+) {
     try {
         // Convert ImageProxy to Bitmap
         val bitmap = imageProxyToBitmap(imageProxy)
@@ -200,7 +206,11 @@ private fun imageProxyToBitmap(imageProxy: ImageProxy): Bitmap? {
     }
 }
 
-private fun convertYuv420ToBitmap(image: Image, width: Int, height: Int): Bitmap {
+private fun convertYuv420ToBitmap(
+    image: Image,
+    width: Int,
+    height: Int,
+): Bitmap {
     val planes = image.planes
     val yPlane = planes[0]
     val uPlane = planes[1]
@@ -254,7 +264,11 @@ private fun convertYuv420ToBitmap(image: Image, width: Int, height: Int): Bitmap
     return BitmapFactory.decodeByteArray(jpegArray, 0, jpegArray.size)
 }
 
-private fun convertNv21ToBitmap(image: Image, width: Int, height: Int): Bitmap {
+private fun convertNv21ToBitmap(
+    image: Image,
+    width: Int,
+    height: Int,
+): Bitmap {
     val nv21 = ByteArray(width * height * 3 / 2)
     val yBuffer = image.planes[0].buffer
     val uvBuffer = image.planes[1].buffer
@@ -265,7 +279,11 @@ private fun convertNv21ToBitmap(image: Image, width: Int, height: Int): Bitmap {
     return convertNv21ToBitmap(nv21, width, height)
 }
 
-private fun convertNv21ToBitmap(nv21: ByteArray, width: Int, height: Int): Bitmap {
+private fun convertNv21ToBitmap(
+    nv21: ByteArray,
+    width: Int,
+    height: Int,
+): Bitmap {
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     val pixels = IntArray(width * height)
 
@@ -273,7 +291,7 @@ private fun convertNv21ToBitmap(nv21: ByteArray, width: Int, height: Int): Bitma
         for (j in 0 until width) {
             val yIndex = i * width + j
             val uvIndex = width * height + (i / 2) * width + (j and 0xFFFE)
-            
+
             val y = nv21[yIndex].toInt() and 0xFF
             val v = nv21[uvIndex].toInt() and 0xFF
             val u = nv21[uvIndex + 1].toInt() and 0xFF

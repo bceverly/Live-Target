@@ -23,7 +23,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -73,9 +72,10 @@ fun ColorPreview(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .size(24.dp)
-            .padding(2.dp),
+        modifier =
+            modifier
+                .size(24.dp)
+                .padding(2.dp),
     ) {
         Card(
             modifier = Modifier.fillMaxSize(),
@@ -92,21 +92,23 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    
+
     // Get app version info
-    val packageInfo: PackageInfo? = try {
-        context.packageManager.getPackageInfo(context.packageName, 0)
-    } catch (e: PackageManager.NameNotFoundException) {
-        null
-    }
-    
+    val packageInfo: PackageInfo? =
+        try {
+            context.packageManager.getPackageInfo(context.packageName, 0)
+        } catch (e: PackageManager.NameNotFoundException) {
+            null
+        }
+
     val appVersion = packageInfo?.let { "${it.versionName} (${it.longVersionCode})" } ?: "0.91"
     val buildDate = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(Date()) // Current build date
-    
+
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
     ) {
         // Top App Bar
         TopAppBar(
@@ -117,15 +119,16 @@ fun SettingsScreen(
                 }
             },
         )
-        
+
         Column(
             modifier = Modifier.padding(16.dp),
         ) {
             // Colors Section
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -136,24 +139,26 @@ fun SettingsScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 12.dp),
                     )
-                    
+
                     // Circle Color
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(stringResource(R.string.circle_color))
                         ColorPreview(color = Color(android.graphics.Color.parseColor("#${uiState.circleColor}")))
                     }
-                    
+
                     // Number Color
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -162,12 +167,13 @@ fun SettingsScreen(
                     }
                 }
             }
-            
+
             // Detection Settings Section
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -178,7 +184,7 @@ fun SettingsScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 12.dp),
                     )
-                    
+
                     // Check Frequency
                     Column(
                         modifier = Modifier.padding(vertical = 8.dp),
@@ -190,57 +196,58 @@ fun SettingsScreen(
                             Text(stringResource(R.string.check_frequency))
                             Text("${String.format("%.1f", uiState.checkInterval)}s")
                         }
-                        
+
                         Slider(
                             value = uiState.checkInterval.toFloat(),
                             onValueChange = { viewModel.setCheckInterval(it.toDouble()) },
                             valueRange = 0.5f..10.0f,
-                            steps = 19, // 0.5 step increments
+                            // 0.5 step increments
+                            steps = 19,
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
-                    
+
                     // Bullet Caliber
                     Column(
                         modifier = Modifier.padding(vertical = 8.dp),
                     ) {
                         Text(
                             text = stringResource(R.string.bullet_caliber),
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            modifier = Modifier.padding(bottom = 8.dp),
                         )
-                        
+
                         var expanded by remember { mutableStateOf(false) }
                         val selectedCaliber = uiState.selectedCaliber
-                        
+
                         Box {
                             OutlinedButton(
                                 onClick = { expanded = true },
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             ) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                    verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Text(
                                         text = selectedCaliber?.name ?: ".22 Long Rifle",
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.weight(1f),
                                     )
                                     Icon(
                                         Icons.Default.ArrowDropDown,
-                                        contentDescription = "Dropdown"
+                                        contentDescription = "Dropdown",
                                     )
                                 }
                             }
-                            
+
                             DropdownMenu(
                                 expanded = expanded,
-                                onDismissRequest = { expanded = false }
+                                onDismissRequest = { expanded = false },
                             ) {
                                 Text(
                                     text = "Common Calibers",
                                     style = MaterialTheme.typography.labelMedium,
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                                 )
                                 CaliberData.commonCalibers.forEach { caliber ->
                                     DropdownMenuItem(
@@ -248,14 +255,14 @@ fun SettingsScreen(
                                         onClick = {
                                             viewModel.setSelectedCaliberName(caliber.name)
                                             expanded = false
-                                        }
+                                        },
                                     )
                                 }
-                                
+
                                 Text(
                                     text = "Rimfire",
                                     style = MaterialTheme.typography.labelMedium,
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                                 )
                                 CaliberData.rimfireCalibers.forEach { caliber ->
                                     DropdownMenuItem(
@@ -263,14 +270,14 @@ fun SettingsScreen(
                                         onClick = {
                                             viewModel.setSelectedCaliberName(caliber.name)
                                             expanded = false
-                                        }
+                                        },
                                     )
                                 }
-                                
+
                                 Text(
                                     text = "Pistol Calibers",
                                     style = MaterialTheme.typography.labelMedium,
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                                 )
                                 CaliberData.pistolCalibers.forEach { caliber ->
                                     DropdownMenuItem(
@@ -278,14 +285,14 @@ fun SettingsScreen(
                                         onClick = {
                                             viewModel.setSelectedCaliberName(caliber.name)
                                             expanded = false
-                                        }
+                                        },
                                     )
                                 }
-                                
+
                                 Text(
                                     text = "Rifle Calibers",
                                     style = MaterialTheme.typography.labelMedium,
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                                 )
                                 CaliberData.rifleCalibers.forEach { caliber ->
                                     DropdownMenuItem(
@@ -293,49 +300,51 @@ fun SettingsScreen(
                                         onClick = {
                                             viewModel.setSelectedCaliberName(caliber.name)
                                             expanded = false
-                                        }
+                                        },
                                     )
                                 }
                             }
                         }
-                        
+
                         // Show caliber details
                         if (selectedCaliber != null) {
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 8.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
                             ) {
                                 Text(
                                     text = "Diameter: ${String.format("%.3f", selectedCaliber.diameterInches)}\"",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                                 Text(
                                     text = "(${selectedCaliber.pixelSize}×${selectedCaliber.pixelSize} pixels)",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
-                            
+
                             // Show calculated grid size
                             Text(
                                 text = "Detection Grid: ${uiState.calculatedGridSize}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(top = 4.dp)
+                                modifier = Modifier.padding(top = 4.dp),
                             )
                         }
                     }
                 }
             }
-            
+
             // Saved Image Overlay Section
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -346,12 +355,13 @@ fun SettingsScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 12.dp),
                     )
-                    
+
                     // Overlay Enable Toggle
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -361,50 +371,52 @@ fun SettingsScreen(
                             onCheckedChange = { viewModel.setOverlayEnabled(it) },
                         )
                     }
-                    
+
                     // Overlay Position Dropdown
                     if (uiState.overlayEnabled) {
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
                         ) {
                             Text(
                                 text = "Overlay Position",
-                                modifier = Modifier.padding(bottom = 8.dp)
+                                modifier = Modifier.padding(bottom = 8.dp),
                             )
-                            
+
                             var positionExpanded by remember { mutableStateOf(false) }
-                            val currentPosition = try {
-                                OverlayPosition.valueOf(uiState.overlayPosition)
-                            } catch (e: Exception) {
-                                OverlayPosition.TOP_LEFT
-                            }
-                            
+                            val currentPosition =
+                                try {
+                                    OverlayPosition.valueOf(uiState.overlayPosition)
+                                } catch (e: Exception) {
+                                    OverlayPosition.TOP_LEFT
+                                }
+
                             Box {
                                 OutlinedButton(
                                     onClick = { positionExpanded = true },
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
                                 ) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
+                                        verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         Text(
                                             text = currentPosition.displayName,
-                                            modifier = Modifier.weight(1f)
+                                            modifier = Modifier.weight(1f),
                                         )
                                         Icon(
                                             Icons.Default.ArrowDropDown,
-                                            contentDescription = "Dropdown"
+                                            contentDescription = "Dropdown",
                                         )
                                     }
                                 }
-                                
+
                                 DropdownMenu(
                                     expanded = positionExpanded,
-                                    onDismissRequest = { positionExpanded = false }
+                                    onDismissRequest = { positionExpanded = false },
                                 ) {
                                     OverlayPosition.values().forEach { position ->
                                         DropdownMenuItem(
@@ -412,24 +424,25 @@ fun SettingsScreen(
                                             onClick = {
                                                 viewModel.setOverlayPosition(position.name)
                                                 positionExpanded = false
-                                            }
+                                            },
                                         )
                                     }
                                 }
                             }
                         }
-                        
+
                         // Bullet Weight
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
                         ) {
                             Text(
                                 text = "Bullet Weight",
-                                modifier = Modifier.padding(bottom = 8.dp)
+                                modifier = Modifier.padding(bottom = 8.dp),
                             )
-                            
+
                             OutlinedTextField(
                                 value = uiState.bulletWeight.toString(),
                                 onValueChange = { newValue ->
@@ -439,53 +452,55 @@ fun SettingsScreen(
                                 },
                                 label = { Text("Weight in grains") },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             )
                         }
-                        
+
                         // Cartridge Type
-                        val currentCartridgeType = try {
-                            CartridgeType.valueOf(uiState.cartridgeType)
-                        } catch (e: Exception) {
-                            CartridgeType.METALLIC_CARTRIDGE
-                        }
-                        
+                        val currentCartridgeType =
+                            try {
+                                CartridgeType.valueOf(uiState.cartridgeType)
+                            } catch (e: Exception) {
+                                CartridgeType.METALLIC_CARTRIDGE
+                            }
+
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
                         ) {
                             Text(
                                 text = "Cartridge Type",
-                                modifier = Modifier.padding(bottom = 8.dp)
+                                modifier = Modifier.padding(bottom = 8.dp),
                             )
-                            
+
                             var cartridgeTypeExpanded by remember { mutableStateOf(false) }
-                            
+
                             Box {
                                 OutlinedButton(
                                     onClick = { cartridgeTypeExpanded = true },
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
                                 ) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
+                                        verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         Text(
                                             text = currentCartridgeType.displayName,
-                                            modifier = Modifier.weight(1f)
+                                            modifier = Modifier.weight(1f),
                                         )
                                         Icon(
                                             Icons.Default.ArrowDropDown,
-                                            contentDescription = "Dropdown"
+                                            contentDescription = "Dropdown",
                                         )
                                     }
                                 }
-                                
+
                                 DropdownMenu(
                                     expanded = cartridgeTypeExpanded,
-                                    onDismissRequest = { cartridgeTypeExpanded = false }
+                                    onDismissRequest = { cartridgeTypeExpanded = false },
                                 ) {
                                     CartridgeType.values().forEach { cartridgeType ->
                                         DropdownMenuItem(
@@ -493,58 +508,60 @@ fun SettingsScreen(
                                             onClick = {
                                                 viewModel.setCartridgeType(cartridgeType.name)
                                                 cartridgeTypeExpanded = false
-                                            }
+                                            },
                                         )
                                     }
                                 }
                             }
                         }
-                        
+
                         // Conditional fields based on cartridge type
                         if (currentCartridgeType == CartridgeType.BLACK_POWDER) {
                             // Black Powder Type
-                            val currentBlackPowderType = try {
-                                BlackPowderType.valueOf(uiState.blackPowderType)
-                            } catch (e: Exception) {
-                                BlackPowderType.TWOF
-                            }
-                            
+                            val currentBlackPowderType =
+                                try {
+                                    BlackPowderType.valueOf(uiState.blackPowderType)
+                                } catch (e: Exception) {
+                                    BlackPowderType.TWOF
+                                }
+
                             Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp),
                             ) {
                                 Text(
                                     text = "Black Powder Type",
-                                    modifier = Modifier.padding(bottom = 8.dp)
+                                    modifier = Modifier.padding(bottom = 8.dp),
                                 )
-                                
+
                                 var blackPowderTypeExpanded by remember { mutableStateOf(false) }
-                                
+
                                 Box {
                                     OutlinedButton(
                                         onClick = { blackPowderTypeExpanded = true },
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier.fillMaxWidth(),
                                     ) {
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
                                             horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
+                                            verticalAlignment = Alignment.CenterVertically,
                                         ) {
                                             Text(
                                                 text = currentBlackPowderType.displayName,
-                                                modifier = Modifier.weight(1f)
+                                                modifier = Modifier.weight(1f),
                                             )
                                             Icon(
                                                 Icons.Default.ArrowDropDown,
-                                                contentDescription = "Dropdown"
+                                                contentDescription = "Dropdown",
                                             )
                                         }
                                     }
-                                    
+
                                     DropdownMenu(
                                         expanded = blackPowderTypeExpanded,
-                                        onDismissRequest = { blackPowderTypeExpanded = false }
+                                        onDismissRequest = { blackPowderTypeExpanded = false },
                                     ) {
                                         BlackPowderType.values().forEach { blackPowderType ->
                                             DropdownMenuItem(
@@ -552,56 +569,58 @@ fun SettingsScreen(
                                                 onClick = {
                                                     viewModel.setBlackPowderType(blackPowderType.name)
                                                     blackPowderTypeExpanded = false
-                                                }
+                                                },
                                             )
                                         }
                                     }
                                 }
                             }
-                            
+
                             // Projectile Type
-                            val currentProjectileType = try {
-                                ProjectileType.valueOf(uiState.projectileType)
-                            } catch (e: Exception) {
-                                ProjectileType.ROUND_BALL
-                            }
-                            
+                            val currentProjectileType =
+                                try {
+                                    ProjectileType.valueOf(uiState.projectileType)
+                                } catch (e: Exception) {
+                                    ProjectileType.ROUND_BALL
+                                }
+
                             Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp),
                             ) {
                                 Text(
                                     text = "Projectile Type",
-                                    modifier = Modifier.padding(bottom = 8.dp)
+                                    modifier = Modifier.padding(bottom = 8.dp),
                                 )
-                                
+
                                 var projectileTypeExpanded by remember { mutableStateOf(false) }
-                                
+
                                 Box {
                                     OutlinedButton(
                                         onClick = { projectileTypeExpanded = true },
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier.fillMaxWidth(),
                                     ) {
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
                                             horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
+                                            verticalAlignment = Alignment.CenterVertically,
                                         ) {
                                             Text(
                                                 text = currentProjectileType.displayName,
-                                                modifier = Modifier.weight(1f)
+                                                modifier = Modifier.weight(1f),
                                             )
                                             Icon(
                                                 Icons.Default.ArrowDropDown,
-                                                contentDescription = "Dropdown"
+                                                contentDescription = "Dropdown",
                                             )
                                         }
                                     }
-                                    
+
                                     DropdownMenu(
                                         expanded = projectileTypeExpanded,
-                                        onDismissRequest = { projectileTypeExpanded = false }
+                                        onDismissRequest = { projectileTypeExpanded = false },
                                     ) {
                                         ProjectileType.values().forEach { projectileType ->
                                             DropdownMenuItem(
@@ -609,24 +628,25 @@ fun SettingsScreen(
                                                 onClick = {
                                                     viewModel.setProjectileType(projectileType.name)
                                                     projectileTypeExpanded = false
-                                                }
+                                                },
                                             )
                                         }
                                     }
                                 }
                             }
-                            
+
                             // Black Powder Charge
                             Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp),
                             ) {
                                 Text(
                                     text = "Powder Charge",
-                                    modifier = Modifier.padding(bottom = 8.dp)
+                                    modifier = Modifier.padding(bottom = 8.dp),
                                 )
-                                
+
                                 OutlinedTextField(
                                     value = uiState.blackPowderCharge.toString(),
                                     onValueChange = { newValue ->
@@ -636,138 +656,144 @@ fun SettingsScreen(
                                     },
                                     label = { Text("Charge in grains") },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
                                 )
                             }
                         } else {
                             // Metallic Cartridge - Ammo Type
-                            val currentAmmoType = try {
-                                AmmoType.valueOf(uiState.ammoType)
-                            } catch (e: Exception) {
-                                AmmoType.FACTORY
-                            }
-                        
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
-                        ) {
-                            Text(
-                                text = "Ammo Type",
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-                            
-                            var ammoTypeExpanded by remember { mutableStateOf(false) }
-                            
-                            Box {
-                                OutlinedButton(
-                                    onClick = { ammoTypeExpanded = true },
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Row(
+                            val currentAmmoType =
+                                try {
+                                    AmmoType.valueOf(uiState.ammoType)
+                                } catch (e: Exception) {
+                                    AmmoType.FACTORY
+                                }
+
+                            Column(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp),
+                            ) {
+                                Text(
+                                    text = "Ammo Type",
+                                    modifier = Modifier.padding(bottom = 8.dp),
+                                )
+
+                                var ammoTypeExpanded by remember { mutableStateOf(false) }
+
+                                Box {
+                                    OutlinedButton(
+                                        onClick = { ammoTypeExpanded = true },
                                         modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text(
-                                            text = currentAmmoType.displayName,
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                        Icon(
-                                            Icons.Default.ArrowDropDown,
-                                            contentDescription = "Dropdown"
-                                        )
-                                    }
-                                }
-                                
-                                DropdownMenu(
-                                    expanded = ammoTypeExpanded,
-                                    onDismissRequest = { ammoTypeExpanded = false }
-                                ) {
-                                    AmmoType.values().forEach { ammoType ->
-                                        DropdownMenuItem(
-                                            text = { Text(ammoType.displayName) },
-                                            onClick = {
-                                                viewModel.setAmmoType(ammoType.name)
-                                                ammoTypeExpanded = false
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        
-                        // Conditional fields based on ammo type
-                        if (currentAmmoType == AmmoType.FACTORY) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp),
-                            ) {
-                                Text(
-                                    text = "Factory Ammo Name",
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-                                
-                                OutlinedTextField(
-                                    value = uiState.factoryAmmoName,
-                                    onValueChange = { viewModel.setFactoryAmmoName(it) },
-                                    label = { Text("e.g., Federal Premium") },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
-                        } else {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp),
-                            ) {
-                                Text(
-                                    text = "Powder",
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-                                
-                                OutlinedTextField(
-                                    value = uiState.handloadPowder,
-                                    onValueChange = { viewModel.setHandloadPowder(it) },
-                                    label = { Text("e.g., H4350") },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
-                            
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp),
-                            ) {
-                                Text(
-                                    text = "Powder Charge",
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-                                
-                                OutlinedTextField(
-                                    value = uiState.handloadCharge.toString(),
-                                    onValueChange = { newValue ->
-                                        newValue.toDoubleOrNull()?.let { charge ->
-                                            viewModel.setHandloadCharge(charge)
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            Text(
+                                                text = currentAmmoType.displayName,
+                                                modifier = Modifier.weight(1f),
+                                            )
+                                            Icon(
+                                                Icons.Default.ArrowDropDown,
+                                                contentDescription = "Dropdown",
+                                            )
                                         }
-                                    },
-                                    label = { Text("Charge in grains") },
-                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                                    }
+
+                                    DropdownMenu(
+                                        expanded = ammoTypeExpanded,
+                                        onDismissRequest = { ammoTypeExpanded = false },
+                                    ) {
+                                        AmmoType.values().forEach { ammoType ->
+                                            DropdownMenuItem(
+                                                text = { Text(ammoType.displayName) },
+                                                onClick = {
+                                                    viewModel.setAmmoType(ammoType.name)
+                                                    ammoTypeExpanded = false
+                                                },
+                                            )
+                                        }
+                                    }
+                                }
                             }
-                        }
+
+                            // Conditional fields based on ammo type
+                            if (currentAmmoType == AmmoType.FACTORY) {
+                                Column(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp),
+                                ) {
+                                    Text(
+                                        text = "Factory Ammo Name",
+                                        modifier = Modifier.padding(bottom = 8.dp),
+                                    )
+
+                                    OutlinedTextField(
+                                        value = uiState.factoryAmmoName,
+                                        onValueChange = { viewModel.setFactoryAmmoName(it) },
+                                        label = { Text("e.g., Federal Premium") },
+                                        modifier = Modifier.fillMaxWidth(),
+                                    )
+                                }
+                            } else {
+                                Column(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp),
+                                ) {
+                                    Text(
+                                        text = "Powder",
+                                        modifier = Modifier.padding(bottom = 8.dp),
+                                    )
+
+                                    OutlinedTextField(
+                                        value = uiState.handloadPowder,
+                                        onValueChange = { viewModel.setHandloadPowder(it) },
+                                        label = { Text("e.g., H4350") },
+                                        modifier = Modifier.fillMaxWidth(),
+                                    )
+                                }
+
+                                Column(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp),
+                                ) {
+                                    Text(
+                                        text = "Powder Charge",
+                                        modifier = Modifier.padding(bottom = 8.dp),
+                                    )
+
+                                    OutlinedTextField(
+                                        value = uiState.handloadCharge.toString(),
+                                        onValueChange = { newValue ->
+                                            newValue.toDoubleOrNull()?.let { charge ->
+                                                viewModel.setHandloadCharge(charge)
+                                            }
+                                        },
+                                        label = { Text("Charge in grains") },
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        modifier = Modifier.fillMaxWidth(),
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
-            
+
             // Samsung Watch Section
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -778,12 +804,13 @@ fun SettingsScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 12.dp),
                     )
-                    
+
                     // Watch Integration Toggle
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -793,12 +820,13 @@ fun SettingsScreen(
                             onCheckedChange = { viewModel.setWatchIntegrationEnabled(it) },
                         )
                     }
-                    
+
                     // Watch Status
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
@@ -806,23 +834,26 @@ fun SettingsScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Text(
-                            text = when {
-                                uiState.isWatchPaired -> "Paired"
-                                else -> "Not Paired"
-                            },
+                            text =
+                                when {
+                                    uiState.isWatchPaired -> "Paired"
+                                    else -> "Not Paired"
+                                },
                             fontWeight = FontWeight.Medium,
-                            color = when {
-                                uiState.isWatchPaired -> MaterialTheme.colorScheme.primary
-                                else -> MaterialTheme.colorScheme.onSurfaceVariant
-                            },
+                            color =
+                                when {
+                                    uiState.isWatchPaired -> MaterialTheme.colorScheme.primary
+                                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                                },
                         )
                     }
-                    
+
                     // Connection Status
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
@@ -830,21 +861,23 @@ fun SettingsScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Text(
-                            text = when (uiState.watchConnectionStatus) {
-                                com.bceassociates.livetarget.watch.WatchConnectionStatus.CONNECTED -> "Connected"
-                                com.bceassociates.livetarget.watch.WatchConnectionStatus.DISCONNECTED -> "Disconnected"
-                                com.bceassociates.livetarget.watch.WatchConnectionStatus.ERROR -> "Error"
-                                com.bceassociates.livetarget.watch.WatchConnectionStatus.UNKNOWN -> "Unknown"
-                            },
+                            text =
+                                when (uiState.watchConnectionStatus) {
+                                    com.bceassociates.livetarget.watch.WatchConnectionStatus.CONNECTED -> "Connected"
+                                    com.bceassociates.livetarget.watch.WatchConnectionStatus.DISCONNECTED -> "Disconnected"
+                                    com.bceassociates.livetarget.watch.WatchConnectionStatus.ERROR -> "Error"
+                                    com.bceassociates.livetarget.watch.WatchConnectionStatus.UNKNOWN -> "Unknown"
+                                },
                             fontWeight = FontWeight.Medium,
-                            color = when (uiState.watchConnectionStatus) {
-                                com.bceassociates.livetarget.watch.WatchConnectionStatus.CONNECTED -> MaterialTheme.colorScheme.primary
-                                com.bceassociates.livetarget.watch.WatchConnectionStatus.ERROR -> MaterialTheme.colorScheme.error
-                                else -> MaterialTheme.colorScheme.onSurfaceVariant
-                            },
+                            color =
+                                when (uiState.watchConnectionStatus) {
+                                    com.bceassociates.livetarget.watch.WatchConnectionStatus.CONNECTED -> MaterialTheme.colorScheme.primary
+                                    com.bceassociates.livetarget.watch.WatchConnectionStatus.ERROR -> MaterialTheme.colorScheme.error
+                                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                                },
                         )
                     }
-                    
+
                     // Help text
                     if (!uiState.isWatchPaired) {
                         Text(
@@ -856,7 +889,7 @@ fun SettingsScreen(
                     }
                 }
             }
-            
+
             // About Section
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -870,12 +903,13 @@ fun SettingsScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 12.dp),
                     )
-                    
+
                     // App Name
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
@@ -887,12 +921,13 @@ fun SettingsScreen(
                             fontWeight = FontWeight.Medium,
                         )
                     }
-                    
+
                     // Version
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
@@ -904,12 +939,13 @@ fun SettingsScreen(
                             fontWeight = FontWeight.Medium,
                         )
                     }
-                    
+
                     // Build Date
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
@@ -921,7 +957,7 @@ fun SettingsScreen(
                             fontWeight = FontWeight.Medium,
                         )
                     }
-                    
+
                     // Copyright
                     Column(
                         modifier = Modifier.padding(vertical = 8.dp),

@@ -22,40 +22,40 @@ import org.robolectric.annotation.Config
 @Config(sdk = [28])
 class ChangeDetectorTest {
     private lateinit var changeDetector: ChangeDetector
-    
+
     @Before
     fun setUp() {
         changeDetector = ChangeDetector()
     }
-    
+
     @Test
     fun `test change detector initialization`() {
         assertNotNull(changeDetector)
         assertFalse(changeDetector.isDetecting.value)
         assertTrue(changeDetector.detectedChanges.value.isEmpty())
     }
-    
+
     @Test
     fun `test start detection`() {
         changeDetector.startDetection()
         assertTrue(changeDetector.isDetecting.value)
     }
-    
+
     @Test
     fun `test stop detection`() {
         changeDetector.startDetection()
         assertTrue(changeDetector.isDetecting.value)
-        
+
         changeDetector.stopDetection()
         assertFalse(changeDetector.isDetecting.value)
     }
-    
+
     @Test
     fun `test clear changes`() {
         changeDetector.clearChanges()
         assertTrue(changeDetector.detectedChanges.value.isEmpty())
     }
-    
+
     @Test
     fun `test set check interval`() {
         val interval = 5.0
@@ -64,7 +64,7 @@ class ChangeDetectorTest {
         // but we can verify the method doesn't crash
         assertTrue(true)
     }
-    
+
     @Test
     fun `test set min change size`() {
         val size = 50
@@ -73,12 +73,12 @@ class ChangeDetectorTest {
         // but we can verify the method doesn't crash
         assertTrue(true)
     }
-    
+
     @Test
     fun `test detect changes with null previous bitmap`() {
         val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
         changeDetector.startDetection()
-        
+
         // First call should not detect any changes (no previous bitmap)
         changeDetector.detectChanges(bitmap)
         assertTrue(changeDetector.detectedChanges.value.isEmpty())

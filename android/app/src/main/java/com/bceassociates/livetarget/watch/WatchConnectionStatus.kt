@@ -11,5 +11,5 @@ enum class WatchConnectionStatus {
     UNKNOWN,
     CONNECTED,
     DISCONNECTED,
-    ERROR
+    ERROR,
 }
