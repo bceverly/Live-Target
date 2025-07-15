@@ -572,11 +572,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         Log.d(TAG, "Saving image (legacy) with filename: $filename")
 
         // Use ContentValues approach for older Android versions
-        val values = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, filename)
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            put(MediaStore.Images.Media.DESCRIPTION, "Live Target shot analysis")
-        }
+        val values =
+            ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, filename)
+                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                put(MediaStore.Images.Media.DESCRIPTION, "Live Target shot analysis")
+            }
 
         return try {
             val uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
