@@ -571,17 +571,29 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         Log.d(TAG, "Saving image (legacy) with filename: $filename")
 
-        // Use MediaStore.Images.Media.insertImage for older Android versions
-        val savedImageURL =
-            MediaStore.Images.Media.insertImage(
-                context.contentResolver,
-                bitmap,
-                filename,
-                "Live Target shot analysis",
-            )
+        // Use ContentValues approach for older Android versions
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, filename)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.DESCRIPTION, "Live Target shot analysis")
+        }
 
-        Log.d(TAG, "Legacy save result: $savedImageURL")
-        return savedImageURL != null
+        return try {
+            val uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            if (uri != null) {
+                context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+                }
+                Log.d(TAG, "Legacy save successful: $uri")
+                true
+            } else {
+                Log.e(TAG, "Failed to create MediaStore entry for legacy save")
+                false
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Legacy save failed: ${e.message}")
+            false
+        }
     }
 
     fun setCircleColor(color: String) {
