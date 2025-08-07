@@ -11,6 +11,7 @@ import AVFoundation
 struct SettingsView: View {
     @AppStorage("circleColor") private var circleColorHex: String = "FF0000"
     @AppStorage("numberColor") private var numberColorHex: String = "FF0000"
+    @AppStorage("centerPointColor") private var centerPointColorHex: String = "00FF00"
     @AppStorage("checkInterval") private var checkInterval: Double = 2.0
     @AppStorage("selectedCaliberName") private var selectedCaliberName: String = ".22 Long Rifle"
     @AppStorage("zoomFactor") private var zoomFactor: Double = 1.0
@@ -119,6 +120,11 @@ struct SettingsView: View {
                     ColorPicker("Number Color", selection: Binding(
                         get: { Color(hex: numberColorHex) ?? .red },
                         set: { numberColorHex = $0.toHex() }
+                    ))
+                    
+                    ColorPicker("Center Point Color", selection: Binding(
+                        get: { Color(hex: centerPointColorHex) ?? .green },
+                        set: { centerPointColorHex = $0.toHex() }
                     ))
                 }
                 

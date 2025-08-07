@@ -34,6 +34,9 @@ class ChangeDetector {
 
     private val _isDetecting = MutableStateFlow(false)
     val isDetecting: StateFlow<Boolean> = _isDetecting.asStateFlow()
+    
+    private val _shotGroupCenter = MutableStateFlow<Point?>(null)
+    val shotGroupCenter: StateFlow<Point?> = _shotGroupCenter.asStateFlow()
 
     private var previousBitmap: Bitmap? = null
     private val changeCounter = AtomicInteger(0)
@@ -178,6 +181,7 @@ class ChangeDetector {
             val currentChanges = _detectedChanges.value.toMutableList()
             currentChanges.add(newChangePoint)
             _detectedChanges.value = currentChanges
+            updateShotGroupCenter(currentChanges)
 
             Log.d(
                 TAG,
@@ -190,11 +194,30 @@ class ChangeDetector {
     }
 
     /**
+     * Updates the shot group center based on current detected changes
+     */
+    private fun updateShotGroupCenter(changes: List<ChangePoint>) {
+        if (changes.size < 2) {
+            _shotGroupCenter.value = null
+            return
+        }
+        
+        val sumX = changes.sumOf { it.location.x.toDouble() }.toFloat()
+        val sumY = changes.sumOf { it.location.y.toDouble() }.toFloat()
+        
+        _shotGroupCenter.value = Point(
+            x = sumX / changes.size,
+            y = sumY / changes.size
+        )
+    }
+
+    /**
      * Clears all detected changes and resets the counter
      */
     fun clearChanges() {
         _detectedChanges.value = emptyList()
         changeCounter.set(0)
+        _shotGroupCenter.value = null
         Log.d(TAG, "Changes cleared")
     }
 

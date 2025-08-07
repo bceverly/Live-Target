@@ -58,29 +58,81 @@ Live-Target/
 ## Features
 
 ### Core Functionality (Available on Both Platforms)
-- **Real-time camera feed** with live impact detection
-- **Automatic bullet impact detection** using computer vision algorithms
-- **Visual impact indicators** with numbered circles and customizable colors
-- **Advanced zoom controls** with hardware zoom support (1x to 10x magnification)
-- **Configurable detection sensitivity** for different bullet calibers (17-70 caliber)
-- **Adjustable check frequency** for optimal performance (0.5-10 seconds)
-- **Photo saving** with impact annotations to device gallery
-- **Settings persistence** with comprehensive customization options
-- **Help system** with detailed usage instructions and troubleshooting
+
+#### 🎯 **Impact Detection & Analysis**
+- **Real-time bullet impact detection** using advanced computer vision algorithms
+- **Automatic shot numbering** with sequential impact markers (1, 2, 3...)
+- **Shot group center calculation** with visual center point indicator (minimum 2 shots)
+- **Configurable detection sensitivity** for different bullet calibers (17-70 caliber supported)
+- **Smart flood-fill algorithm** for accurate impact point identification
+- **Size filtering** to eliminate false positives from environmental changes
+- **Real-time performance optimization** with throttled detection intervals
+
+#### 📱 **Camera & Visual Interface**
+- **Live camera preview** with real-time impact overlay
+- **Hardware zoom integration** with smooth 1x to 10x+ magnification controls
+- **Visual impact indicators** with customizable colored circles and numbers
+- **Shot group center point** displayed as contrasting filled circle
+- **Customizable colors** for impact circles, numbers, and center point
+- **Responsive UI** optimized for different screen sizes and orientations
+- **Real-time zoom controls** with platform-native interfaces
+
+#### ⚙️ **Configuration & Settings**
+- **Bullet caliber selection** with comprehensive caliber database (17-70 caliber range)
+- **Detection frequency adjustment** (0.5-10 seconds between checks)
+- **Color customization** for all visual elements (circles, numbers, center point)
+- **Settings persistence** across app launches
+- **Advanced calibration options** for different shooting distances
+- **Performance tuning** options for battery optimization
+
+#### 💾 **Photo Management**
+- **Photo saving** with complete impact annotations (shots + center point)
+- **High-resolution image capture** with impact overlays burned-in
+- **Gallery integration** for easy access to saved target images
+- **Metadata overlay options** with shooting details (date, caliber, ammunition info)
+- **Batch photo operations** for session management
+
+#### ⌚ **Smart Watch Integration**
+- **Real-time impact notifications** sent to paired smartwatch
+- **Watch status indicators** (connected/disconnected/error states)
+- **Haptic feedback** for tactile shot confirmation
+- **Watch app companion** with dedicated watch interface
+- **Connectivity monitoring** with automatic reconnection
+- **Watch-specific UI** optimized for small screens
 
 ### Cross-Platform Feature Parity
 Both iOS and Android versions offer **identical functionality** with platform-optimized implementations:
 
-| Feature | iOS Implementation | Android Implementation |
-|---------|-------------------|----------------------|
-| **Camera Integration** | AVFoundation with hardware zoom | CameraX with hardware zoom support |
-| **Watch Integration** | Apple Watch with WatchConnectivity | Samsung Galaxy Watch with Accessory SDK |
-| **Impact Notifications** | Haptic feedback + visual display | Notifications + visual display |
-| **Watch Status Icons** | Green/Red/Gray indicators | Green/Red/Gray indicators |
-| **Zoom Controls** | Native iOS zoom interface | Material Design zoom controls |
-| **Settings Storage** | UserDefaults persistence | DataStore preferences |
-| **Photo Saving** | Photos library integration | Android MediaStore gallery |
-| **UI Framework** | SwiftUI with iOS design guidelines | Jetpack Compose with Material Design 3 |
+| Feature Category | iOS Implementation | Android Implementation |
+|------------------|-------------------|----------------------|
+| **📷 Camera Integration** | AVFoundation with hardware zoom | CameraX with hardware zoom support |
+| **🎯 Impact Detection** | Computer vision with flood-fill algorithm | Computer vision with flood-fill algorithm |
+| **📊 Shot Group Analysis** | Real-time center point calculation | Real-time center point calculation |
+| **🎨 Visual Overlays** | SwiftUI Canvas with customizable colors | Jetpack Compose Canvas with customizable colors |
+| **⌚ Watch Integration** | Apple Watch with WatchConnectivity | Samsung Galaxy Watch with Accessory SDK |
+| **📳 Impact Notifications** | Haptic feedback + watch display | Notifications + watch display |
+| **🔘 Watch Status Icons** | Green/Red/Gray connectivity indicators | Green/Red/Gray connectivity indicators |
+| **🔍 Zoom Controls** | Native iOS zoom slider interface | Material Design zoom controls |
+| **💾 Settings Storage** | UserDefaults with real-time sync | DataStore preferences with reactive updates |
+| **📸 Photo Saving** | Photos library with metadata overlay | MediaStore gallery with metadata overlay |
+| **🎛️ UI Controls** | SwiftUI toggle buttons and color pickers | Jetpack Compose buttons and color previews |
+| **🏗️ UI Framework** | SwiftUI with iOS Human Interface Guidelines | Jetpack Compose with Material Design 3 |
+
+### Platform-Specific Optimizations
+
+#### iOS-Specific Features
+- **SwiftUI native animations** for smooth UI transitions
+- **Apple Watch companion app** with dedicated watchOS interface and haptic feedback
+- **iOS color picker integration** with system color palette
+- **AVFoundation optimization** for real-time camera processing
+- **UserDefaults reactive binding** with @AppStorage property wrappers
+
+#### Android-Specific Features  
+- **Material Design 3 theming** with dynamic color adaptation
+- **Samsung Galaxy Watch notifications** with rich visual feedback
+- **CameraX modern APIs** for optimized camera lifecycle management
+- **DataStore preferences** with coroutine-based reactive updates
+- **Jetpack Compose state management** with automatic UI recomposition
 
 ### iOS-Specific Implementation Details
 - **Apple Watch companion app** with dedicated watchOS interface
@@ -626,7 +678,7 @@ For security issues, please contact: security@bceassociates.com
 
 ## Roadmap
 
-### iOS (Completed v0.91)
+### iOS (Completed v0.92)
 - [x] Core bullet detection algorithm with configurable sensitivity
 - [x] Real-time camera integration with AVFoundation
 - [x] Apple Watch companion app with dedicated watchOS interface
@@ -634,16 +686,13 @@ For security issues, please contact: security@bceassociates.com
 - [x] Photo saving functionality with impact annotations
 - [x] Advanced zoom controls (1x-10x hardware zoom)
 - [x] Help system with detailed usage instructions
+- [x] **Shot group center point calculation and visualization** 🆕
+- [x] **Center point toggle control in main UI** 🆕
+- [x] **Center point color customization in settings** 🆕
+- [x] **Center point included in saved photos** 🆕
 - [x] Complete feature parity with Android version
 
-### Future Enhancements (Both Platforms)
-- [ ] Advanced calibration options for different distances
-- [ ] Multiple target support for complex ranges
-- [ ] Shot grouping analysis with accuracy metrics
-- [ ] Cloud sync for impact history
-- [ ] Video recording with impact detection overlay
-
-### Android (Completed v0.91)
+### Android (Completed v0.92)
 - [x] Project setup with modern Gradle build system
 - [x] CameraX integration with hardware zoom support
 - [x] Core detection algorithm implementation with pixel-level analysis
@@ -656,7 +705,33 @@ For security issues, please contact: security@bceassociates.com
 - [x] Advanced zoom controls (1x-10x magnification)
 - [x] Help system with detailed usage instructions
 - [x] Performance optimization for real-time detection
+- [x] **Shot group center point calculation and visualization** 🆕
+- [x] **Center point toggle button in bottom controls** 🆕
+- [x] **Center point color preview in settings** 🆕
+- [x] **Center point included in saved composite images** 🆝
 - [x] Complete feature parity with iOS version
+
+### Recent Additions (v0.92)
+#### 🎯 **Shot Group Analysis**
+- **Automatic center point calculation** using centroid algorithm (minimum 2 shots required)
+- **Real-time center visualization** with customizable colored filled circle
+- **Toggle control** for easy on/off functionality in main UI
+- **Color customization** with platform-native color selection interfaces
+- **Persistent settings** with center point preferences saved across sessions
+- **Photo integration** with center point included in saved target images
+- **Cross-platform consistency** with identical behavior on iOS and Android
+
+### Future Enhancements (Both Platforms)
+- [ ] **Shot group statistics** (group size, mean radius, standard deviation)
+- [ ] **Multiple target support** for complex shooting ranges
+- [ ] **Advanced shot analysis** with accuracy metrics and scoring
+- [ ] **Session management** with shot history and progress tracking
+- [ ] **Cloud sync** for impact history across devices
+- [ ] **Video recording** with impact detection overlay
+- [ ] **Export functionality** for shot data and analysis reports
+- [ ] **Range finder integration** for distance-based calibration
+- [ ] **Wind compensation** settings for outdoor shooting
+- [ ] **Competition scoring** with various target types and scoring systems
 
 ### Shared Infrastructure
 - [x] Multi-platform repository structure

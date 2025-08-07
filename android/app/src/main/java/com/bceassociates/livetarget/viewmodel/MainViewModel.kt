@@ -47,8 +47,11 @@ import java.util.Locale
 data class MainUiState(
     val isDetecting: Boolean = false,
     val detectedChanges: List<ChangePoint> = emptyList(),
+    val shotGroupCenter: com.bceassociates.livetarget.data.model.Point? = null,
     val circleColor: String = "FF0000",
     val numberColor: String = "FF0000",
+    val centerPointEnabled: Boolean = false,
+    val centerPointColor: String = "00FF00",
     val checkInterval: Double = 2.0,
     val selectedCaliberName: String = ".22 Long Rifle",
     val zoomFactor: Double = 1.0,
@@ -136,6 +139,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             settingsDataStore.numberColor.collect { color ->
                 _uiState.value = _uiState.value.copy(numberColor = color)
+            }
+        }
+
+        viewModelScope.launch {
+            settingsDataStore.centerPointEnabled.collect { enabled ->
+                _uiState.value = _uiState.value.copy(centerPointEnabled = enabled)
+            }
+        }
+
+        viewModelScope.launch {
+            settingsDataStore.centerPointColor.collect { color ->
+                _uiState.value = _uiState.value.copy(centerPointColor = color)
             }
         }
 
@@ -261,6 +276,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             changeDetector.detectedChanges.collect { changes ->
                 _uiState.value = _uiState.value.copy(detectedChanges = changes)
+            }
+        }
+
+        viewModelScope.launch {
+            changeDetector.shotGroupCenter.collect { center ->
+                _uiState.value = _uiState.value.copy(shotGroupCenter = center)
             }
         }
     }
@@ -404,6 +425,27 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val textY = centerY + textBounds.height() / 2f
 
             canvas.drawText(impact.number.toString(), centerX, textY, textPaint)
+        }
+
+        // Draw center point if enabled and available
+        val currentState = _uiState.value
+        if (currentState.centerPointEnabled && currentState.shotGroupCenter != null) {
+            val center = currentState.shotGroupCenter
+            val centerX = center.x * compositeBitmap.width
+            val centerY = center.y * compositeBitmap.height
+            val scaleFactor = minOf(compositeBitmap.width, compositeBitmap.height) / 1000f
+            val radius = 10f * scaleFactor
+            
+            // Parse center point color
+            val centerPointColor = Color.parseColor("#${currentState.centerPointColor}")
+            
+            // Draw filled circle for center point
+            val centerPaint = Paint().apply {
+                color = centerPointColor
+                style = Paint.Style.FILL
+                isAntiAlias = true
+            }
+            canvas.drawCircle(centerX, centerY, radius, centerPaint)
         }
 
         // Draw overlay if enabled
@@ -606,6 +648,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setNumberColor(color: String) {
         viewModelScope.launch {
             settingsDataStore.setNumberColor(color)
+        }
+    }
+
+    fun setCenterPointEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.setCenterPointEnabled(enabled)
+        }
+    }
+
+    fun setCenterPointColor(color: String) {
+        viewModelScope.launch {
+            settingsDataStore.setCenterPointColor(color)
         }
     }
 

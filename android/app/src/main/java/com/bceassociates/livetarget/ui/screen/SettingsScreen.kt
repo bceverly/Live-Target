@@ -165,6 +165,19 @@ fun SettingsScreen(
                         Text(stringResource(R.string.number_color))
                         ColorPreview(color = Color(android.graphics.Color.parseColor("#${uiState.numberColor}")))
                     }
+
+                    // Center Point Color
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text("Center Point Color")
+                        ColorPreview(color = Color(android.graphics.Color.parseColor("#${uiState.centerPointColor}")))
+                    }
                 }
             }
 

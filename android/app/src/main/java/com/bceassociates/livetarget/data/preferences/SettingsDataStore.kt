@@ -29,6 +29,8 @@ class SettingsDataStore(private val context: Context) {
 
         private val CIRCLE_COLOR_KEY = stringPreferencesKey("circle_color")
         private val NUMBER_COLOR_KEY = stringPreferencesKey("number_color")
+        private val CENTER_POINT_ENABLED_KEY = booleanPreferencesKey("center_point_enabled")
+        private val CENTER_POINT_COLOR_KEY = stringPreferencesKey("center_point_color")
         private val CHECK_INTERVAL_KEY = doublePreferencesKey("check_interval")
         private val SELECTED_CALIBER_NAME_KEY = stringPreferencesKey("selected_caliber_name")
         private val ZOOM_FACTOR_KEY = doublePreferencesKey("zoom_factor")
@@ -56,6 +58,16 @@ class SettingsDataStore(private val context: Context) {
     val numberColor: Flow<String> =
         context.dataStore.data.map { preferences ->
             preferences[NUMBER_COLOR_KEY] ?: "FF0000"
+        }
+
+    val centerPointEnabled: Flow<Boolean> =
+        context.dataStore.data.map { preferences ->
+            preferences[CENTER_POINT_ENABLED_KEY] ?: false
+        }
+
+    val centerPointColor: Flow<String> =
+        context.dataStore.data.map { preferences ->
+            preferences[CENTER_POINT_COLOR_KEY] ?: "00FF00"
         }
 
     val checkInterval: Flow<Double> =
@@ -143,6 +155,18 @@ class SettingsDataStore(private val context: Context) {
     suspend fun setNumberColor(color: String) {
         context.dataStore.edit { settings ->
             settings[NUMBER_COLOR_KEY] = color
+        }
+    }
+
+    suspend fun setCenterPointEnabled(enabled: Boolean) {
+        context.dataStore.edit { settings ->
+            settings[CENTER_POINT_ENABLED_KEY] = enabled
+        }
+    }
+
+    suspend fun setCenterPointColor(color: String) {
+        context.dataStore.edit { settings ->
+            settings[CENTER_POINT_COLOR_KEY] = color
         }
     }
 

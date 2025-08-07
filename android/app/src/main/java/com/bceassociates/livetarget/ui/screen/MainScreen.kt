@@ -160,6 +160,19 @@ fun MainScreen(
                             circleColor = Color(android.graphics.Color.parseColor("#${uiState.circleColor}")),
                             numberColor = Color(android.graphics.Color.parseColor("#${uiState.numberColor}")),
                         )
+                        
+                        // Draw center point if enabled and available
+                        if (uiState.centerPointEnabled && uiState.shotGroupCenter != null) {
+                            val center = uiState.shotGroupCenter!!
+                            val centerX = center.x * size.width
+                            val centerY = center.y * size.height
+                            
+                            drawCircle(
+                                color = Color(android.graphics.Color.parseColor("#${uiState.centerPointColor}")),
+                                radius = 10.dp.toPx(),
+                                center = androidx.compose.ui.geometry.Offset(centerX, centerY)
+                            )
+                        }
                     }
 
                     // Status indicator
@@ -265,6 +278,23 @@ fun MainScreen(
                         ),
                 ) {
                     Text(stringResource(R.string.clear))
+                }
+
+                Button(
+                    onClick = { viewModel.setCenterPointEnabled(!uiState.centerPointEnabled) },
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = if (uiState.centerPointEnabled) {
+                                Color(android.graphics.Color.parseColor("#${uiState.centerPointColor}"))
+                            } else {
+                                MaterialTheme.colorScheme.outline
+                            }
+                        ),
+                ) {
+                    Text(
+                        if (uiState.centerPointEnabled) "Center" else "Center",
+                        color = if (uiState.centerPointEnabled) Color.Black else Color.White
+                    )
                 }
 
                 Button(

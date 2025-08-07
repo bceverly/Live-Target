@@ -55,6 +55,8 @@ struct ContentView: View {
     @State private var showingHelp = false
     @AppStorage("circleColor") private var circleColorHex: String = "FF0000"
     @AppStorage("numberColor") private var numberColorHex: String = "FF0000"
+    @AppStorage("centerPointEnabled") private var centerPointEnabled: Bool = false
+    @AppStorage("centerPointColor") private var centerPointColorHex: String = "00FF00"
     @AppStorage("checkInterval") private var checkInterval: Double = 2.0
     @AppStorage("selectedCaliberName") private var selectedCaliberName: String = ".22 Long Rifle"
     @AppStorage("zoomFactor") private var zoomFactor: Double = 1.0
@@ -135,6 +137,19 @@ struct ContentView: View {
                         .position(screenPoint)
                     }
                     
+                    // Shot group center point
+                    if centerPointEnabled, let center = changeDetector.shotGroupCenter {
+                        let centerScreenPoint = CGPoint(
+                            x: center.x * geometry.size.width,
+                            y: center.y * geometry.size.height
+                        )
+                        
+                        Circle()
+                            .fill(Color(hex: centerPointColorHex) ?? .green)
+                            .frame(width: 20, height: 20)
+                            .position(centerScreenPoint)
+                    }
+                    
                     // Zoom control positioned at the bottom
                     VStack {
                         Spacer()
@@ -171,6 +186,12 @@ struct ContentView: View {
                         changeDetector.clearChanges()
                     }
                     .foregroundColor(.primary)
+                    
+                    Button(centerPointEnabled ? "Center: On" : "Center: Off") {
+                        centerPointEnabled.toggle()
+                    }
+                    .foregroundColor(centerPointEnabled ? .green : .secondary)
+                    .font(.caption)
                     
                     Spacer()
                     

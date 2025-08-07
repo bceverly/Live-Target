@@ -23,6 +23,7 @@ struct ChangePoint {
 class ChangeDetector: ObservableObject {
     @Published var detectedChanges: [ChangePoint] = []
     @Published var isDetecting: Bool = false
+    @Published var shotGroupCenter: CGPoint? = nil
     
     // MARK: - Private Properties
     private var previousImage: UIImage?
@@ -90,6 +91,7 @@ class ChangeDetector: ObservableObject {
             
             DispatchQueue.main.async {
                 self.detectedChanges.append(changePoint)
+                self.updateShotGroupCenter()
                 
                 // Send to Apple Watch
                 self.sendImpactToWatch(changePoint, image: newImage)
@@ -278,10 +280,27 @@ class ChangeDetector: ObservableObject {
         return BoundingBox(minX: minX, minY: minY, maxX: maxX, maxY: maxY)
     }
     
+    /// Updates the shot group center based on current detected changes
+    private func updateShotGroupCenter() {
+        guard detectedChanges.count >= 2 else {
+            shotGroupCenter = nil
+            return
+        }
+        
+        let sumX = detectedChanges.reduce(0) { $0 + $1.location.x }
+        let sumY = detectedChanges.reduce(0) { $0 + $1.location.y }
+        
+        shotGroupCenter = CGPoint(
+            x: sumX / CGFloat(detectedChanges.count),
+            y: sumY / CGFloat(detectedChanges.count)
+        )
+    }
+    
     /// Clears all detected changes and resets the counter
     func clearChanges() {
         detectedChanges.removeAll()
         changeCounter = 0
+        shotGroupCenter = nil
     }
     
     /// Saves the current image with detected changes to the photo library
@@ -376,6 +395,28 @@ class ChangeDetector: ObservableObject {
                     x: centerX - stringSize.width / 2,
                     y: centerY - stringSize.height / 2
                 ))
+            }
+            
+            // Draw center point if enabled and available
+            let centerPointEnabled = UserDefaults.standard.bool(forKey: "centerPointEnabled")
+            if centerPointEnabled, let center = shotGroupCenter {
+                let centerX = center.x * imageSize.width
+                let centerY = center.y * imageSize.height
+                let radius: CGFloat = 10
+                
+                // Get center point color from UserDefaults
+                let centerPointColorHex = UserDefaults.standard.string(forKey: "centerPointColor") ?? "00FF00"
+                let centerPointColor = UIColor(Color(hex: centerPointColorHex) ?? .green)
+                
+                // Draw filled circle for center point
+                cgContext.setFillColor(centerPointColor.cgColor)
+                cgContext.addEllipse(in: CGRect(
+                    x: centerX - radius,
+                    y: centerY - radius,
+                    width: radius * 2,
+                    height: radius * 2
+                ))
+                cgContext.fillPath()
             }
             
             // Draw overlay if enabled
