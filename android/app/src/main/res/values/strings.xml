@@ -5,7 +5,7 @@
   Copyright © 2025 BCEAssociates, Inc. All rights reserved.
 -->
 <resources>
-    <string name="app_name">Live Target</string>
+    <string name="app_name">Precision Target Analysis</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="clear">Clear</string>
@@ -32,8 +32,8 @@
     <string name="close">Close</string>
     
     <!-- Help Screen Content -->
-    <string name="help_what_is_title">What is Live Target?</string>
-    <string name="help_what_is_description">Live Target is an intelligent bullet impact detection system that uses your device\'s camera and computer vision to automatically identify and track bullet holes on targets during shooting practice.</string>
+    <string name="help_what_is_title">What is Precision Target Analysis?</string>
+    <string name="help_what_is_description">Precision Target Analysis is an intelligent impact detection system that uses your device\'s camera and computer vision to automatically identify and track impact patterns on targets for competitive ballistic sports training.</string>
     <string name="help_feature_parity">Available for both Android (with Samsung Galaxy Watch) and iOS (with Apple Watch) with full feature parity between platforms.</string>
     <string name="help_what_is_use_cases">The app continuously monitors your target through the camera feed and alerts you when new impacts are detected, making it perfect for:</string>
     <string name="help_use_case_practice">Target shooting practice</string>
@@ -41,7 +41,7 @@
     <string name="help_use_case_analysis">Shot group analysis</string>
     <string name="help_use_case_monitoring">Remote target monitoring</string>
     
-    <string name="help_how_to_use_title">How to Use Live Target</string>
+    <string name="help_how_to_use_title">How to Use Precision Target Analysis</string>
     <string name="help_step_1">Position your device so the target is clearly visible in the camera view</string>
     <string name="help_step_2">Adjust settings (caliber, colors, check frequency) as needed</string>
     <string name="help_step_3">Tap \'Start\' to begin impact detection</string>
@@ -105,7 +105,7 @@
     <string name="help_multiple_detections">Multiple detections per shot: Increase check frequency</string>
     
     <string name="help_performance_issues">Performance Issues</string>
-    <string name="help_close_camera_apps">Close other camera apps before using Live Target</string>
+    <string name="help_close_camera_apps">Close other camera apps before using Precision Target Analysis</string>
     <string name="help_restart_app">Restart app if detection becomes unresponsive</string>
     <string name="help_increase_frequency">Increase check frequency if device is struggling</string>
     

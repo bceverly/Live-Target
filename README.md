@@ -1,11 +1,11 @@
-# Live Target
+# Precision Target Analysis
 
-[![Multi-Platform CI/CD](https://github.com/bceverly/Live-Target/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/bceverly/Live-Target/actions/workflows/ci-cd.yml)
-[![iOS CI/CD Pipeline](https://github.com/bceverly/Live-Target/actions/workflows/ios-ci.yml/badge.svg)](https://github.com/bceverly/Live-Target/actions/workflows/ios-ci.yml)
-[![Android CI/CD Pipeline](https://github.com/bceverly/Live-Target/actions/workflows/android-ci.yml/badge.svg)](https://github.com/bceverly/Live-Target/actions/workflows/android-ci.yml)
-[![SwiftLint](https://github.com/bceverly/Live-Target/actions/workflows/swiftlint.yml/badge.svg)](https://github.com/bceverly/Live-Target/actions/workflows/swiftlint.yml)
-[![Dependency Security Check](https://github.com/bceverly/Live-Target/actions/workflows/dependency-security-check.yml/badge.svg)](https://github.com/bceverly/Live-Target/actions/workflows/dependency-security-check.yml)
-[![Release Pipeline](https://github.com/bceverly/Live-Target/actions/workflows/release.yml/badge.svg)](https://github.com/bceverly/Live-Target/actions/workflows/release.yml)
+[![Multi-Platform CI/CD](https://github.com/bceverly/Precision-Target-Analysis/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/bceverly/Precision-Target-Analysis/actions/workflows/ci-cd.yml)
+[![iOS CI/CD Pipeline](https://github.com/bceverly/Precision-Target-Analysis/actions/workflows/ios-ci.yml/badge.svg)](https://github.com/bceverly/Precision-Target-Analysis/actions/workflows/ios-ci.yml)
+[![Android CI/CD Pipeline](https://github.com/bceverly/Precision-Target-Analysis/actions/workflows/android-ci.yml/badge.svg)](https://github.com/bceverly/Precision-Target-Analysis/actions/workflows/android-ci.yml)
+[![SwiftLint](https://github.com/bceverly/Precision-Target-Analysis/actions/workflows/swiftlint.yml/badge.svg)](https://github.com/bceverly/Precision-Target-Analysis/actions/workflows/swiftlint.yml)
+[![Dependency Security Check](https://github.com/bceverly/Precision-Target-Analysis/actions/workflows/dependency-security-check.yml/badge.svg)](https://github.com/bceverly/Precision-Target-Analysis/actions/workflows/dependency-security-check.yml)
+[![Release Pipeline](https://github.com/bceverly/Precision-Target-Analysis/actions/workflows/release.yml/badge.svg)](https://github.com/bceverly/Precision-Target-Analysis/actions/workflows/release.yml)
 
 [![Platform](https://img.shields.io/badge/platform-iOS%2018.5%2B%20%7C%20Android%207.0%2B-blue.svg)](https://developer.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-5.0-orange.svg)](https://swift.org/)
@@ -14,7 +14,7 @@
 [![Android Studio](https://img.shields.io/badge/Android%20Studio-2025.1.1-green.svg)](https://developer.android.com/studio)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)](#license)
 
-[![Dependabot](https://img.shields.io/badge/Dependabot-enabled-brightgreen.svg)](https://github.com/bceverly/Live-Target/network/dependencies)
+[![Dependabot](https://img.shields.io/badge/Dependabot-enabled-brightgreen.svg)](https://github.com/bceverly/Precision-Target-Analysis/network/dependencies)
 [![Code Quality](https://img.shields.io/badge/Code%20Quality-SwiftLint-brightgreen.svg)](https://github.com/realm/SwiftLint)
 [![Security](https://img.shields.io/badge/Security-Monitored-green.svg)](#security)
 
@@ -22,7 +22,7 @@ A multi-platform bullet impact detection system for target shooting practice.
 
 ## Overview
 
-Live Target helps shooting enthusiasts automatically detect and track bullet impacts on targets using computer vision. The system provides real-time visual feedback and can save annotated target images for analysis.
+Precision Target Analysis helps shooting enthusiasts automatically detect and track bullet impacts on targets using computer vision. The system provides real-time visual feedback and can save annotated target images for analysis.
 
 ## Platform Support
 
@@ -36,11 +36,11 @@ Live Target helps shooting enthusiasts automatically detect and track bullet imp
 ## Repository Structure
 
 ```
-Live-Target/
+Precision-Target-Analysis/
 ├── ios/                    # iOS & watchOS implementation
-│   ├── Live Target/        # Main iOS app
-│   ├── Live Target Watch App/   # Watch app
-│   └── Live Target.xcodeproj
+│   ├── Precision Target Analysis/        # Main iOS app
+│   ├── Precision Target Analysis Watch App/   # Watch app
+│   └── Precision Target Analysis.xcodeproj
 ├── android/                # Android implementation (completed)
 │   ├── app/               # Main Android app (Kotlin + Compose)
 │   └── gradle/            # Build system configuration
@@ -227,20 +227,20 @@ swiftlint version
 #### 4. Setup iOS Project
 ```bash
 # Clone repository
-git clone https://github.com/bceverly/Live-Target.git
-cd Live-Target
+git clone https://github.com/bceverly/Precision-Target-Analysis.git
+cd Precision-Target-Analysis
 
 # Navigate to iOS project
 cd ios/
 
 # Open in Xcode
-open "Live Target.xcodeproj"
+open "Precision Target Analysis.xcodeproj"
 ```
 
 #### 5. Configure Signing (Required for Device Testing)
 1. **Open project in Xcode**
-2. **Select "Live Target" project** in navigator
-3. **Choose "Live Target" target**
+2. **Select "Precision Target Analysis" project** in navigator
+3. **Choose "Precision Target Analysis" target**
 4. **Go to "Signing & Capabilities" tab**
 5. **Select your development team**
 6. **Ensure bundle identifier is unique**
@@ -250,10 +250,10 @@ open "Live Target.xcodeproj"
 ```bash
 # Build from command line
 cd ios/
-xcodebuild -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 16" build
+xcodebuild -project "Precision Target Analysis.xcodeproj" -scheme "Precision Target Analysis" -destination "platform=iOS Simulator,name=iPhone 16" build
 
 # Run tests
-xcodebuild test -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 16"
+xcodebuild test -project "Precision Target Analysis.xcodeproj" -scheme "Precision Target Analysis" -destination "platform=iOS Simulator,name=iPhone 16"
 
 # Or use build script
 ../tools/scripts/build-ios.sh
@@ -391,10 +391,10 @@ git pull origin main
 
 # 2. iOS development
 cd ios/
-open "Live Target.xcodeproj"
+open "Precision Target Analysis.xcodeproj"
 
 # 3. Run tests before committing
-xcodebuild test -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 16"
+xcodebuild test -project "Precision Target Analysis.xcodeproj" -scheme "Precision Target Analysis" -destination "platform=iOS Simulator,name=iPhone 16"
 
 # 4. Check code quality
 swiftlint
@@ -415,7 +415,7 @@ swiftlint --fix
 
 # Run all tests
 cd ios/
-xcodebuild test -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 16"
+xcodebuild test -project "Precision Target Analysis.xcodeproj" -scheme "Precision Target Analysis" -destination "platform=iOS Simulator,name=iPhone 16"
 ```
 
 ### Troubleshooting
@@ -545,7 +545,7 @@ For detailed technical documentation, see [`shared/docs/architecture.md`](shared
 ### iOS Testing
 ```bash
 cd ios/
-xcodebuild test -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 16"
+xcodebuild test -project "Precision Target Analysis.xcodeproj" -scheme "Precision Target Analysis" -destination "platform=iOS Simulator,name=iPhone 16"
 ```
 
 ### Test Coverage
@@ -554,7 +554,7 @@ xcodebuild test -project "Live Target.xcodeproj" -scheme "Live Target" -destinat
 - **UI tests** for user workflows
 - **Performance tests** for real-time processing
 
-See test files in `ios/Live TargetTests/` for detailed test coverage.
+See test files in `ios/Precision Target AnalysisTests/` for detailed test coverage.
 
 ## Local CI/CD Testing
 
@@ -608,7 +608,7 @@ The `scripts/local-ci.sh` script runs the same checks as GitHub Actions:
 cd android && ./gradlew lintDebug testDebugUnitTest assembleDebug
 
 # iOS only (if Xcode installed)
-cd ios && xcodebuild -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 15" build test
+cd ios && xcodebuild -project "Precision Target Analysis.xcodeproj" -scheme "Precision Target Analysis" -destination "platform=iOS Simulator,name=iPhone 15" build test
 
 # Full local CI/CD
 ./scripts/local-ci.sh

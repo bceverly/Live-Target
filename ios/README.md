@@ -1,7 +1,7 @@
-# Live Target iOS
+# Precision Target Analysis iOS
 
 ## Overview
-iOS and watchOS implementation of the Live Target bullet impact detection system.
+iOS and watchOS implementation of the Precision Target Analysis bullet impact detection system.
 
 ## Current Status
 ✅ **Completed** - Fully functional with comprehensive Apple Watch integration
@@ -43,7 +43,7 @@ iOS and watchOS implementation of the Live Target bullet impact detection system
 
 ```
 ios/
-├── Live Target/                    # Main iOS app
+├── Precision Target Analysis/                    # Main iOS app
 │   ├── ContentView.swift          # Main UI interface
 │   ├── CameraView.swift           # Camera integration
 │   ├── ChangeDetector.swift       # Core detection algorithm
@@ -51,18 +51,18 @@ ios/
 │   ├── ZoomControl.swift          # Camera zoom controls
 │   ├── WatchConnectivityManager.swift  # Watch communication
 │   └── Supporting Files/
-├── Live Target Watch App Watch App/  # Watch app implementation
+├── Precision Target Analysis Watch App Watch App/  # Watch app implementation
 │   ├── ContentView.swift          # Watch main interface
 │   ├── ImpactHistoryView.swift    # Impact timeline
 │   ├── ImpactStore.swift          # Watch data storage
 │   └── WatchConnectivityManager.swift  # Watch-side communication
-├── Live TargetTests/               # Unit tests
+├── Precision Target AnalysisTests/               # Unit tests
 │   ├── ChangeDetectorTests.swift  # Detection algorithm tests
 │   ├── ColorExtensionTests.swift  # Color utility tests
 │   ├── UIImageExtensionTests.swift # Image processing tests
 │   └── WatchConnectivityTests.swift # Communication tests
-├── Live TargetUITests/             # UI integration tests
-└── Live Target.xcodeproj           # Xcode project
+├── Precision Target AnalysisUITests/             # UI integration tests
+└── Precision Target Analysis.xcodeproj           # Xcode project
 ```
 
 ## Getting Started
@@ -75,7 +75,7 @@ ios/
 
 2. **Open in Xcode:**
    ```bash
-   open "Live Target.xcodeproj"
+   open "Precision Target Analysis.xcodeproj"
    ```
 
 3. **Configure signing:**
@@ -111,10 +111,10 @@ Access via Settings button in main app:
 ### Unit Tests
 ```bash
 # Run all tests
-xcodebuild test -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 16"
+xcodebuild test -project "Precision Target Analysis.xcodeproj" -scheme "Precision Target Analysis" -destination "platform=iOS Simulator,name=iPhone 16"
 
 # Run specific test class
-xcodebuild test -project "Live Target.xcodeproj" -scheme "Live Target" -destination "platform=iOS Simulator,name=iPhone 16" -only-testing:Live_TargetTests/ChangeDetectorTests
+xcodebuild test -project "Precision Target Analysis.xcodeproj" -scheme "Precision Target Analysis" -destination "platform=iOS Simulator,name=iPhone 16" -only-testing:Live_TargetTests/ChangeDetectorTests
 ```
 
 ### Test Coverage
@@ -258,5 +258,5 @@ Located in `.swiftlint.yml`:
 
 - **Issues:** Report bugs via GitHub Issues
 - **Documentation:** See `../shared/docs/` for detailed architecture
-- **Testing:** Comprehensive test suite in `Live TargetTests/`
+- **Testing:** Comprehensive test suite in `Precision Target AnalysisTests/`
 - **Performance:** Use Xcode Instruments for profiling
