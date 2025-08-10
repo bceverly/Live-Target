@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Camera Usage - Sports Training Focus -->
+    <key>NSCameraUsageDescription</key>
+    <string>Precision Target Analysis uses your camera to automatically detect and measure impact groupings on paper targets for competitive ballistic sports training and precision improvement.</string>
+    
+    <!-- Photo Library Add - Save Training Results -->
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Precision Target Analysis saves your training session images with impact analysis overlays to help track your competitive ballistic sports progress over time.</string>
+    
+    <!-- Photo Library Access - Training History -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Precision Target Analysis accesses your photo library to save target analysis images for competitive ballistic sports training documentation and progress tracking.</string>
+    
+    <!-- Apple Watch Connectivity (if using WatchConnectivity) -->
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>Precision Target Analysis connects to your Apple Watch to provide real-time shot notifications during training sessions.</string>
+</dict>
+</plist>

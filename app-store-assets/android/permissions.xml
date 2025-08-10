@@ -1,0 +1,63 @@
+<!-- Android Permissions for Precision Target Analysis -->
+<!-- Add these to android/app/src/main/AndroidManifest.xml -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Camera Permission - Required for target analysis -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+
+    <!-- Storage Permissions - Required for saving training documentation -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    
+    <!-- Android 13+ Photo/Media Permissions -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <!-- Samsung Galaxy Watch Integration (Optional) -->
+    <uses-permission android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY" />
+    <uses-permission android:name="com.samsung.accessory.permission.ACCESSORY_FRAMEWORK" />
+
+    <application>
+        <!-- Camera FileProvider for sharing images -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.bceassociates.precisiontarget.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Samsung Accessory Service (if using Galaxy Watch) -->
+        <service
+            android:name=".watch.SamsungAccessoryService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.samsung.accessory.action.SERVICE_CONNECTION_REQUESTED" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>
+
+<!-- 
+PERMISSION DESCRIPTIONS FOR GOOGLE PLAY STORE:
+
+Camera Permission:
+"Precision Target Analysis uses your device camera to automatically detect and measure impact patterns on paper targets for competitive ballistic sports training and precision improvement."
+
+Storage Permission:
+"Precision Target Analysis saves your training session images with impact analysis overlays to help track your competitive ballistic sports progress and training documentation over time."
+
+Samsung Accessory Permission (if applicable):
+"Precision Target Analysis connects to your Samsung Galaxy Watch to provide real-time impact notifications during competitive ballistic sports training sessions."
+-->
